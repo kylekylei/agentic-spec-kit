@@ -1,0 +1,118 @@
+---
+alwaysApply: true
+---
+
+# Teammate - AI Collaboration System
+
+Teammate is a structured workflow for collaborating with AI. Treat AI as a teammate — give it clear context, verifiable tasks, and review its work.
+
+## Workflow
+
+Commands must follow this phase order. Do not skip phases unless the user explicitly requests it.
+
+```
+Foundation → Align → Commit → Deliver
+```
+
+### Foundation (run once per project)
+
+| Command | Purpose |
+|---------|---------|
+| `/teammate.kickoff` | Initialize project context (`project-context.md`) |
+| `/teammate.principles` | Define non-negotiable principles (`principles.md`) |
+
+### Align (per feature)
+
+| Command | Purpose |
+|---------|---------|
+| `/teammate.align` | Define what to build via Impact Mapping |
+| `/teammate.clarify` | Clarify requirements via Example Mapping |
+
+### Commit (per feature)
+
+| Command | Purpose |
+|---------|---------|
+| `/teammate.plan` | Generate Gherkin .feature files |
+| `/teammate.tasks` | Technical plan with Screenplay Pattern |
+| `/teammate.actions` | Break into atomic, verifiable actions |
+
+### Deliver (per feature)
+
+| Command | Purpose |
+|---------|---------|
+| `/teammate.execute` | Red-Green Loop implementation |
+| `/teammate.review` | Behavioral coverage analysis (read-only) |
+| `/teammate.checklist` | Feature readiness validation |
+| `/teammate.assign` | Convert actions to GitHub Issues |
+
+## Foundation Check
+
+**Before any Align/Commit/Deliver command**, verify:
+
+1. `.teammate/memory/project-context.md` has no `[PLACEHOLDER]` tokens
+2. `.teammate/memory/principles.md` has no `[PLACEHOLDER]` tokens
+
+If either fails, stop and direct the user to run `/teammate.kickoff` or `/teammate.principles`.
+
+## Key Paths
+
+```
+.teammate/
+├── memory/
+│   ├── project-context.md    # Project identity, users, goals, tech stack
+│   ├── principles.md         # Non-negotiable principles (MUST / MUST NOT)
+│   ├── active-context.md     # Current session state (auto-updated)
+│   └── progress.md           # Progress tracking
+├── snapshots/                # Decision & plan change snapshots
+├── templates/                # Document templates
+├── scripts/bash/             # Automation scripts
+└── config/teammate.yml       # Lifecycle configuration
+
+features/[###-feature-name]/  # Per-feature artifacts
+├── spec.md                   # /teammate.align output
+├── example-mapping.md        # /teammate.clarify output
+├── scenarios/*.feature       # /teammate.plan output
+├── screenplay.md             # /teammate.tasks output
+├── tasks.md                  # /teammate.tasks output
+├── actions.md                # /teammate.actions output
+├── contracts/ui/             # Figma page links (per feature, via /teammate.tasks)
+└── checklists/               # /teammate.checklist output
+```
+
+## Snapshots
+
+Snapshots are created when major decisions or plan changes occur. They capture a point-in-time record so the team can trace back why things changed.
+
+**When to create a snapshot:**
+- Principles are amended (`/teammate.principles` re-run)
+- A feature plan is significantly revised after review
+- Scope changes during Deliver phase (requirements discovered mid-implementation)
+
+**What to capture:**
+- The changed file(s) before and after
+- A one-line reason for the change
+- Timestamp
+
+Snapshots are stored in `.teammate/snapshots/` and are meant for human review, not automation.
+
+## Mid-Cycle Updates
+
+When plans need to change (design revision, verification failure, scope change):
+
+```
+/teammate.tasks update [what changed]
+/teammate.actions update
+```
+
+Update mode preserves existing work, snapshots before overwriting, and marks changes with `[UNCHANGED]` / `[NEW]` / `[REVISED]` / `[REMOVED]` markers. Completed actions are never discarded.
+
+## Rules
+
+- **Principles are supreme.** Defined principles override all other decisions. Violations are always CRITICAL.
+- **Behavior over implementation.** Specs describe WHAT the system does, not HOW it's built.
+- **Red-Green discipline.** During `/teammate.execute`, always write step definitions first (RED), then implement (GREEN).
+- **No skipping phases.** Each command depends on artifacts from previous commands.
+- **Figma links are per-feature.** Project-level Figma URL goes in `project-context.md`. Feature-level page links go in `contracts/ui/` during `/teammate.tasks`.
+- **Update active-context.md** after each command completes — mark the current stage, set the next action.
+- **Explicit handoff required.** Every `teammate.*` command must state when to use it and the next suggested command (or handoff) so developers can follow the flow without ambiguity.
+- **Snapshot on significant changes.** When principles, plans, or scope change, create a snapshot before overwriting.

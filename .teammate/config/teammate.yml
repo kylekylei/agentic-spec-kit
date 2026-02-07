@@ -1,0 +1,187 @@
+# Teammate Configuration
+# Version: 2.0.0
+
+# =============================================================================
+# LIFECYCLE PHASES
+# =============================================================================
+# Configure which phases are required vs optional for your workflow
+
+lifecycle:
+  foundation:
+    kickoff:
+      required: true
+      description: "Initialize project context"
+      output: "project-context.md"
+    principles:
+      required: true
+      description: "Define non-negotiable behavioral principles and boundaries"
+      output: "principles.md"
+
+  align:
+    align:
+      required: true
+      description: "Align on the problem and expected outcomes"
+    clarify:
+      required: true
+      description: "Clarify ambiguities with concrete examples"
+
+  commit:
+    plan:
+      required: true
+      description: "Create executable work plan"
+    tasks:
+      required: false
+      description: "Define tasks with Screenplay Pattern"
+    actions:
+      required: true
+      description: "Break tasks into atomic verifiable actions"
+
+  deliver:
+    execute:
+      required: true
+      description: "Execute actions using Red-Green Loop"
+    review:
+      required: false
+      description: "Behavioral coverage analysis"
+    checklist:
+      required: true
+      description: "Feature readiness and quality checklist"
+    assign:
+      required: false
+      description: "Convert to GitHub Issues"
+
+# =============================================================================
+# GHERKIN SETTINGS
+# =============================================================================
+
+gherkin:
+  # Default language for feature files
+  language: en
+
+  # Tag conventions
+  tags:
+    priority:
+      - "@P1"  # Critical - MVP
+      - "@P2"  # Important - Release
+      - "@P3"  # Nice-to-have - Deferred
+    
+    category:
+      - "@happy-path"
+      - "@alternative"
+      - "@negative"
+      - "@boundary"
+      - "@data-driven"
+      - "@principles"
+    
+    status:
+      - "@wip"
+      - "@manual"
+      - "@slow"
+      - "@flaky"
+
+  # Scenario naming conventions
+  naming:
+    pattern: "Sentence case with context"
+    max_length: 120
+    
+  # Step definition settings
+  step_definitions:
+    language: typescript  # or: javascript, python, ruby, java
+    location: "tests/step-definitions"
+
+# =============================================================================
+# VERIFICATION SETTINGS
+# =============================================================================
+
+verification:
+  # Coverage thresholds
+  coverage:
+    minimum_scenario_coverage: 80  # Percentage of scenarios that must pass
+    require_happy_path: true       # All @happy-path scenarios must pass
+    require_principles: true       # All @principles scenarios must pass
+
+  # Living documentation output
+  living_docs:
+    enabled: true
+    format: html  # or: markdown, json
+    output_dir: "docs/living-documentation"
+    include_pending: true
+
+  # Traceability requirements
+  traceability:
+    require_scenario_to_slice: true   # Each slice must reference a scenario
+    require_slice_to_task: true       # Each task must have slices
+
+# =============================================================================
+# FEATURE DIRECTORY STRUCTURE
+# =============================================================================
+
+feature_structure:
+  base_dir: "features"
+  
+  # Files generated per feature
+  files:
+    - spec.md              # teammate.align output
+    - example-mapping.md   # teammate.clarify output
+    - teammate.refs.yaml   # Context anchors
+    - screenplay.md        # teammate.tasks output
+    - tasks.md             # teammate.tasks output
+    - actions.md           # teammate.actions output
+    - README.md            # Feature overview
+  
+  # Subdirectories per feature
+  directories:
+    scenarios: "scenarios"    # .feature files (Gherkin scenarios)
+    contracts:
+      api: "contracts/api"    # OpenAPI specs
+      ui: "contracts/ui"      # UI mockups
+      ai: "contracts/ai"      # Prompt contracts
+    checklists: "checklists"  # Verification checklists
+
+# =============================================================================
+# MEMORY SETTINGS
+# =============================================================================
+
+memory:
+  location: ".teammate/memory"
+  
+  files:
+    principles: "principles.md"
+    project_context: "project-context.md"
+    active_context: "active-context.md"
+    progress: "progress.md"
+
+  # Auto-update settings
+  auto_update:
+    active_context: true   # Update on each command
+    progress: true         # Update on phase completion
+
+# =============================================================================
+# SCRIPT SETTINGS
+# =============================================================================
+
+scripts:
+  location: ".teammate/scripts/bash"
+  
+  # Script execution preferences
+  shell: "/bin/bash"
+  json_output: true
+
+# =============================================================================
+# SNAPSHOT SETTINGS
+# =============================================================================
+
+snapshots:
+  enabled: false
+  location: ".teammate/snapshots"
+  
+  # When to capture snapshots
+  triggers:
+    - on_phase_complete
+    - on_verification_pass
+  
+  # What to include in snapshots
+  include:
+    - feature_files
+    - living_docs
+    - coverage_reports
