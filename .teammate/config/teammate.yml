@@ -139,6 +139,24 @@ feature_structure:
     checklists: "checklists"  # Verification checklists
 
 # =============================================================================
+# DOCS SETTINGS (External Reference Knowledge Base)
+# =============================================================================
+
+docs:
+  location: "docs"
+  
+  # llms.txt standard — index file for LLM-friendly reference discovery
+  llms_txt:
+    enabled: true
+    root: "docs/llms.txt"
+  
+  # Subdirectory conventions
+  directories:
+    design: "docs/design"           # Design system docs, Figma index
+    # Add per-library directories as needed:
+    # fubon_neo: "docs/fubon-neo"
+
+# =============================================================================
 # MEMORY SETTINGS
 # =============================================================================
 

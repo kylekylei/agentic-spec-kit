@@ -114,6 +114,7 @@ When running with `update`, the command preserves existing work and focuses on w
    Optional:
    - `FEATURE_DIR/example-mapping.md`
    - IMPL_TASKS template (already copied)
+   - `docs/llms.txt` — Check for relevant external API/SDK references that this feature depends on. If found, read the corresponding `docs/[library]/llms.txt` for integration guidance.
 
 3. **Phase 0: Screenplay Pattern Extraction**
 

@@ -167,6 +167,14 @@ Teammate/
 │   ├── config/teammate.yml      # 設定檔
 │   └── snapshots/               # 快照
 │
+├── docs/                        # 外部參考知識庫
+│   ├── llms.txt                 # 參考資料索引（llms.txt 標準）
+│   ├── [library-name]/          # 第三方 API/SDK 文件
+│   │   ├── llms.txt             # 該函式庫的 LLM 友善摘要
+│   │   └── api-reference.md     # 完整 API 參考
+│   └── design/                  # 設計系統文件與 Figma 索引
+│       └── figma-index.md
+│
 ├── .cursor/
 │   ├── commands/                # Teammate 指令
 │   │   ├── teammate.kickoff.md
@@ -195,9 +203,25 @@ Teammate/
         └── checklists/          # /teammate.checklist 產出
 ```
 
+### spec.md vs tasks.md
+
+Feature 目錄中最重要的兩份文件有本質上的差異：
+
+| | spec.md | tasks.md |
+|---|---------|----------|
+| **回答的問題** | 做什麼？為什麼？給誰用？ | 怎麼做？改哪些檔案？用什麼技術？ |
+| **讀者** | 非技術人員也能看懂 | 開發者 |
+| **語言** | 業務語言（使用者故事、驗收標準） | 技術語言（模組、函式、路徑） |
+| **可變性** | 除非需求變了，否則不改 | 實作過程中可能調整 |
+
+- **只有 spec，沒有 tasks**：知道要做什麼，但不知道怎麼動手。AI 可能每次用不同方式實作。
+- **只有 tasks，沒有 spec**：知道怎麼做，但不知道為什麼做。無法驗收，也無法判斷做完後是否正確。
+- **兩者都有**：spec 定義「完成的定義」，tasks 定義「實作的路徑」。即使換一個 AI session，也能接手。
+
 備註：
 - `.teammate/memory/README.md` 為說明檔，協助理解 memory 內容用途。
 - `.cursor/skills/` 為可選的技能擴充目錄，若未使用可忽略。
+- `docs/` 遵循 [llms.txt 標準](https://llmstxt.org/)，讓 AI 能快速索引外部參考資料。
 
 
 

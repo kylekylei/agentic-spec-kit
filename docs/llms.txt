@@ -1,0 +1,20 @@
+# Teammate External References
+
+> External API documentation, SDK references, and design resources for AI-assisted development.
+> This file follows the llms.txt standard to help LLMs quickly discover available reference materials.
+
+## APIs
+
+<!-- Add third-party API/SDK references here. Each entry should link to its own llms.txt or docs. -->
+<!-- Example: -->
+<!-- - [Supabase](./supabase/llms.txt): Backend-as-a-Service (Auth, Database, Storage) -->
+
+## Frontend Libraries
+
+<!-- Add frontend component library references here, especially those providing llms.txt. -->
+<!-- Example: -->
+<!-- - [Shadcn UI](./shadcn-ui/llms.txt): UI component library -->
+
+## Design
+
+- [Figma Index](./design/figma-index.md): Project and feature-level design references

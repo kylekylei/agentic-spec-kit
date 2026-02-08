@@ -1,0 +1,56 @@
+---
+alwaysApply: true
+---
+
+# Teammate Sync Rule
+
+This rule ensures all Teammate framework improvements discovered during project work flow back to the central Teammate repository.
+
+## Central Repository
+
+**Teammate Hub**: `/Users/kylelei/Developer/Teammate`
+
+This is the single source of truth for the Teammate framework. All projects share this same hub.
+
+## Sync: Framework Files
+
+Whenever the user requests changes to any of the following files in this project:
+
+- `.cursor/rules/teammate-rules.mdc`
+- `.cursor/commands/teammate.*.md`
+
+The AI MUST also apply the same changes to the corresponding files in the Teammate Hub:
+
+- `/Users/kylelei/Developer/Teammate/.cursor/rules/teammate-rules.mdc`
+- `/Users/kylelei/Developer/Teammate/.cursor/commands/teammate.*.md`
+
+## Sync: Lessons Learned
+
+Whenever the AI discovers a workflow improvement, rule addition, or process insight during project work, it MUST append the learning to:
+
+- `/Users/kylelei/Developer/Teammate/ROADMAP.md` → "從實戰中學到的教訓" table
+
+Format:
+```
+| 日期 | 專案 | 教訓 | 改善 |
+|------|------|------|------|
+| YYYY-MM-DD | [project-name] | [what went wrong or could be better] | [what was changed] |
+```
+
+This ensures all projects contribute to a centralized memory that any future AI session can learn from.
+
+## Rules
+
+- **Always sync to Hub**: Changes to framework files must propagate to the Teammate Hub
+- **Announce the sync**: After updating, explicitly confirm which files were synced
+- **Do not ask for permission to sync**: The sync is automatic as long as this rule is active
+- **Preserve project-specific content**: Only sync Teammate framework files, not project-specific rules or features
+- **ROADMAP is append-only**: Never remove existing entries from the lessons learned table
+
+## What to Sync vs What NOT to Sync
+
+| Sync to Teammate Hub | Do NOT sync (project-specific) |
+|----------------------|-------------------------------|
+| `teammate-rules.mdc` | `backtest_rules.mdc` or other project rules |
+| `teammate.*.md` commands | `.teammate/memory/` contents |
+| Lessons to `ROADMAP.md` | `features/` artifacts |

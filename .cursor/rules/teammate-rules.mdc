@@ -68,6 +68,14 @@ If either fails, stop and direct the user to run `/teammate.kickoff` or `/teamma
 ├── scripts/bash/             # Automation scripts
 └── config/teammate.yml       # Lifecycle configuration
 
+docs/                         # External reference knowledge base
+├── llms.txt                  # Index of all references (llms.txt standard)
+├── [library-name]/           # Per-library API docs & llms.txt
+│   ├── llms.txt
+│   └── api-reference.md
+└── design/                   # Design system docs & Figma index
+    └── figma-index.md
+
 features/[###-feature-name]/  # Per-feature artifacts
 ├── spec.md                   # /teammate.align output
 ├── example-mapping.md        # /teammate.clarify output
@@ -116,3 +124,52 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
 - **Update active-context.md** after each command completes — mark the current stage, set the next action.
 - **Explicit handoff required.** Every `teammate.*` command must state when to use it and the next suggested command (or handoff) so developers can follow the flow without ambiguity.
 - **Snapshot on significant changes.** When principles, plans, or scope change, create a snapshot before overwriting.
+- **主動提供下一步選項.** 每個 `teammate.*` 指令完成後，AI 必須在回覆末尾以結構化格式列出可選的下一步動作，格式如下：
+
+```
+接下來要做什麼？
+
+- [A] 動作描述（對應的 /teammate.* 指令）
+- [B] 動作描述
+- [C] 動作描述
+- [D] {根據當前時間選擇，產出前先用 `date +%H:%M` 取得本機時間}
+  - 06:00-08:59 → 先吃個早餐，回來再繼續
+  - 09:00-11:59 → 休息一下，喝杯咖啡
+  - 12:00-13:29 → 先去吃午餐
+  - 13:30-17:29 → 休息一下，喝杯咖啡
+  - 17:30-19:29 → 先去吃晚餐
+  - 19:30-22:59 → 今天先到這，明天繼續
+  - 23:00-05:59 → 太晚了，先去睡覺
+```
+
+## Simplified Flow (for small, focused tasks)
+
+When the AI evaluates a task as small enough to skip full BDD scenarios, the following rules apply:
+
+**Eligibility criteria** (ALL must be true):
+- Single concern (one module, one behavior change)
+- No user-facing behavior change that needs scenario verification
+- Estimated implementation < 2 hours
+- No Principles boundaries involved
+
+**Minimum artifacts required** (even in simplified flow):
+1. `spec.md` — WHAT is being built and WHY (always required)
+2. `tasks.md` — HOW it will be implemented (always required)
+3. Tests — at least unit tests for the new code
+
+**Skippable in simplified flow**:
+- `example-mapping.md`
+- `scenarios/*.feature`
+- `screenplay.md`
+- `actions.md`
+
+**AI must explicitly**:
+1. State: "This task qualifies for simplified flow because [reason]"
+2. Ask: "Proceed with simplified flow (spec + tasks then execute), or full BDD?"
+3. Wait for user confirmation before executing
+
+**Never simplify when**:
+- Task involves Principles boundaries (e.g. BB-001 ~ BB-009)
+- Task changes decision-making logic (e.g. RuleEngine)
+- Task affects multiple modules or cross-cutting concerns
+- User explicitly requests full flow

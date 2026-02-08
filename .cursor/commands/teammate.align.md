@@ -8,6 +8,17 @@ handoffs:
     agent: teammate.plan
     prompt: Generate Gherkin feature files from the spec and examples
     send: true
+  - label: Update Tasks
+    agent: teammate.tasks
+    prompt: Update technical tasks to reflect the spec changes
+    send: true
+  - label: Continue Editing Spec
+    agent: teammate.align
+    prompt: Continue refining the current spec
+  - label: Skip to Execute
+    agent: teammate.execute
+    prompt: Start implementing — spec is sufficient, no further planning needed
+    send: true
 ---
 
 ## User Input

@@ -64,6 +64,7 @@ RED → GREEN → REFACTOR → REPEAT
    - `screenplay.md` - Task definitions
    - `data-model.md` - Entities
    - `contracts/` - API specs
+   - `docs/llms.txt` — Read the root index to discover available external references. For any third-party API/SDK used by this feature, load the corresponding `docs/[library]/llms.txt` for implementation guidance (e.g., correct method signatures, authentication patterns, error handling).
 
 4. **Project Setup Verification**:
 
