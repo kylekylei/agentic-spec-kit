@@ -109,8 +109,8 @@ verification:
 
   # Traceability requirements
   traceability:
-    require_scenario_to_slice: true   # Each slice must reference a scenario
-    require_slice_to_task: true       # Each task must have slices
+    require_scenario_to_action: true   # Each action must reference a scenario
+    require_action_to_task: true      # Each task must have actions
 
 # =============================================================================
 # FEATURE DIRECTORY STRUCTURE

@@ -1,21 +1,21 @@
 ---
-description: "Chainlink Beads template for feature implementation - atomic verifiable slices"
+description: "Actions template for feature implementation - atomic verifiable actions"
 ---
 
-# Slices: [FEATURE NAME]
+# Actions: [FEATURE NAME]
 
 **Input**: Design documents from `/features/[###-feature-name]/`
 **Prerequisites**: spec.md, example-mapping.md, scenarios/*.feature, screenplay.md, tasks.md
 
-**BDD Integration**: Each slice MUST reference the scenario(s) it verifies via the `[Verifies: @tag]` marker.
+**BDD Integration**: Each action MUST reference the scenario(s) it verifies via the `[Verifies: @tag]` marker.
 
-**Organization**: Slices are grouped by user story and linked to Gherkin scenarios for full traceability.
+**Organization**: Actions are grouped by user story and linked to Gherkin scenarios for full traceability.
 
-## Format: `[SliceID] [P?] [Story?] [Verifies: @scenario-tag] Description`
+## Format: `[ActionID] [P?] [Story?] [Verifies: @scenario-tag] Description`
 
-- **[SliceID]**: Sequential ID (S001, S002, S003...)
+- **[ActionID]**: Sequential ID (S001, S002, S003...)
 - **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this slice belongs to (e.g., US1, US2, US3)
+- **[Story]**: Which user story this action belongs to (e.g., US1, US2, US3)
 - **[Verifies: @tag]**: Links to scenario tag(s) in .feature files
 - Include exact file paths in descriptions
 
@@ -28,7 +28,7 @@ description: "Chainlink Beads template for feature implementation - atomic verif
 
 <!-- 
   ============================================================================
-  CHAINLINK BEADS: Atomic Verifiable Slices
+  ATOMIC VERIFIABLE ACTIONS
   
   The /teammate.actions command MUST replace these with actual actions based on:
   - Scenarios from scenarios/*.feature (with their priority tags @P1, @P2, @P3)
@@ -36,12 +36,12 @@ description: "Chainlink Beads template for feature implementation - atomic verif
   - Actors/Tasks from screenplay.md
   - Technical structure from tasks.md
   
-  Each slice (bead) in the chainlink:
+  Each action:
   - Links to one or more Gherkin scenarios via [Verifies: @tag]
   - Can be implemented and verified independently
   - Forms a traceable chain from behavior to implementation
   
-  DO NOT keep these sample slices in the generated actions.md file.
+  DO NOT keep these sample actions in the generated actions.md file.
   ============================================================================
 -->
 
@@ -62,7 +62,7 @@ description: "Chainlink Beads template for feature implementation - atomic verif
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-Examples of foundational slices (adjust based on your project):
+Examples of foundational actions (adjust based on your project):
 
 - [ ] S004 [Verifies: @foundation] Setup database schema and migrations framework
 - [ ] S005 [P] [Verifies: @foundation] Implement authentication/authorization framework
@@ -247,26 +247,26 @@ With multiple developers:
 
 ## Notes
 
-- [P] slices = different files, no dependencies
-- [Story] label maps slice to specific user story for traceability
-- [Verifies: @tag] links slice to Gherkin scenario(s) for behavior traceability
+- [P] actions = different files, no dependencies
+- [Story] label maps action to specific user story for traceability
+- [Verifies: @tag] links action to Gherkin scenario(s) for behavior traceability
 - Each user story should be independently completable and testable
 - RED-GREEN LOOP: Step definitions fail (RED) → Implement → Pass (GREEN)
-- Commit after each slice or logical group
+- Commit after each action or logical group
 - Stop at any checkpoint to validate story independently
-- Avoid: vague slices, same file conflicts, missing scenario links
+- Avoid: vague actions, same file conflicts, missing scenario links
 
 ---
 
 ## Traceability Matrix
 
-> Auto-generated summary linking slices to scenarios
+> Auto-generated summary linking actions to scenarios
 
-| Scenario Tag | Slices | Status |
-|--------------|--------|--------|
+| Scenario Tag | Actions | Status |
+|--------------|---------|--------|
 | @us1-happy-path | S010, S012-S015 | Pending |
 | @us1-negative | S011, S016 | Pending |
 | @us2-happy-path | S018, S020-S022 | Pending |
 | @us3-happy-path | S024, S026-S028 | Pending |
 
-**Coverage**: [X]/[Y] scenarios have linked slices ([Z]%)
+**Coverage**: [X]/[Y] scenarios have linked actions ([Z]%)

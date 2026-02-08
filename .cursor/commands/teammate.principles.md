@@ -121,7 +121,7 @@ The principles file defines:
    
    - Read `.teammate/templates/plan-template.md` - ensure Principles Check aligns
    - Read `.teammate/templates/spec-template.md` - verify scope/requirements alignment
-   - Read `.teammate/templates/slices-template.md` - ensure task types reflect principles
+   - Read `.teammate/templates/actions-template.md` - ensure task types reflect principles
    - Read `.teammate/templates/feature-template.feature` - verify @principles scenarios align
    - Check any existing `features/*/scenarios/*.feature` for principles boundary scenarios
 

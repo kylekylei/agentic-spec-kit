@@ -160,7 +160,7 @@ Each action in the chain:
 
 9. **Write Tasks File**:
 
-   Write to `FEATURE_DIR/actions.md` using `.teammate/templates/slices-template.md`:
+   Write to `FEATURE_DIR/actions.md` using `.teammate/templates/actions-template.md`:
    
    - Correct feature name
    - All phases with proper structure
