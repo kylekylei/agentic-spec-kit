@@ -34,11 +34,11 @@ Parse `$ARGUMENTS` for the keyword **`update`**:
 
 1. **Read `.teammate/memory/project-context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
+   - If found → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
 
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.principles` first."
+   - If found → **ERROR**: "Principles not defined. Run `/teammate.init` first."
 
 ### Update Mode
 
@@ -161,13 +161,73 @@ For every `[NEW]` component, identify its **consumer** (existing file that must 
 - Every `[NEW]` UI component (not a child of another [NEW]) MUST have at least one `[INTEGRATE]` consumer
 - Common integration points: `+layout.svelte` (global), `+page.svelte` (route-specific), parent components
 
-### UI Interactive State Machine (if UI involved)
+### UI Deep Analysis（UI 深度分析 — 自動觸發）
 
-For each UI component with interactive elements:
+當 feature 涉及 3+ 個 UI 組件，或使用者指定 `--ui` flag 時，自動啟用 UI 深度分析。
 
-1. **列舉所有互動元素**
-2. **產出狀態機表格**: 元素 / 觸發條件 / 狀態 / 行為
-3. **驗證**: 每個互動元素 MUST 有 enabled + disabled 狀態；每個 disabled MUST 說明原因
+> 此區段整合原 `/teammate.ui` 的能力。偵測條件：掃描 spec.md 和 tasks.md Project Structure 中的 `[NEW]`/`[ENHANCE]` 組件數量 ≥ 3。
+
+#### Component Inventory
+
+掃描 spec.md 和 tasks.md，列出所有 UI 組件：
+
+| 組件 | 類型 | 狀態數 | 父組件 | 備註 |
+|------|------|--------|--------|------|
+| [ComponentA] | [Panel/Card/Indicator/...] | [N] | [parent] | [notes] |
+
+#### State Matrix
+
+對每個組件定義完整的視覺狀態：
+
+| 狀態 | 觸發條件 | 外觀描述 | 互動行為 |
+|------|----------|----------|----------|
+| Default | [condition] | [appearance] | [interaction] |
+| Loading | [condition] | [appearance] | [interaction] |
+| Error | [condition] | [appearance] | [interaction] |
+| Empty | [condition] | [appearance] | [interaction] |
+
+規則：
+- 每個組件 MUST 至少定義 3 種狀態（預設 + 主要 + 邊界）
+- Loading 狀態 MUST 說明 loading 的內容和預估時間
+- Error 狀態 MUST 說明可能的錯誤類型和使用者動作
+- Empty 狀態 MUST 說明何時出現和顯示內容
+
+#### Interaction Flows
+
+定義核心互動路徑（happy path + error path），以步驟序列描述使用者操作和系統回應。
+
+#### Interactive State Machine
+
+對每個互動元素（按鈕、連結、切換）產出狀態機表格：
+
+| 元素 | 觸發條件 | 狀態 | 行為 |
+|------|----------|------|------|
+| [element] | [condition] | enabled/disabled | [behavior] |
+
+驗證規則：
+- 每個互動元素 MUST 有 enabled + disabled 兩種狀態
+- 每個 disabled MUST 說明原因
+- 若引用外部設計（如「參考 Google Drive」），MUST 標註語意差異
+
+#### Design System Compliance Checklist
+
+```markdown
+### UI Compliance
+- [ ] 使用專案定義的 color tokens（不使用 raw hex/rgb）
+- [ ] 間距遵循 spacing scale
+- [ ] 字型遵循 typography scale
+
+### i18n Compliance
+- [ ] 所有使用者可見文字使用 i18n key
+- [ ] 新增 key 已同步到所有 locale
+
+### a11y Compliance
+- [ ] 互動元素有 aria-label
+- [ ] 鍵盤導覽可操作
+- [ ] 色彩對比度 ≥ 4.5:1（WCAG AA）
+```
+
+產出至 `FEATURE_DIR/contracts/ui/ui-spec.md`。
 
 ### Design Artifacts
 

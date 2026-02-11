@@ -4,8 +4,8 @@
 
 | 檔案 | 用途 | 誰來改 | 什麼時候改 |
 |------|------|--------|-----------|
-| `project-context.md` | 專案身份、使用者、目標、技術堆疊 | 人類 | 專案啟動時（`/teammate.kickoff`）；技術堆疊或目標變更時手動更新 |
-| `principles.md` | 不可違反的原則（MUST / MUST NOT） | 人類 | 專案啟動時（`/teammate.principles`）；原則需要修訂時（應建立 snapshot） |
+| `project-context.md` | 專案身份、使用者、目標、技術堆疊 | 人類 | 專案啟動時（`/teammate.init`）；技術堆疊或目標變更時手動更新 |
+| `principles.md` | 不可違反的原則（MUST / MUST NOT） | 人類 | 專案啟動時（`/teammate.init`）；原則需要修訂時（應建立 snapshot） |
 | `active-context.md` | 當前工作狀態、進行中的 feature | AI 自動 | 每個指令完成後自動更新；人類不需要手動編輯 |
 | `progress.md` | 各 feature 的完成進度 | AI 自動 | Feature 階段完成時自動更新；人類不需要手動編輯 |
 

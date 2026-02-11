@@ -10,7 +10,7 @@
 - **Feature Branch**: [None]
 - **Phase**: [Foundation / Align / Commit / Deliver]
 - **Last Command**: [None]
-- **Next Action**: [/teammate.kickoff]
+- **Next Action**: [/teammate.init]
 
 ## Session Log
 

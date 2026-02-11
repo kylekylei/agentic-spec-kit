@@ -2,7 +2,8 @@
 description: Perform behavioral coverage analysis and feature readiness validation. Combines review + checklist into one comprehensive quality gate.
 handoffs:
   - label: Create Issues
-    agent: teammate.assign
+    agent: teammate.toolkit
+    prompt: assign — Convert actions to GitHub Issues
     prompt: Convert tasks to GitHub issues
     send: true
   - label: Fix Gaps
@@ -35,11 +36,11 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage, artif
 
 1. **Read `.teammate/memory/project-context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
+   - If found → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
 
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.principles` first."
+   - If found → **ERROR**: "Principles not defined. Run `/teammate.init` first."
 
 ### Setup
 
@@ -233,7 +234,7 @@ Generate `FEATURE_DIR/checklists/feature-readiness.md`:
 Based on findings:
 - If CRITICAL: Must resolve before proceeding → suggest `/teammate.plan update`
 - If HIGH: Should address for quality → suggest specific fixes
-- If only LOW/MEDIUM: Can proceed → suggest `/teammate.assign`
+- If only LOW/MEDIUM: Can proceed → suggest `/teammate.toolkit assign`
 
 ## Update Progress
 

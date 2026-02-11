@@ -240,7 +240,7 @@ Overall: [READY / NOT READY / NEEDS CLARIFICATION]
 
 This skill integrates with:
 - `contracts/ui/component-specs.md` — UI component specifications per feature
-- `/teammate.figma` — Figma resource synchronization
+- `figma-sync` skill — Figma resource synchronization (write to Figma)
 - `/teammate.align` — Pre-implementation spec generation
 - `/teammate.review` — Design-code alignment analysis (Pass E: UI Contract Consistency)
 - `principles.md` — Design system token enforcement during implementation

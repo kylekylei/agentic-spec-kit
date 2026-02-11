@@ -8,42 +8,27 @@ version: "0.0.1"
 
 lifecycle:
   foundation:
-    kickoff:
+    init:
       required: true
-      description: "Initialize project context"
-      output: "project-context.md"
-    principles:
-      required: true
-      description: "Define non-negotiable behavioral principles and boundaries"
-      output: "principles.md"
+      description: "Initialize or audit project foundation (project-context + principles)"
+      output: "project-context.md + principles.md"
 
-  align:
+  per_feature:
     align:
       required: true
       description: "Define what to build (Impact Mapping + Example Mapping)"
       output: "spec.md + example-mapping.md"
-
-  commit:
     plan:
       required: true
-      description: "Generate scenarios, technical plan, and atomic actions"
-      output: ".feature + tasks.md + actions.md"
-    ui:
-      required: false
-      description: "UI component states, interaction flows, design system compliance"
-      output: "contracts/ui/ui-spec.md"
-
-  deliver:
+      description: "Generate scenarios, technical plan, and atomic actions (UI deep analysis auto-triggered)"
+      output: ".feature + tasks.md + actions.md + contracts/ui/ui-spec.md (if UI)"
     execute:
       required: true
-      description: "Execute actions using Red-Green Loop"
+      description: "Execute actions using Red-Green-Refactor-Reflect Loop"
     review:
       required: true
       description: "Behavioral coverage + requirements quality + feature readiness"
       output: "checklists/feature-readiness.md"
-    assign:
-      required: false
-      description: "Convert to GitHub Issues"
 
 # =============================================================================
 # GHERKIN SETTINGS

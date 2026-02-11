@@ -39,11 +39,11 @@ Parse `$ARGUMENTS` for the keyword **`update`**:
 
 1. **Read `.teammate/memory/project-context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
+   - If found → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
 
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.principles` first."
+   - If found → **ERROR**: "Principles not defined. Run `/teammate.init` first."
 
 3. **If both pass** → Load both files as working context:
    - project-context.md provides WHO (actors), WHY (business goals), and technical constraints

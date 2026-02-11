@@ -11,44 +11,32 @@ Teammate is a structured workflow for collaborating with AI. Treat AI as a teamm
 Commands must follow this phase order. Do not skip phases unless the user explicitly requests it.
 
 ```
-Foundation → Align → Commit → Deliver
+Init → Align → Plan → Execute → Review
 ```
 
 ### Foundation (run once per project)
 
 | Command | Purpose |
 |---------|---------|
-| `/teammate.kickoff` | Initialize project context (`project-context.md`) |
-| `/teammate.principles` | Define non-negotiable principles (`principles.md`) |
+| `/teammate.init` | Initialize or audit project foundation (`project-context.md` + `principles.md`) |
 
-### Align (per feature)
+### Per Feature
 
 | Command | Purpose |
 |---------|---------|
 | `/teammate.align` | Define what to build (Impact Mapping + Example Mapping) → `spec.md` + `example-mapping.md` |
-
-### Commit (per feature)
-
-| Command | Purpose |
-|---------|---------|
-| `/teammate.plan` | Generate scenarios, technical plan, and actions → `.feature` + `tasks.md` + `actions.md` |
-| `/teammate.ui` | UI-specific: component states, interaction flows, design/i18n/a11y checklists → `contracts/ui/ui-spec.md` |
-
-### Deliver (per feature)
-
-| Command | Purpose |
-|---------|---------|
-| `/teammate.execute` | Red-Green Loop implementation |
+| `/teammate.plan` | Generate scenarios, technical plan, and actions → `.feature` + `tasks.md` + `actions.md`（UI 深度分析自動觸發） |
+| `/teammate.execute` | Red-Green-Refactor-Reflect Loop implementation |
 | `/teammate.review` | Behavioral coverage + requirements quality + feature readiness |
-| `/teammate.assign` | Convert actions to GitHub Issues |
 
 ### Toolkit (anytime — not part of workflow)
 
 | Command | Purpose |
 |---------|---------|
-| `/teammate.toolkit healthcheck` | 工作流程健康診斷（Foundation、階段合規、Hub 同步） |
-| `/teammate.toolkit consult [問題]` | 流程問診（使用者提問 → 分析 → 改善提案） |
-| `/teammate.toolkit migrate` | 版本遷移工具（計劃中） |
+| `/teammate.toolkit healthcheck` | 工作流程健康診斷 |
+| `/teammate.toolkit consult [問題]` | 流程問診 |
+| `/teammate.toolkit migrate` | 版本遷移 |
+| `/teammate.toolkit assign` | actions → GitHub Issues |
 
 > Toolkit 指令**不屬於主流程**，隨時可執行，不需要前置 artifact。
 
@@ -59,7 +47,7 @@ Foundation → Align → Commit → Deliver
 1. `.teammate/memory/project-context.md` has no `[PLACEHOLDER]` tokens
 2. `.teammate/memory/principles.md` has no `[PLACEHOLDER]` tokens
 
-If either fails, stop and direct the user to run `/teammate.kickoff` or `/teammate.principles`.
+If either fails, stop and direct the user to run `/teammate.init`.
 
 ## Key Paths
 
@@ -93,7 +81,7 @@ features/[###-feature-name]/  # Per-feature artifacts
 ├── tasks.md                  # /teammate.plan output (technical plan)
 ├── actions.md                # /teammate.plan output (atomic actions)
 ├── insights.md               # /teammate.execute REFLECT output (dynamic cheatsheet)
-├── contracts/ui/             # /teammate.ui or /teammate.plan output (UI specs)
+├── contracts/ui/             # /teammate.plan output (UI specs)
 └── checklists/               # /teammate.review output (readiness reports)
 ```
 
@@ -102,7 +90,7 @@ features/[###-feature-name]/  # Per-feature artifacts
 Snapshots are created when major decisions or plan changes occur. They capture a point-in-time record so the team can trace back why things changed.
 
 **When to create a snapshot:**
-- Principles are amended (`/teammate.principles` re-run)
+- Principles are amended (`/teammate.init` re-run in Audit Mode)
 - A feature plan is significantly revised after review
 - Scope changes during Deliver phase (requirements discovered mid-implementation)
 
@@ -197,7 +185,7 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
 - **Behavior over implementation.** Specs describe WHAT the system does, not HOW it's built.
 - **Red-Green discipline.** During `/teammate.execute`, always write step definitions first (RED), then implement (GREEN).
 - **No skipping phases.** Each command depends on artifacts from previous commands.
-- **Figma links are per-feature.** Project-level Figma URL goes in `project-context.md`. Feature-level page links go in `contracts/ui/` during `/teammate.plan` or `/teammate.ui`.
+- **Figma links are per-feature.** Project-level Figma URL goes in `project-context.md`. Feature-level page links go in `contracts/ui/` during `/teammate.plan`.
 - **Update active-context.md using Memory Delta Protocol** after each command completes — 覆寫 Current State、追加 Session Log、更新 Blockers（見 Memory Delta Protocol 區段）。
 - **Explicit handoff required.** Every `teammate.*` command must state when to use it and the next suggested command (or handoff) so developers can follow the flow without ambiguity.
 - **Snapshot on significant changes.** When principles, plans, or scope change, create a snapshot before overwriting.

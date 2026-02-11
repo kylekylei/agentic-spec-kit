@@ -2,7 +2,7 @@
 description: Teammate utility toolkit — healthcheck (workflow health), consult (process diagnosis), migrate (version migration).
 handoffs:
   - label: Run Foundation
-    agent: teammate.kickoff
+    agent: teammate.init
     prompt: "healthcheck found missing or incomplete Foundation artifacts"
     send: true
   - label: Fix with Plan Update
@@ -36,6 +36,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 | `healthcheck` | 工作流程健康診斷（Foundation、階段合規、追溯骨架、Hub 同步） | ✅ 可用 |
 | `consult [問題]` | 流程問診（使用者提問 → 分析 → 改善提案） | ✅ 可用 |
 | `migrate` | 版本遷移工具（比對 Hub 版本、產出遷移計畫、套用更新） | ✅ 可用 |
+| `assign` | 將 actions.md 轉為 GitHub Issues（需 GitHub MCP） | ✅ 可用 |
 | （空或無法辨識） | 顯示可用工具清單 | ✅ 可用 |
 
 若 `$ARGUMENTS` 為空或無法辨識，輸出可用工具清單並結束：
@@ -50,6 +51,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 | `/teammate.toolkit healthcheck` | 工作流程健康診斷 |
 | `/teammate.toolkit consult [問題]` | 流程問診 |
 | `/teammate.toolkit migrate` | 版本遷移 |
+| `/teammate.toolkit assign` | actions → GitHub Issues |
 ```
 
 ---
@@ -480,9 +482,39 @@ spec.md (FR-xxx) → scenarios/*.feature (@tag) → actions.md (Sxxx [Verifies: 
 
 ---
 
+---
+
+## Tool 4: `assign`
+
+**定位**：將 `actions.md` 轉為 GitHub Issues，用於專案管理和團隊協作。
+
+### Operating Constraints
+
+- **需要 GitHub MCP**：`github/github-mcp-server/issue_write`
+- **只在 GitHub repo 中運行**：檢查 remote URL 是否為 GitHub
+
+### Execution Steps
+
+1. **Load** `FEATURE_DIR/actions.md`，解析所有 actions（ID、phase、story、tags、dependencies）
+2. **Verify** Git remote 是 GitHub URL
+3. **For each action** 建立 GitHub Issue：
+   - Title: `[ActionID] [Story] Description`
+   - Body: Action details、acceptance criteria、related scenarios、dependencies
+   - Labels: `action`, `phase-N`, `story-USN`, `parallel`（if [P]）, `priority-P1/P2/P3`
+4. **Update** `actions.md`：在每個 action 後附加 Issue number（如 `(#123)`）
+5. **Update Active Context**（Memory Delta Protocol）：追加 Session Log
+
+### Error Handling
+
+- Remote 非 GitHub → 報告並結束
+- MCP 不可用 → 報告錯誤，附手動建立說明
+- Issue 建立失敗 → 記錄錯誤，繼續其他 actions
+
+---
+
 ## Key Rules
 
-- **healthcheck = 體檢，consult = 問診，migrate = 升級** — 三種不同的維護場景
+- **healthcheck = 體檢，consult = 問診，migrate = 升級，assign = 發派** — 四種不同的維護場景
 - **READ-ONLY（healthcheck / consult）** — 不主動修改檔案（consult 的改善提案需使用者確認）
 - **WRITE-ON-CONFIRM（migrate）** — migrate 預設只產出報告，需使用者確認才寫入（`apply` 除外）
 - **Fast** — healthcheck 優先掃描 Foundation 完整性和階段合規性
