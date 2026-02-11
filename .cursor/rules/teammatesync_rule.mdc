@@ -8,7 +8,9 @@ This rule ensures all Teammate framework improvements discovered during project 
 
 ## Central Repository
 
-**Teammate Hub**: `/Users/kylelei/Developer/Teammate`
+**Teammate Hub**: `[TEAMMATE_HUB_PATH]`
+
+> 安裝時請將 `[TEAMMATE_HUB_PATH]` 替換為實際的 Teammate 專案路徑（例如 `D:\Teammate` 或 `/Users/me/Developer/Teammate`）。
 
 This is the single source of truth for the Teammate framework. All projects share this same hub.
 
@@ -21,14 +23,22 @@ Whenever the user requests changes to any of the following files in this project
 
 The AI MUST also apply the same changes to the corresponding files in the Teammate Hub:
 
-- `/Users/kylelei/Developer/Teammate/.cursor/rules/teammate-rules.mdc`
-- `/Users/kylelei/Developer/Teammate/.cursor/commands/teammate.*.md`
+- `[TEAMMATE_HUB_PATH]/.cursor/rules/teammate-rules.mdc`
+- `[TEAMMATE_HUB_PATH]/.cursor/commands/teammate.*.md`
+
+## Sync: Version Tracking
+
+When framework files are changed in the Hub, the AI SHOULD remind the user to:
+
+1. Update `[TEAMMATE_HUB_PATH]/CHANGELOG.md` — add changes to `[Unreleased]` section
+2. Bump `[TEAMMATE_HUB_PATH]/.teammate/config/teammate.yml` version when releasing
+3. Run `/teammate.toolkit migrate` in other projects to apply the changes
 
 ## Sync: Lessons Learned
 
 Whenever the AI discovers a workflow improvement, rule addition, or process insight during project work, it MUST append the learning to:
 
-- `/Users/kylelei/Developer/Teammate/ROADMAP.md` → "從實戰中學到的教訓" table
+- `[TEAMMATE_HUB_PATH]/PLAYBOOK.md` → "從實戰中學到的教訓" table
 
 Format:
 ```
@@ -45,7 +55,7 @@ This ensures all projects contribute to a centralized memory that any future AI 
 - **Announce the sync**: After updating, explicitly confirm which files were synced
 - **Do not ask for permission to sync**: The sync is automatic as long as this rule is active
 - **Preserve project-specific content**: Only sync Teammate framework files, not project-specific rules or features
-- **ROADMAP is append-only**: Never remove existing entries from the lessons learned table
+- **PLAYBOOK is append-only**: Never remove existing entries from the lessons learned table
 
 ## What to Sync vs What NOT to Sync
 
@@ -53,4 +63,6 @@ This ensures all projects contribute to a centralized memory that any future AI 
 |----------------------|-------------------------------|
 | `teammate-rules.mdc` | `backtest_rules.mdc` or other project rules |
 | `teammate.*.md` commands | `.teammate/memory/` contents |
-| Lessons to `ROADMAP.md` | `features/` artifacts |
+| Lessons to `PLAYBOOK.md` | `features/` artifacts |
+| Changes to `CHANGELOG.md` | `.cursorule` (User Profile) |
+| | `docs/` (project-specific docs) |
