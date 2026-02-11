@@ -109,20 +109,25 @@ Each action in the chain:
 
    Every action MUST follow this format:
    ```
-   - [ ] [ActionID] [P?] [Story?] [Verifies: @scenario-tag(s)] Description with file path
+   - [ ] [ActionID] [Type] [P?] [Story?] [Verifies: @scenario-tag(s)] Description with file path
    ```
 
    Components:
    - `[ActionID]`: Sequential (S001, S002, S003...)
+   - `[Type]`: Action type - **REQUIRED** - one of:
+     - `[LOGIC]` — model/store/service/util/config，有可自動化測試的邏輯
+     - `[UI]` — 純 UI 組件，無獨立邏輯可測試
+     - `[LOGIC+UI]` — 含邏輯的 UI 組件（如有 store 互動的面板）
    - `[P]`: Parallel marker (optional - different files, no dependencies)
    - `[Story]`: User story marker (US1, US2, US3...)
    - `[Verifies: @tag]`: Links to scenario tag(s) - **REQUIRED**
    - Description: Clear action with exact file path
 
    Examples:
-   - `- [ ] S012 [P] [US1] [Verifies: @us1-login-success] Create User model in src/models/user.py`
-   - `- [ ] S015 [US1] [Verifies: @us1-login-success, @us1-login-failure] Implement AuthService in src/services/auth.py`
-   - `- [ ] S012 [US1] Create User model` (missing Verifies tag)
+   - `- [ ] S012 [LOGIC] [P] [US1] [Verifies: @us1-login-success] Create User model in src/models/user.py`
+   - `- [ ] S015 [LOGIC] [US1] [Verifies: @us1-login-success, @us1-login-failure] Implement AuthService in src/services/auth.py`
+   - `- [ ] S020 [UI] [US2] [Verifies: @us2-dashboard] Create Dashboard.svelte in src/components/`
+   - `- [ ] S025 [LOGIC+UI] [US3] [Verifies: @us3-notification] Create TaskNotifier.svelte with store integration`
 
 6. **Integration Actions**:
 
@@ -228,7 +233,24 @@ Actions are ordered to support:
 1. Write step definitions → expect RED
 2. Implement minimum code → expect GREEN
 3. Refactor if needed
-4. Mark action complete
+4. REFLECT if new insights discovered
+5. Mark action complete
+
+### RED/GREEN Forced Split（強制拆分規則）
+
+`[LOGIC]` 和 `[LOGIC+UI]` 類型的 action，若涉及 util / store / service / model 等可測試邏輯，MUST 拆為兩個連續 actions：
+
+```markdown
+- [ ] S010 [LOGIC] [US1] [Verifies: @us1-auth] RED: 建立 AuthService 測試 in tests/services/auth.test.ts
+- [ ] S011 [LOGIC] [US1] [Verifies: @us1-auth] GREEN: 實作 AuthService in src/services/auth.ts
+```
+
+規則：
+- RED action 只寫測試，不寫實作
+- GREEN action 只寫實作，讓測試通過
+- RED action 的 ID 必須在 GREEN action 之前（確保先 RED 再 GREEN）
+- `[UI]` 類型不強制拆分（純 UI 無可自動化的 RED 測試）
+- `[LOGIC+UI]` 拆分邏輯部分的 RED/GREEN，UI 部分單獨一個 action
 
 ## Action Generation Rules
 

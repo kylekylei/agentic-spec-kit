@@ -179,7 +179,21 @@ When running with `update`, the command preserves existing work and focuses on w
    - Interaction map (visual)
    - Traceability matrix
 
-5. **Phase 1: Technical Planning**
+5. **Phase 0: Test Infrastructure**（測試基礎設施）
+
+   在技術規劃前，確認測試基礎設施存在或規劃建立：
+
+   1. **檢查既有測試框架**：掃描 `package.json`（vitest/jest/playwright）、`pytest.ini`、`go.mod` 等
+   2. **若不存在**，在 tasks.md 新增 Phase 0 必要 IMP：
+      - 測試框架安裝與設定（如 `vitest.config.ts`、`playwright.config.ts`）
+      - 測試目錄結構建立（如 `tests/`、`__tests__/`）
+      - Mock / fixture setup（如 `tests/mocks/`、`tests/fixtures/`）
+      - CI 整合（如有 CI 設定檔）
+   3. **若已存在**，記錄在 tasks.md 的 Technical Context 中，供 actions 參考
+
+   > **目的**：確保 `/teammate.actions` 產出 RED:test action 時，測試框架已就位，不會因缺少 vitest config 而無法執行測試。
+
+6. **Phase 1: Technical Planning**
 
    Execute standard planning workflow:
    
@@ -233,7 +247,7 @@ When running with `update`, the command preserves existing work and focuses on w
    - Common integration points: `+layout.svelte` (global), `+page.svelte` (route-specific), parent components
    - If a `[NEW]` component is only used inside another `[NEW]` component (e.g. TaskCard inside TaskNotifier), no `[INTEGRATE]` is needed for the child
 
-6. **Phase 2: Research & Decisions**
+7. **Phase 2: Research & Decisions**
 
    If NEEDS CLARIFICATION items exist:
    
@@ -243,7 +257,7 @@ When running with `update`, the command preserves existing work and focuses on w
       - Rationale
       - Alternatives considered
 
-7. **Phase 3: Design Artifacts**
+8. **Phase 3: Design Artifacts**
 
    Generate supporting documents:
    
@@ -296,21 +310,21 @@ When running with `update`, the command preserves existing work and focuses on w
 
    > **目的**：避免 AI 實作 UI 時遺漏按鈕的 disabled 條件、誤用參考設計的操作語意。
 
-8. **Update Agent Context**:
+9. **Update Agent Context**:
 
    Run `.teammate/scripts/bash/update-agent-context.sh cursor-agent`:
    - Update agent-specific context file
    - Add new technology from current plan
    - Preserve manual additions
 
-9. **Update Active Context**:
+10. **Update Active Context**:
 
    Update `.teammate/memory/active-context.md`:
    - Mark `tasks` as complete
    - Record key technical decisions
    - Set next action as `teammate.actions`
 
-10. **Report Completion**:
+11. **Report Completion**:
 
     Output:
     - Branch name
