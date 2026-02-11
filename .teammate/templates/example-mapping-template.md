@@ -82,7 +82,7 @@
 
 ---
 
-## Constitution Boundaries
+## principles Boundaries
 
 > Rules from principles.md that apply to this story
 
@@ -98,7 +98,7 @@
 - [ ] Each rule has at least one happy path example
 - [ ] Negative/error cases identified for each rule
 - [ ] All high-impact questions resolved
-- [ ] Constitution boundaries identified
+- [ ] principles boundaries identified
 - [ ] Edge cases documented
 - [ ] Ready for `/teammate.plan` (Gherkin generation)
 

@@ -26,20 +26,20 @@ Goal: Create a technical implementation plan enhanced with **Screenplay Pattern*
 
 Parse `$ARGUMENTS` for the keyword **`update`**:
 
-- If `$ARGUMENTS` contains "update" → **Update Mode**
-- Otherwise → **Create Mode** (default)
+- If `$ARGUMENTS` contains "update" ??**Update Mode**
+- Otherwise ??**Create Mode** (default)
 
-**Update Mode** changes the execution behavior — see details below.
+**Update Mode** changes the execution behavior ??see details below.
 
 ### Phase 0: Foundation Check
 
 1. **Read `.teammate/memory/project-context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
+   - If found ??**ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
 
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.principles` first."
+   - If found ??**ERROR**: "Principles not defined. Run `/teammate.principles` first."
 
 ### Update Mode
 
@@ -68,10 +68,10 @@ When running with `update`, the command preserves existing work and focuses on w
    - Load existing `tasks.md` and `screenplay.md` as baseline
    - Re-read current `.feature` files to detect new/changed/removed scenarios
    - Compare against baseline:
-     - **New scenarios** → generate new tasks for them
-     - **Removed scenarios** → mark affected tasks as obsolete
-     - **Changed scenarios** → flag tasks that may need revision
-     - **Unchanged scenarios** → **preserve existing tasks as-is**
+     - **New scenarios** ??generate new tasks for them
+     - **Removed scenarios** ??mark affected tasks as obsolete
+     - **Changed scenarios** ??flag tasks that may need revision
+     - **Unchanged scenarios** ??**preserve existing tasks as-is**
 
 4. **Output with Change Markers**:
    - Write updated `tasks.md` with change markers:
@@ -83,15 +83,23 @@ When running with `update`, the command preserves existing work and focuses on w
      ```
    - Update `screenplay.md` only if actors/abilities changed
 
-5. **Impact Report**:
+5. **Sync Contracts** (if `FEATURE_DIR/contracts/ui/` exists):
+   - Re-read updated `tasks.md` component list and architecture
+   - Compare against `contracts/ui/*.md` component names, descriptions, and props
+   - Update stale entries with [REVISED] marker
+   - Add new components with [NEW] marker
+   - Mark removed components with [REMOVED] marker
+
+6. **Impact Report**:
    - Summary of what changed and why (from user input)
    - Count: [N] unchanged, [N] new, [N] revised, [N] removed
+   - Contracts synced: [Y/N] (list changed components if Y)
    - Downstream impact: "Run `/teammate.actions update` to reflect these changes"
 
 #### Update Mode does NOT:
-- Start from scratch — preserves all unchanged work
-- Delete tasks silently — removed tasks are commented out with reason
-- Skip the principles check — still validates foundation
+- Start from scratch ??preserves all unchanged work
+- Delete tasks silently ??removed tasks are commented out with reason
+- Skip the principles check ??still validates foundation
 
 ---
 
@@ -114,7 +122,7 @@ When running with `update`, the command preserves existing work and focuses on w
    Optional:
    - `FEATURE_DIR/example-mapping.md`
    - IMPL_TASKS template (already copied)
-   - `docs/llms.txt` — Check for relevant external API/SDK references that this feature depends on. If found, read the corresponding `docs/[library]/llms.txt` for integration guidance.
+   - `docs/llms.txt` ??Check for relevant external API/SDK references that this feature depends on. If found, read the corresponding `docs/[library]/llms.txt` for integration guidance.
 
 3. **Phase 0: Screenplay Pattern Extraction**
 
@@ -135,9 +143,9 @@ When running with `update`, the command preserves existing work and focuses on w
    #### Abilities Definition
    
    1. Group scenario steps by interaction type:
-      - UI interactions → BrowseTheWeb ability
-      - API calls → CallAnApi ability
-      - Database access → QueryDatabase ability
+      - UI interactions ??BrowseTheWeb ability
+      - API calls ??CallAnApi ability
+      - Database access ??QueryDatabase ability
       - Custom abilities as needed
    
    2. For each ability, define:
@@ -186,7 +194,7 @@ When running with `update`, the command preserves existing work and focuses on w
    - Performance Goals
    - Constraints
 
-   #### Constitution Check
+   #### Principles Check
    
    Verify plan aligns with principles:
    - Map each principle to technical decisions
@@ -200,6 +208,30 @@ When running with `update`, the command preserves existing work and focuses on w
    - Source structure based on project type
    - Test structure for step definitions
    - Ability implementations location
+
+   #### Integration Impact Analysis
+
+   For every `[NEW]` component in the source structure, identify its **consumer** — the existing file that must import/mount it to make it visible in the app:
+
+   ```
+   File markers:
+   - [NEW]        New file to create
+   - [ENHANCE]    Existing file with functional changes
+   - [INTEGRATE]  Existing file that must import/mount a [NEW] component (pure wiring)
+   ```
+
+   Example:
+   ```text
+   TaskNotifier.svelte            # [NEW] 持久狀態面板
+   +layout.svelte                 # [INTEGRATE] 掛載 TaskNotifier（全站可見）
+   Citations.svelte               # [ENHANCE] 整合 sourcesStore
+   ```
+
+   Rules:
+   - Every `[NEW]` UI component that is **not a child of another [NEW] component** MUST have at least one `[INTEGRATE]` consumer identified
+   - `[INTEGRATE]` is different from `[ENHANCE]`: INTEGRATE is pure import/mount wiring with no functional changes; ENHANCE involves logic or UI changes
+   - Common integration points: `+layout.svelte` (global), `+page.svelte` (route-specific), parent components
+   - If a `[NEW]` component is only used inside another `[NEW]` component (e.g. TaskCard inside TaskNotifier), no `[INTEGRATE]` is needed for the child
 
 6. **Phase 2: Research & Decisions**
 
@@ -237,6 +269,33 @@ When running with `update`, the command preserves existing work and focuses on w
       ```
    4. If no Figma link provided, skip — not all features require UI design
 
+   #### UI Interactive State Machine (if UI involved)
+
+   For each UI component with interactive elements (buttons, toggles, panels, links):
+
+   1. **列舉所有互動元素**
+      - 掃描 `contracts/ui/` 和 `spec.md` 中提到的按鈕、連結、切換、手勢
+   
+   2. **產出狀態機表格**
+
+      ```markdown
+      ### Interactive State Machine
+
+      | 元素 | 觸發條件 | 狀態 | 行為 |
+      |------|----------|------|------|
+      | 「×」關閉按鈕 | 有 active tasks | disabled | 不可點擊（灰色） |
+      | 「×」關閉按鈕 | 全部 completed/failed | enabled | 點擊 dismiss 全部 |
+      | 最小化按鈕 | 任何時候 | enabled | 收合為 badge |
+      | 重試按鈕 | 後端無 API | removed | 不實作 |
+      ```
+
+   3. **驗證規則**
+      - 每個互動元素 MUST 列出至少 `enabled` 和 `disabled` 兩種狀態
+      - 每個 `disabled` 狀態 MUST 說明原因（如「後端無取消 API」）
+      - 若元素引用外部設計（如 Google Drive），MUST 標註操作語意差異
+
+   > **目的**：避免 AI 實作 UI 時遺漏按鈕的 disabled 條件、誤用參考設計的操作語意。
+
 8. **Update Agent Context**:
 
    Run `.teammate/scripts/bash/update-agent-context.sh cursor-agent`:
@@ -261,7 +320,7 @@ When running with `update`, the command preserves existing work and focuses on w
       - Abilities: [count]
       - Tasks: [count]
     - Generated artifacts list
-    - Constitution check status
+    - Principles check status
     - Suggested next command: `/teammate.actions`
 
 ## Screenplay Pattern Benefits
@@ -276,12 +335,12 @@ When running with `update`, the command preserves existing work and focuses on w
 ### Screenplay Structure
 
 ```
-Actor (who?) → Task (what?) → Ability (how?) → System
+Actor (who?) ??Task (what?) ??Ability (how?) ??System
 ```
 
 Example:
 ```
-AuthenticatedUser → LoginWithCredentials → BrowseTheWeb → Login Page
+AuthenticatedUser ??LoginWithCredentials ??BrowseTheWeb ??Login Page
 ```
 
 ### Mapping to Step Definitions
@@ -312,4 +371,4 @@ Task: LoginWithValidCredentials
 - Screenplay model must be complete before actions
 - All tasks must trace to scenarios
 - All abilities must have defined operations
-- **In update mode**: never discard work silently — mark, explain, and let the user decide
+- **In update mode**: never discard work silently ??mark, explain, and let the user decide

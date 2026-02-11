@@ -28,11 +28,11 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
 
 1. **Read `.teammate/memory/project-context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
+   - If found ??**ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
 
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.principles` first."
+   - If found ??**ERROR**: "Principles not defined. Run `/teammate.principles` first."
 
 ### Execution Steps
 
@@ -51,6 +51,8 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
    Optional files:
    - `.teammate/templates/feature-template.feature` - Gherkin template
    - `FEATURE_DIR/teammate.refs.yaml` - Context anchors (if exists)
+   - `FEATURE_DIR/contracts/ui/design-principles.md` - UX 設計原則（if exists）
+   - `.teammate/memory/project-context.md` - 後端 API 合約（for conflict scan）
 
 3. **Create Features Directory**:
    
@@ -58,7 +60,48 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
    mkdir -p FEATURE_DIR/scenarios
    ```
 
-4. **For Each User Story** (in priority order P1, P2, P3...):
+4. **UX Conflict Scan** (if `FEATURE_DIR/contracts/ui/design-principles.md` exists):
+
+   在產生 scenarios 之前，強制執行設計原則衝突分析。
+
+   #### 4a. 設計原則 vs 核心原則交叉比對
+   
+   For each design principle:
+   - 是否需要後端 API 支援？→ 對照 `principles.md` Principle I（後端不可變）
+   - 是否需要 SSE 事件中不存在的欄位？→ 對照 `project-context.md` API 合約
+   - 是否需要新增後端 endpoint？→ 如是，標記 CONFLICT
+   
+   #### 4b. 互動元素可行性檢查
+   
+   For each design principle mentioning UI actions (buttons, links, gestures):
+   - 該操作需要什麼後端能力？（取消、重試、刪除、查詢）
+   - 後端 API 是否提供？（掃描 `project-context.md` REST APIs + SSE Streams）
+   - 若不提供 → 標記 CONFLICT，建議替代方案
+   
+   #### 4c. 參考設計語意差異
+   
+   If design principles reference external products (e.g. "參考 Google Drive"):
+   - 列出被參考的 UI 模式（佈局、互動、動畫）
+   - 對每個互動操作，比較參考產品 vs 本專案的操作語意
+   - 若語意不同（如「×」在 Google Drive = 取消上傳，但本系統無取消 API）→ 標記 SEMANTIC_GAP
+   
+   #### 4d. 產出 Conflict Report
+   
+   ```markdown
+   ### UX Conflict Scan Results
+   
+   | 設計原則 | 衝突類型 | 說明 | 建議替代 |
+   |----------|----------|------|----------|
+   | III-1 重試按鈕 | CONFLICT | 後端無重試 API | 移除重試，改為「請重新上傳」提示 |
+   | II-1 前往知識庫 | CONFLICT | SSE 不含 knowledge_id | 改為通用連結或移除 |
+   | II-2 關閉按鈕 | SEMANTIC_GAP | Google Drive「×」=取消，本系統無取消 | 改為 dismiss（processing 時 disabled） |
+   ```
+   
+   - 有 CONFLICT 或 SEMANTIC_GAP 時 → **暫停**，列出選項讓使用者決策
+   - 使用者決策後，將結果更新到 `design-principles.md` 的「不做的事項」區段
+   - 無衝突時 → 繼續產生 scenarios
+
+5. **For Each User Story** (in priority order P1, P2, P3...):
 
    Generate a `.feature` file following this structure:
 
@@ -85,10 +128,10 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
    For each **Rule** in example-mapping.md:
    - Convert each **Example** to a Scenario
    - Apply appropriate tags based on example type:
-     - Happy path → `@happy-path`
-     - Alternative → `@alternative`
-     - Negative → `@negative`
-     - Boundary → `@boundary`
+     - Happy path ??`@happy-path`
+     - Alternative ??`@alternative`
+     - Negative ??`@negative`
+     - Boundary ??`@boundary`
 
    Transform example table rows:
    ```
@@ -104,7 +147,7 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
      Then [outcome from example]
    ```
 
-   #### Constitution Boundary Scenarios
+   #### Principles Boundary Scenarios
 
    For each principles boundary in example-mapping.md:
    ```gherkin
@@ -132,7 +175,7 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
        | value2   | result2  |
    ```
 
-5. **Write Feature Files**:
+6. **Write Feature Files**:
 
    For each user story, write to:
    `FEATURE_DIR/scenarios/[story-slug].feature`
@@ -142,7 +185,7 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
    - `us2-password-reset.feature`
    - `us3-profile-management.feature`
 
-6. **Generate Context Anchors**:
+7. **Generate Context Anchors**:
 
    Create or update `FEATURE_DIR/teammate.refs.yaml`:
    
@@ -169,7 +212,7 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
      - [Other features this depends on]
    ```
 
-7. **Coverage Validation**:
+8. **Coverage Validation**:
 
    Verify complete coverage:
    
@@ -180,14 +223,14 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
    | Scenarios Generated | [N] | |
    | Happy Path Coverage | [%] | |
    | Negative Path Coverage | [%] | |
-   | Constitution Boundaries | [N] | |
+   | Principles Boundaries | [N] | |
    
    **Coverage Requirements**:
    - Every rule must have at least one scenario
    - Every P1 story must have happy path + negative scenarios
    - Every principles boundary must have a scenario
 
-8. **Gherkin Quality Check**:
+9. **Gherkin Quality Check**:
 
    Validate generated scenarios:
    
@@ -199,7 +242,7 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
    - [ ] Given/When/Then structure is correct
    - [ ] No "And" or "But" without preceding Given/When/Then
 
-9. **Update Active Context**:
+10. **Update Active Context**:
 
    Update `.teammate/memory/active-context.md`:
    - Mark `plan` as complete
@@ -207,7 +250,7 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
    - Note coverage metrics
    - Set next action as `teammate.tasks`
 
-10. **Report Completion**:
+11. **Report Completion**:
 
     Output:
     - List of generated .feature files with paths
@@ -253,7 +296,7 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
 @alternative                 # Valid alternative flows
 @negative                    # Error/failure scenarios
 @boundary                    # Edge cases and limits
-@principles                # Constitution boundary enforcement
+@principles                # Principles boundary enforcement
 @data-driven                 # Parameterized scenarios
 @wip                        # Work in progress
 @manual                      # Requires manual testing

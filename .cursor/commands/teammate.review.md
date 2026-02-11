@@ -31,11 +31,11 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
 
 1. **Read `.teammate/memory/project-context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
+   - If found ??**ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
 
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.principles` first."
+   - If found ??**ERROR**: "Principles not defined. Run `/teammate.principles` first."
 
 ### Execution Steps
 
@@ -52,6 +52,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
    - FEATURES = `FEATURE_DIR/scenarios/*.feature`
    - EXAMPLE_MAPPING = `FEATURE_DIR/example-mapping.md`
    - SCREENPLAY = `FEATURE_DIR/screenplay.md`
+   - CONTRACTS = `FEATURE_DIR/contracts/ui/*.md` (if directory exists)
    
    Abort if required files missing.
 
@@ -83,7 +84,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
    - **Requirements inventory**: Map each requirement to a key
    - **Scenario inventory**: All scenarios with tags and status
    - **Action coverage mapping**: Map actions to scenarios via [Verifies: @tag]
-   - **Constitution rule set**: MUST/MUST NOT statements
+   - **Principles rule set**: MUST/MUST NOT statements
 
 4. **Behavioral Coverage Analysis**:
 
@@ -99,7 +100,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
 
    #### Coverage by User Story
    
-   | Story | Scenarios | Happy | Negative | Constitution | Status |
+   | Story | Scenarios | Happy | Negative | Principles | Status |
    |-------|-----------|-------|----------|--------------|--------|
    | US1 | [N] | [N] | [N] | [N] | [Complete/Gaps] |
 
@@ -127,7 +128,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
    - Same concepts named differently across files?
    - Entity names match between spec, model, and scenarios?
 
-   #### C. Constitution Alignment
+   #### C. Principles Alignment
    
    - Every MUST NOT has a @principles scenario?
    - Plan decisions align with principles?
@@ -136,6 +137,13 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
    
    - Every rule from example-mapping has scenarios?
    - Questions all resolved?
+
+   #### E. UI Contract Consistency (if CONTRACTS exist)
+   
+   - Component names in `contracts/ui/` match spec acceptance criteria and tasks component list?
+   - Component descriptions align with actual implementation (no stale names or outdated descriptions)?
+   - Props, routes, and enhanced components match tasks.md architecture?
+   - Report any terminology drift between contracts and other artifacts (e.g. old component name vs renamed component)
 
 6. **Detection Passes**:
 
@@ -157,7 +165,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
 
 7. **Severity Assignment**:
 
-   - **CRITICAL**: Constitution violations, missing coverage for P1 scenarios
+   - **CRITICAL**: Principles violations, missing coverage for P1 scenarios
    - **HIGH**: Duplicate scenarios, ambiguous requirements, P2 coverage gaps
    - **MEDIUM**: Terminology drift, minor coverage gaps, unclear steps
    - **LOW**: Style improvements, optimization opportunities
@@ -193,7 +201,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
    | Requirement | Scenarios | Actions | Status |
    |-------------|-----------|---------|--------|
    
-   ## Constitution Compliance
+   ## Principles Compliance
    
    | Principle | Coverage | Status |
    |-----------|----------|--------|
@@ -203,7 +211,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
    - Total Scenarios: [N]
    - Total Actions: [N]
    - Scenario Coverage: [%]
-   - Constitution Coverage: [%]
+   - Principles Coverage: [%]
    - Critical Issues: [N]
    - High Issues: [N]
    
@@ -262,7 +270,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
 |--------|--------|-------------------|
 | P1 Happy Path | 100% | 100% |
 | P1 Negative | 50%+ | 25% |
-| Constitution | 100% | 80% |
+| Principles | 100% | 80% |
 | Overall | 80%+ | 60% |
 
 ## Operating Principles

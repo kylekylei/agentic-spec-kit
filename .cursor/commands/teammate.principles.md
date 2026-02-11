@@ -119,7 +119,7 @@ The principles file defines:
    
    Validate alignment with dependent artifacts:
    
-   - Read `.teammate/templates/plan-template.md` - ensure Principles Check aligns
+   - Read `.teammate/templates/task-template.md` - ensure Principles Check aligns
    - Read `.teammate/templates/spec-template.md` - verify scope/requirements alignment
    - Read `.teammate/templates/actions-template.md` - ensure task types reflect principles
    - Read `.teammate/templates/feature-template.feature` - verify @principles scenarios align

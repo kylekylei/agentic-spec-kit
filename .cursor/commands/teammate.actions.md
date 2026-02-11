@@ -124,7 +124,26 @@ Each action in the chain:
    - `- [ ] S015 [US1] [Verifies: @us1-login-success, @us1-login-failure] Implement AuthService in src/services/auth.py`
    - `- [ ] S012 [US1] Create User model` (missing Verifies tag)
 
-6. **Phase Structure**:
+6. **Integration Actions**:
+
+   For every `[INTEGRATE]` file listed in `tasks.md` project structure, generate a corresponding mount/import action:
+
+   ```markdown
+   - [ ] S0XX [US?] [Verifies: @rule-X.X] 在 `[consumer file]` 中掛載 `[NEW component]`（import + render）
+   ```
+
+   Rules:
+   - Place integration actions **immediately after** the component creation action (e.g., S031 creates TaskNotifier → S031a integrates into +layout.svelte)
+   - Integration actions inherit the `[Verifies]` tags of the component they mount
+   - If the integration requires conditional rendering (e.g., only when logged in), note it in the action description
+
+   Example:
+   ```markdown
+   - [ ] S031 [US2] [Verifies: @rule-2.1] 建立 TaskNotifier.svelte
+   - [ ] S031a [US2] [Verifies: @rule-2.1] 在 +layout.svelte 掛載 TaskNotifier（已登入時渲染）
+   ```
+
+7. **Phase Structure**:
 
    Organize actions into phases:
    
@@ -133,7 +152,7 @@ Each action in the chain:
    - **Phase 3+: User Stories** - `[Verifies: @usX-*]` - Story-specific actions
    - **Phase N: Polish** - `[Verifies: @polish, @cross-cutting]` - Final touches
 
-7. **Generate Traceability Matrix**:
+8. **Generate Traceability Matrix**:
 
    Build and include the traceability matrix:
    
@@ -149,7 +168,7 @@ Each action in the chain:
    **Coverage**: [X]/[Y] scenarios have linked actions ([Z]%)
    ```
 
-8. **Coverage Validation**:
+9. **Coverage Validation**:
 
    Verify every scenario is covered:
    
@@ -158,7 +177,7 @@ Each action in the chain:
    - [ ] Every @principles scenario has verification actions
    - [ ] No orphan actions (actions without scenario links)
 
-9. **Write Tasks File**:
+10. **Write Tasks File**:
 
    Write to `FEATURE_DIR/actions.md` using `.teammate/templates/actions-template.md`:
    
@@ -169,14 +188,14 @@ Each action in the chain:
    - Dependencies and execution order
    - Red-Green Loop instructions
 
-10. **Update Active Context**:
+11. **Update Active Context**:
 
     Update `.teammate/memory/active-context.md`:
     - Mark `actions` as complete
     - Record action count and coverage
     - Set next action as `teammate.execute`
 
-11. **Report Completion**:
+12. **Report Completion**:
 
     Output:
     - Path to actions.md

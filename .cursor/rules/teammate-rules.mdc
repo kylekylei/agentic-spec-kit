@@ -45,6 +45,16 @@ Foundation → Align → Commit → Deliver
 | `/teammate.checklist` | Feature readiness validation |
 | `/teammate.assign` | Convert actions to GitHub Issues |
 
+### Toolkit (anytime — not part of workflow)
+
+| Command | Purpose |
+|---------|---------|
+| `/teammate.toolkit healthcheck` | 工作流程健康診斷（Foundation、階段合規、Hub 同步） |
+| `/teammate.toolkit consult [問題]` | 流程問診（使用者提問 → 分析 → 改善提案） |
+| `/teammate.toolkit migrate` | 版本遷移工具（計劃中） |
+
+> Toolkit 指令**不屬於主流程**，隨時可執行，不需要前置 artifact。
+
 ## Foundation Check
 
 **Before any Align/Commit/Deliver command**, verify:
@@ -66,7 +76,9 @@ If either fails, stop and direct the user to run `/teammate.kickoff` or `/teamma
 ├── snapshots/                # Decision & plan change snapshots
 ├── templates/                # Document templates
 ├── scripts/bash/             # Automation scripts
-└── config/teammate.yml       # Lifecycle configuration
+└── config/teammate.yml       # Lifecycle configuration (includes version field)
+
+CHANGELOG.md                  # Version release notes (parsed by /teammate.toolkit migrate)
 
 docs/                         # External reference knowledge base
 ├── llms.txt                  # Index of all references (llms.txt standard)
@@ -124,6 +136,12 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
 - **Update active-context.md** after each command completes — mark the current stage, set the next action.
 - **Explicit handoff required.** Every `teammate.*` command must state when to use it and the next suggested command (or handoff) so developers can follow the flow without ambiguity.
 - **Snapshot on significant changes.** When principles, plans, or scope change, create a snapshot before overwriting.
+- **文件以繁體中文撰寫.** 透過 `teammate.*` 指令產生的所有文件（spec.md、example-mapping.md、scenarios/*.feature、tasks.md、actions.md、screenplay.md、checklists/ 等），其內文描述 MUST 以**繁體中文**撰寫。以下項目允許使用英文：
+  - 代號與識別碼（Feature ID、Story ID、Rule ID、Tag 如 `@happy-path`）
+  - 程式碼片段、檔案路徑、指令名稱（如 `EventSource.close()`、`src/lib/components/`）
+  - 框架或技術專有名詞（如 Gherkin、Svelte、SSE、Tailwind、Scenario Outline）
+  - Gherkin 關鍵字（`Feature`、`Scenario`、`Given`、`When`、`Then`、`And`、`But`、`Background`、`Examples`）
+  - Markdown 結構標記與表格欄位標題（可中可英，但內容描述必須中文）
 - **主動提供下一步選項.** 每個 `teammate.*` 指令完成後，AI 必須在回覆末尾以結構化格式列出可選的下一步動作，格式如下：
 
 ```
@@ -173,3 +191,40 @@ When the AI evaluates a task as small enough to skip full BDD scenarios, the fol
 - Task changes decision-making logic (e.g. RuleEngine)
 - Task affects multiple modules or cross-cutting concerns
 - User explicitly requests full flow
+
+## UX 灰色地帶主動分析（UX Gray Area Proactive Analysis）
+
+AI 在處理 UI 相關任務時，MUST 主動識別並提出以下 UX 灰色地帶，不等使用者詢問：
+
+### 參考設計語意差異分析
+
+當使用者引用外部產品作為 UI 參考（如「參考 Google Drive」、「像 Slack 那樣」）：
+
+1. **列出被參考的 UI 模式**（佈局、互動、動畫）
+2. **比較每個互動操作的語意**：
+   - 參考產品的操作語意（如 Google Drive「×」= 取消上傳）
+   - 本專案的操作語意（如 TaskNotifier「×」= ？）
+3. **標註差異**：若語意不同，明確提出替代方案
+4. **檢查平台能力**：參考產品的操作是否需要本專案後端不支援的 API
+
+**禁止**：默默套用參考產品的操作語意而未分析差異。
+
+### 互動元素狀態完整性
+
+對每個新增或修改的互動元素（按鈕、連結、切換）：
+
+1. **列舉所有狀態**：至少包含 `enabled`、`disabled`、`loading`（如適用）
+2. **說明每個狀態的觸發條件**：什麼情況下按鈕可點、什麼情況下灰掉
+3. **標註後端依賴**：如果操作需要後端 API，確認 API 存在
+
+**禁止**：只實作 `enabled` 狀態而遺漏 `disabled` 條件。
+
+### 設計原則衝突偵測
+
+當 `contracts/ui/design-principles.md` 存在時：
+
+1. **交叉比對核心原則**：每條設計原則是否與 `principles.md` 衝突
+2. **檢查 API 可行性**：每條設計原則是否需要不存在的後端 API
+3. **有衝突時立即提出**：以表格列出衝突項目、原因、替代方案
+
+**禁止**：整合設計原則後不做衝突分析就直接產出 scenarios。

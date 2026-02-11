@@ -19,6 +19,27 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 Goal: Execute implementation using the **Red-Green Loop** discipline, ensuring every line of code is driven by failing tests (step definitions).
 
+### Argument Parsing
+
+Parse `$ARGUMENTS` for special keywords:
+
+| Keyword | Behavior |
+|---------|----------|
+| `next` | 自動找到 `actions.md` 中下一個未完成的 action（`- [ ]`），直接執行它 |
+| `S0XX` | 執行指定 Action ID（如 `S006`） |
+| `S0XX-S0YY` | 執行指定範圍的 actions（如 `S006-S010`） |
+| _(empty)_ | 從頭開始，或從上次中斷處繼續 |
+| _(other text)_ | 視為特定任務描述，尋找最匹配的 action |
+
+#### `next` 模式流程
+
+1. 讀取 `FEATURE_DIR/actions.md`
+2. 掃描所有 action 行，找到第一個 `- [ ]`（未完成）的 action
+3. 跳過所有 `- [x]`（已完成）的 action
+4. 顯示：「**執行 S0XX**: [action 描述]」
+5. 直接進入該 action 的 Red-Green Loop
+6. 完成後標記為 `- [x]`，並報告下一個待執行的 action
+
 ### Red-Green Loop
 
 ```

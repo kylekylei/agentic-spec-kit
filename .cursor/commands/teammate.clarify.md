@@ -1,5 +1,5 @@
 ---
-description: Transform abstract requirements into concrete examples using Example Mapping (Story → Rules → Examples → Questions).
+description: Transform abstract requirements into concrete examples using Example Mapping (Story ??Rules ??Examples ??Questions).
 handoffs: 
   - label: Create Work Plan
     agent: teammate.plan
@@ -28,11 +28,11 @@ Note: This workflow should run AFTER `/teammate.align` has produced a spec.md. I
 
 1. **Read `.teammate/memory/project-context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
+   - If found ??**ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
 
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.principles` first."
+   - If found ??**ERROR**: "Principles not defined. Run `/teammate.principles` first."
 
 ### Execution Steps
 
@@ -87,14 +87,14 @@ Note: This workflow should run AFTER `/teammate.align` has produced a spec.md. I
      - Ambiguous requirements
      - Missing information
      - Edge cases not covered
-     - Constitution conflicts
+     - Principles conflicts
    
    - For each question:
      - State the question clearly
      - Assess impact (High/Medium/Low)
      - Mark as Open or Resolved
 
-4. **Constitution Boundary Check**:
+4. **Principles Boundary Check**:
    
    For each rule and example, verify:
    - Does this violate any principles principle?
@@ -109,7 +109,7 @@ Note: This workflow should run AFTER `/teammate.align` has produced a spec.md. I
    - All rules with clear statements
    - Examples table for each rule (Given/When/Then)
    - Questions with impact assessment
-   - Constitution boundaries
+   - Principles boundaries
    - Readiness checklist
 
 6. **Interactive Refinement** (if questions exist):
@@ -133,7 +133,7 @@ Note: This workflow should run AFTER `/teammate.align` has produced a spec.md. I
    | Rules per story | [N] | 3+ | [Pass/Fail] |
    | Examples per rule | [Avg] | 2+ | [Pass/Fail] |
    | Open questions | [N] | 0 high-impact | [Pass/Fail] |
-   | Constitution boundaries | [N] | 1+ per story | [Pass/Fail] |
+   | Principles boundaries | [N] | 1+ per story | [Pass/Fail] |
 
 8. **Update Active Context**:
 
@@ -159,9 +159,9 @@ Note: This workflow should run AFTER `/teammate.align` has produced a spec.md. I
 - "Orders cannot be modified after shipping"
 
 ### Bad Rules (Too Vague)
-- "The system should be secure" → What specifically?
-- "It must be fast" → What threshold?
-- "Users should have a good experience" → What behaviors?
+- "The system should be secure" ??What specifically?
+- "It must be fast" ??What threshold?
+- "Users should have a good experience" ??What behaviors?
 
 ### Good Examples (Green Cards)
 | Given | When | Then |
@@ -170,7 +170,7 @@ Note: This workflow should run AFTER `/teammate.align` has produced a spec.md. I
 | User has invalid password | User submits login form | Error message "Invalid credentials" shown |
 | User account is locked | User submits login form | Error message "Account locked" with unlock instructions |
 
-### Constitution Boundaries
+### Principles Boundaries
 For each story, explicitly add examples that show:
 - What the system MUST NOT do
 - How principles principles constrain behavior

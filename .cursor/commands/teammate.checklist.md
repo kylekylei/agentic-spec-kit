@@ -88,7 +88,7 @@ Goal: Validate requirements quality ("Unit Tests for English") and generate **Li
    - Are boundary conditions defined?
    - Are negative paths specified?
 
-   #### Constitution Alignment
+   #### Principles Alignment
    - Are principles boundaries documented?
    - Are there scenarios that verify principle enforcement?
 
@@ -96,7 +96,7 @@ Goal: Validate requirements quality ("Unit Tests for English") and generate **Li
 
    Analyze `.feature` files for behavioral completeness:
 
-   | Story | Scenarios | Happy | Negative | Boundary | Constitution |
+   | Story | Scenarios | Happy | Negative | Boundary | Principles |
    |-------|-----------|-------|----------|----------|--------------|
    | US1   | [N]       | [N]   | [N]      | [N]      | [N]          |
    | US2   | [N]       | [N]   | [N]      | [N]      | [N]          |
@@ -105,7 +105,7 @@ Goal: Validate requirements quality ("Unit Tests for English") and generate **Li
    - Total scenarios
    - Scenarios per story
    - Tag distribution (@happy-path, @negative, etc.)
-   - Constitution boundary coverage
+   - Principles boundary coverage
 
 6. **Phase 3: Traceability Matrix**
 
@@ -151,11 +151,11 @@ Goal: Validate requirements quality ("Unit Tests for English") and generate **Li
    | Total Scenarios | [N] | - | - |
    | Happy Path | [N] | 1+ per story | [Pass/Fail] |
    | Negative Path | [N] | 1+ per story | [Pass/Fail] |
-   | Constitution | [N] | 1+ | [Pass/Fail] |
+   | Principles | [N] | 1+ | [Pass/Fail] |
    
    ## Traceability
    
-   [Matrix showing scenario → action → implementation status]
+   [Matrix showing scenario ??action ??implementation status]
    
    ## Open Issues
    
@@ -234,6 +234,6 @@ Living Documentation must:
 | Requirements Quality | All dimensions > 80% | Yes |
 | Happy Path Coverage | 100% of P1 stories | Yes |
 | Negative Coverage | At least 1 per story | Yes |
-| Constitution Coverage | At least 1 boundary | Yes |
+| Principles Coverage | At least 1 boundary | Yes |
 | Traceability | All scenarios linked to actions | No |
 | Open Issues | No critical/high issues | Yes |
