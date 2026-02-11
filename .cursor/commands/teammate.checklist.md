@@ -183,12 +183,11 @@ Goal: Validate requirements quality ("Unit Tests for English") and generate **Li
    - Coverage metrics
    - Readiness assessment
 
-10. **Update Active Context**:
-    
-    Update `.teammate/memory/active-context.md`:
-    - Mark `checklist` as complete
-    - Record readiness status
-    - Set next action as `teammate.assign`
+10. **Update Active Context**（Memory Delta Protocol）:
+
+    Update `.teammate/memory/active-context.md` using delta mode:
+    - **覆寫 `## Current State`**：Phase: Deliver, Last Command: checklist, Next Action: /teammate.assign
+    - **追加 `## Session Log`**：`| [timestamp] | checklist | Readiness: [READY/NOT READY], [pass/total] checks | [blockers if any] |`
 
 11. **Report Completion**:
 

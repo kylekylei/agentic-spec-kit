@@ -1,53 +1,26 @@
 # Active Context
 
-> This file tracks the current working context for AI agents. Updated automatically by Teammate commands.
+> This file tracks the current working context for AI agents. Updated automatically by Teammate commands using **Memory Delta Protocol** (see teammate-rules.mdc).
 
-## Current Focus
+## Current State
 
-**Active Feature**: [None]
-**Feature Branch**: [None]
-**Current Phase**: Align | Commit | Deliver
-**Active Command**: [None]
+<!-- 此區塊由最近一個指令覆寫（僅此區塊） -->
 
-## Session State
+- **Active Feature**: [None]
+- **Feature Branch**: [None]
+- **Phase**: [Foundation / Align / Commit / Deliver]
+- **Last Command**: [None]
+- **Next Action**: [/teammate.kickoff]
 
-### Current Stage
+## Session Log
 
-```text
-Align:    [ ] align → [ ] clarify
-Commit:   [ ] plan → [ ] tasks → [ ] actions
-Deliver:  [ ] execute → [ ] review → [ ] checklist
-```
+<!-- 此區塊為 append-only，每個指令完成時追加一行，禁止修改或刪除既有行 -->
 
-### Working Files
+| Timestamp | Command | Key Output | Notes |
+|-----------|---------|------------|-------|
 
-| File | Status | Last Modified |
-|------|--------|---------------|
-| spec.md | [Draft/Complete/N/A] | [Date] |
-| example-mapping.md | [Draft/Complete/N/A] | [Date] |
-| *.feature | [Draft/Complete/N/A] | [Date] |
-| screenplay.md | [Draft/Complete/N/A] | [Date] |
-| tasks.md | [Draft/Complete/N/A] | [Date] |
-| actions.md | [Draft/Complete/N/A] | [Date] |
+## Blockers
 
-## Decision Log
+<!-- 有 blocker 時記錄，解決後標記 [RESOLVED] 而非刪除 -->
 
-> Key decisions made during this session
-
-| Decision | Rationale | Date | Command |
-|----------|-----------|------|---------|
-| [Decision description] | [Why this was chosen] | [Date] | [Command that made it] |
-
-## Blockers & Questions
-
-- [ ] [Question or blocker needing resolution]
-
-## Next Actions
-
-1. [Next recommended action]
-2. [Following action]
-
----
-
-**Session Started**: [DATE]
-**Last Updated**: [DATE]
+(None)

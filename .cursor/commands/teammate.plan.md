@@ -242,13 +242,11 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
    - [ ] Given/When/Then structure is correct
    - [ ] No "And" or "But" without preceding Given/When/Then
 
-10. **Update Active Context**:
+10. **Update Active Context**（Memory Delta Protocol）:
 
-   Update `.teammate/memory/active-context.md`:
-   - Mark `plan` as complete
-   - List generated .feature files
-   - Note coverage metrics
-   - Set next action as `teammate.tasks`
+   Update `.teammate/memory/active-context.md` using delta mode:
+   - **覆寫 `## Current State`**：Phase: Commit, Last Command: plan, Next Action: /teammate.tasks
+   - **追加 `## Session Log`**：`| [timestamp] | plan | [N] scenarios, [coverage]% | [.feature files list] |`
 
 11. **Report Completion**:
 

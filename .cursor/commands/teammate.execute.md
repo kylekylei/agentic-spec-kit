@@ -249,13 +249,12 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 
     > 此步驟確保 memory 與實際進度同步，避免 Feature Registry 仍顯示 Pending 的脫節問題。
 
-12. **Update Active Context**:
+12. **Update Active Context**（Memory Delta Protocol）:
 
-    Update `.teammate/memory/active-context.md`:
-    - Current phase and action
-    - Scenarios passing/failing
-    - Blockers if any
-    - Set next action as `teammate.review`
+    Update `.teammate/memory/active-context.md` using delta mode:
+    - **覆寫 `## Current State`**：Phase: Deliver, Last Command: execute [action ID], Next Action: [next action or /teammate.review]
+    - **追加 `## Session Log`**：`| [timestamp] | execute [ID] | [GREEN/RED], [action description] | [insights discovered if any] |`
+    - **更新 `## Blockers`**：如有 failing scenarios 或 Risk Gate 暫停，記錄為 blocker；已解決的標記 `[RESOLVED]`
 
 13. **Report Completion**:
 

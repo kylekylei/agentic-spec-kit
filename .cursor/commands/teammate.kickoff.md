@@ -180,12 +180,12 @@ Based on the **Technical Context** filled in Phase 3, set up the project's base 
    2. Run `/teammate.align` to start working on the first feature
    ```
 
-3. **Update Active Context**:
-   Update `.teammate/memory/active-context.md`:
-   - Mark `kickoff` as complete
-   - Record bootstrap status (success/partial/skipped)
-   - Note any remaining placeholders (if any)
-   - Set next action as `teammate.principles`
+3. **Update Active Context**（Memory Delta Protocol）:
+
+   Update `.teammate/memory/active-context.md` using delta mode:
+   - **覆寫 `## Current State`**：Phase: Foundation, Last Command: kickoff, Next Action: /teammate.principles
+   - **追加 `## Session Log`**：`| [timestamp] | kickoff | Bootstrap: [success/partial/skipped] | [remaining placeholders if any] |`
+   - **更新 `## Blockers`**：如有未解決的 placeholder，記錄為 blocker
 
 ## What Does NOT Belong Here
 

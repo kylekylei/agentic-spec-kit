@@ -155,12 +155,11 @@ The principles file defines:
    
    Write back to `.teammate/memory/principles.md` (overwrite).
 
-8. **Update Active Context**:
-   
-   Update `.teammate/memory/active-context.md`:
-   - Mark `principles` as complete
-   - Record principles version and last amended date
-   - Set next action as `teammate.align`
+8. **Update Active Context**（Memory Delta Protocol）:
+
+   Update `.teammate/memory/active-context.md` using delta mode:
+   - **覆寫 `## Current State`**：Phase: Foundation (complete), Last Command: principles, Next Action: /teammate.align
+   - **追加 `## Session Log`**：`| [timestamp] | principles | [N] MUST, [N] MUST NOT | [version/amended note] |`
 
 9. **Output Final Summary**:
    

@@ -95,6 +95,7 @@ features/[###-feature-name]/  # Per-feature artifacts
 ├── screenplay.md             # /teammate.tasks output
 ├── tasks.md                  # /teammate.tasks output
 ├── actions.md                # /teammate.actions output
+├── insights.md               # /teammate.execute REFLECT output (dynamic cheatsheet)
 ├── contracts/ui/             # Figma page links (per feature, via /teammate.tasks)
 └── checklists/               # /teammate.checklist output
 ```
@@ -115,6 +116,74 @@ Snapshots are created when major decisions or plan changes occur. They capture a
 
 Snapshots are stored in `.teammate/snapshots/` and are meant for human review, not automation.
 
+## Context Layer
+
+每個指令載入 context 時，遵循三層架構。衝突時上層優先（Principles are supreme）。
+
+```
+System Layer（系統層 — 跨 feature 不變）:
+  - principles.md          # 不可違反的原則
+  - project-context.md     # 專案身份、技術棧、架構慣例
+
+Task Layer（任務層 — per feature）:
+  - spec.md                # WHAT: 要做什麼
+  - tasks.md               # HOW: 怎麼做
+  - actions.md             # STEPS: 逐步拆解
+  - scenarios/*.feature    # VERIFY: 驗證條件
+  - insights.md            # LEARNED: 執行中學到的
+  - contracts/             # CONTRACTS: 介面規格
+
+User Layer（使用者層 — 持久 + 即時）:
+  - .cursorule             # 持久偏好（如存在）
+  - $ARGUMENTS             # 即時輸入
+  - handoffs               # 使用者選擇的下一步
+```
+
+> 載入優先級：System > Task > User。User Layer 影響 AI 的**溝通方式**，不影響**決策邏輯**。
+
+## Insights Graduation
+
+當某個 insight 在 3+ 個 features 的 `insights.md` 中重複出現，AI 在 `/teammate.execute` 的 REFLECT 步驟中應建議提升：
+
+| Insight 類型 | 畢業目標 |
+|-------------|---------|
+| Codebase Conventions / Patterns | 提升到 `project-context.md` 的 Architecture Patterns |
+| Gotchas / 約束 | 提升到 `principles.md` 的新 MUST/MUST NOT 規則 |
+| Technical Decisions | 記錄到 `project-context.md` 的 Key Decisions |
+
+畢業流程：
+1. AI 在 REFLECT 中發現重複 insight，建議：「此 insight 已在 3+ features 出現，建議提升到 [target]」
+2. 用戶確認後，AI 執行提升（更新目標檔案 + 在 insights.md 標記 `[GRADUATED → target]`）
+3. 畢業後的 insight 不從 insights.md 刪除（保留歷史記錄）
+
+## Memory Delta Protocol
+
+`active-context.md` 採用**分區更新模式**，防止 Context Collapse（經多次全量覆寫後早期細節流失）。
+
+### 分區結構
+
+```markdown
+# Active Context
+
+## Current State
+<!-- 此區塊由最近一個指令覆寫 -->
+
+## Session Log
+<!-- 此區塊為 append-only，每個指令完成時追加一行 -->
+
+## Blockers
+<!-- 有 blocker 時記錄，解決後標記 [RESOLVED] 而非刪除 -->
+```
+
+### 更新規則
+
+每個 `teammate.*` 指令完成時：
+1. **覆寫** `## Current State`：Phase、Last Command、Next Action（僅此區塊）
+2. **追加** `## Session Log`：新增一行，格式為 `| Timestamp | Command | Key Output | Notes |`。**禁止修改或刪除既有行**
+3. **更新** `## Blockers`：有新 blocker 時追加；解決時標記 `[RESOLVED]`，不刪除
+
+> 這樣即使 LLM 在覆寫 Current State 時簡化內容，Session Log 中的歷史細節仍完整保留。
+
 ## Mid-Cycle Updates
 
 When plans need to change (design revision, verification failure, scope change):
@@ -133,7 +202,7 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
 - **Red-Green discipline.** During `/teammate.execute`, always write step definitions first (RED), then implement (GREEN).
 - **No skipping phases.** Each command depends on artifacts from previous commands.
 - **Figma links are per-feature.** Project-level Figma URL goes in `project-context.md`. Feature-level page links go in `contracts/ui/` during `/teammate.tasks`.
-- **Update active-context.md** after each command completes — mark the current stage, set the next action.
+- **Update active-context.md using Memory Delta Protocol** after each command completes — 覆寫 Current State、追加 Session Log、更新 Blockers（見 Memory Delta Protocol 區段）。
 - **Explicit handoff required.** Every `teammate.*` command must state when to use it and the next suggested command (or handoff) so developers can follow the flow without ambiguity.
 - **Snapshot on significant changes.** When principles, plans, or scope change, create a snapshot before overwriting.
 - **文件以繁體中文撰寫.** 透過 `teammate.*` 指令產生的所有文件（spec.md、example-mapping.md、scenarios/*.feature、tasks.md、actions.md、screenplay.md、checklists/ 等），其內文描述 MUST 以**繁體中文**撰寫。以下項目允許使用英文：

@@ -231,12 +231,12 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
    - "Add @negative scenario for [requirement] using `/teammate.plan`"
    - "Add principles boundary scenario for [principle]"
 
-10. **Update Active Context**:
-   
-   Update `.teammate/memory/active-context.md`:
-   - Mark `review` as complete
-   - Record critical/high findings count
-   - Set next action to the command recommended in step 9
+10. **Update Active Context**（Memory Delta Protocol）:
+
+   Update `.teammate/memory/active-context.md` using delta mode:
+   - **覆寫 `## Current State`**：Phase: Deliver, Last Command: review, Next Action: [recommended command from step 9]
+   - **追加 `## Session Log`**：`| [timestamp] | review | [N] critical, [N] high findings | [recommended action] |`
+   - **更新 `## Blockers`**：如有 CRITICAL findings，記錄為 blocker
 
 ## Analysis Guidelines
 

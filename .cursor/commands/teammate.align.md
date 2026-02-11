@@ -172,11 +172,11 @@ Execute the Impact Mapping framework to derive valuable behaviors:
       - If items fail: Update the spec to address issues (max 3 iterations)
       - If [NEEDS CLARIFICATION] markers remain: Present options to user
 
-7. **Update Active Context**:
-   Update `.teammate/memory/active-context.md`:
-   - Mark `align` as complete
-   - Record the feature short name and branch
-   - Set next action as `teammate.clarify`
+7. **Update Active Context**（Memory Delta Protocol）:
+
+   Update `.teammate/memory/active-context.md` using delta mode:
+   - **覆寫 `## Current State`**：Active Feature: [name], Feature Branch: [branch], Phase: Align, Last Command: align, Next Action: /teammate.clarify
+   - **追加 `## Session Log`**：`| [timestamp] | align | Feature: [name], Branch: [branch] | [NEEDS CLARIFICATION count if any] |`
 
 8. Report completion with:
    - Branch name

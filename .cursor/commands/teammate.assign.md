@@ -111,12 +111,11 @@ Goal: Convert actions from actions.md into GitHub issues for project management 
    - Add issue number reference to each action
    - Format: `- [ ] S012 [P] [US1] [Verifies: @tag] Description (#123)`
 
-8. **Update Active Context**:
-   
-   Update `.teammate/memory/active-context.md`:
-   - Mark `assign` as complete
-   - Record number of issues created
-   - Set next action as `teammate.execute`
+8. **Update Active Context**（Memory Delta Protocol）:
+
+   Update `.teammate/memory/active-context.md` using delta mode:
+   - **覆寫 `## Current State`**：Phase: Deliver, Last Command: assign, Next Action: /teammate.execute
+   - **追加 `## Session Log`**：`| [timestamp] | assign | [N] issues created | [GitHub project link if any] |`
 
 9. **Report Completion**:
 

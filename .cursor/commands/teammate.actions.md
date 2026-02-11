@@ -193,12 +193,11 @@ Each action in the chain:
    - Dependencies and execution order
    - Red-Green Loop instructions
 
-11. **Update Active Context**:
+11. **Update Active Context**（Memory Delta Protocol）:
 
-    Update `.teammate/memory/active-context.md`:
-    - Mark `actions` as complete
-    - Record action count and coverage
-    - Set next action as `teammate.execute`
+    Update `.teammate/memory/active-context.md` using delta mode:
+    - **覆寫 `## Current State`**：Phase: Commit (complete), Last Command: actions, Next Action: /teammate.execute
+    - **追加 `## Session Log`**：`| [timestamp] | actions | [N] actions, [coverage]% scenario coverage | [parallel opportunities] |`
 
 12. **Report Completion**:
 

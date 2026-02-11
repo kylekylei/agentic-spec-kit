@@ -317,12 +317,11 @@ When running with `update`, the command preserves existing work and focuses on w
    - Add new technology from current plan
    - Preserve manual additions
 
-10. **Update Active Context**:
+10. **Update Active Context**（Memory Delta Protocol）:
 
-   Update `.teammate/memory/active-context.md`:
-   - Mark `tasks` as complete
-   - Record key technical decisions
-   - Set next action as `teammate.actions`
+   Update `.teammate/memory/active-context.md` using delta mode:
+   - **覆寫 `## Current State`**：Phase: Commit, Last Command: tasks, Next Action: /teammate.actions
+   - **追加 `## Session Log`**：`| [timestamp] | tasks | Actors: [N], Abilities: [N], Tasks: [N] | [key technical decisions] |`
 
 11. **Report Completion**:
 

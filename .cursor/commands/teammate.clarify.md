@@ -135,12 +135,12 @@ Note: This workflow should run AFTER `/teammate.align` has produced a spec.md. I
    | Open questions | [N] | 0 high-impact | [Pass/Fail] |
    | Principles boundaries | [N] | 1+ per story | [Pass/Fail] |
 
-8. **Update Active Context**:
+8. **Update Active Context**（Memory Delta Protocol）:
 
-   Update `.teammate/memory/active-context.md`:
-   - Mark `clarify` as complete
-   - Note any deferred questions
-   - Set next action as `teammate.plan`
+   Update `.teammate/memory/active-context.md` using delta mode:
+   - **覆寫 `## Current State`**：Phase: Align (complete), Last Command: clarify, Next Action: /teammate.plan
+   - **追加 `## Session Log`**：`| [timestamp] | clarify | [N] rules, [N] examples | [deferred questions if any] |`
+   - **更新 `## Blockers`**：如有未解決的 questions，記錄為 blocker
 
 9. **Report Completion**:
 
