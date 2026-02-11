@@ -32,7 +32,7 @@
 
 ## 計劃中
 
-### P1: install.sh 安裝腳本
+### P1: install.sh 安裝腳本 (暫時不執行)
 
 **動機**: 讓 Teammate 可以一鍵安裝到任何專案，取代手動複製和 sync rule
 
@@ -106,11 +106,11 @@
 
 ---
 
-### P4: 指令合成（Command Consolidation）
+### P4: 指令合成（Command Consolidation）✅
 
 **動機**: Phase A 實戰後發現 PM/設計端無法消化 11 個指令的工程流程，需要語意化精簡
 
-**合併策略**（不新增指令數，反而縮減）：
+**已完成（2026-02-11）**:
 
 | 合併前 | 合併後 | 產出 |
 |--------|--------|------|
@@ -132,17 +132,17 @@ Per Feature: align → plan → execute → review
 UI-Only:    ui → execute → review
 ```
 
-**被合併的指令**（未來刪除或降級為內部函式）：
-- `teammate.clarify` → 併入 `align`
-- `teammate.tasks` → 併入 `plan`
-- `teammate.actions` → 併入 `plan`
-- `teammate.checklist` → 併入 `review`
+**已刪除的指令**：
+- `teammate.clarify.md` → 併入 `align`
+- `teammate.tasks.md` → 併入 `plan`
+- `teammate.actions.md` → 併入 `plan`
+- `teammate.checklist.md` → 併入 `review`
 
-**狀態**: 計劃中，待下一個 feature 驗證
+**配套更新**：`teammate-rules.mdc` 指令表、Key Paths、Mid-Cycle Updates；`teammate.yml` lifecycle；所有指令的交叉引用
 
 ---
 
-### P5: ACE 產品開發知識閉環（Agentic Context Engineering）
+### P5: ACE 產品開發知識閉環（Agentic Context Engineering）✅
 
 **動機**: 對照 ACE 框架與 Agentic Engineering 原則發現，Teammate 的產品開發流程在知識累積、增量更新、上下文深度、風險管控、可觀測性等面向有結構性缺口。AI 在 execute 過程中發現的 codebase 慣例、陷阱、技術決策，無法結構化持久保存並在後續 actions/features 中復用，且 memory 檔案的全量覆寫模式有 Context Collapse 風險。
 
@@ -364,7 +364,19 @@ User Layer（使用者層 — per command）:
 5. 同步到 Teammate Hub
 6. 在下一個 feature 實戰驗證
 
-**狀態**: 計劃中，可獨立於 P4 實施。建議先做 A+B+C（低侵入），再做 E+F+G（需修改多個指令）
+**已完成（2026-02-11）**:
+- A: 新增 `.teammate/templates/insights-template.md`（5 section 模板）
+- B: `teammate.execute.md` Red-Green Loop 改為 `RED → GREEN → REFACTOR → REFLECT → REPEAT`
+- C: `teammate.execute.md` Context Loading 改為 Required / Recommended / Optional 三層
+- D: `teammate-rules.mdc` 新增 Insights Graduation 規則（3+ features 重複 → 提升）
+- E: `teammate-rules.mdc` + `active-context.md` 模板 + 全部 11 個 `teammate.*.md` 改為 Memory Delta Protocol
+- F: `teammate.execute.md` 新增 4 個 Risk-Based HITL Gates
+- G: `teammate-rules.mdc` 新增 Context Layer 三層定義（System / Task / User）
+
+**額外整合的散落教訓**（一併在 P5 實施）：
+- `teammate.execute.md`：`[LOGIC]`/`[UI]`/`[LOGIC+UI]` 任務分流 + UI 智能暫停 + 階段完成同步 + 實作前測試檢查
+- `teammate.actions.md`：RED/GREEN 強制拆分規則 + 類型標記
+- `teammate.tasks.md`：Phase 0 測試基礎設施
 
 ---
 
@@ -480,7 +492,7 @@ User Layer（使用者層 — 持久 + 即時）:
 3. 新增 `.teammate/templates/cursorule-template.md` 作為安裝用模板
 4. 更新 P5-G Context Layer 定義（與 P5 一併實施）
 
-**狀態**: 計劃中，低侵入，可獨立於 P4/P5 先行實施
+**狀態**: 計劃中，優先度低，延後至 P1/P3 一併實施。P5-G Context Layer 的 User Layer 已包含簡化版 `.cursorule` 定義
 
 ---
 
@@ -515,8 +527,9 @@ User Layer（使用者層 — 持久 + 即時）:
 | 2026-02-11 | OpenWebUI_Frontend | AI 整合設計原則時未主動做衝突分析。實證：(1)「重試按鈕」需後端 API，違反核心原則 I（後端不可變）(2)「前往知識庫」需 SSE 不提供的 knowledge_id (3)「×」關閉按鈕語意與 Google Drive 不同（取消 vs dismiss），後端無取消 API (4) 按鈕 disabled 狀態未列舉（processing 時應 disabled）。AI 只在使用者主動問「會產生衝突嗎？」時才分析，不主動挑戰設計決策 | 三項框架改善：(1) `teammate.plan.md` 新增 Step 4「UX Conflict Scan」——設計原則 vs 核心原則/API 交叉比對 + 參考設計語意差異 + 有衝突時暫停讓使用者決策 (2) `teammate.tasks.md` 新增「UI Interactive State Machine」——每個互動元素 MUST 列舉 enabled/disabled 狀態和觸發條件 (3) `teammate-rules.mdc` 新增「UX 灰色地帶主動分析」always-apply 規則——參考設計語意差異、互動狀態完整性、設計原則衝突偵測 |
 | 2026-02-11 | Teammate | `.cursorule` 散文體規則與 `teammate-rules.mdc` 的 Foundation Check、哲學宣言重複；使用者身份/溝通風格/執行偏好等跨專案不變的資訊在框架中無正式位置；P5 Context Layer 的 User Layer 只有即時輸入，缺少持久偏好 | 提出 P6「User Profile + Profile Evolution」：(1) `.cursorule` 結構化為 User Profile（Identity / Communication Style / Execution Preferences）(2) 通用預設為「假設完全不懂技術」(3) `teammate-rules.mdc` 新增載入規則 + Evolution 機制（觀察→建議→畢業）(4) `teammatesync_rule.mdc` 標記 `.cursorule` 為 Do NOT sync (5) P5 Context Layer User Layer 補完 |
 | 2026-02-11 | Teammate | 框架版本只是 `teammate.yml` 的一行註解 `# Version: 2.0.0`，無正式追蹤機制；`teammate.toolkit migrate` 只是佔位訊息；跨專案更新完全依賴 AI 記憶同步，會忘會漏；無結構化變更紀錄，無法回溯某版本改了什麼 | 完成 P2 版本管理：(1) `teammate.yml` 新增 `version: "0.0.1"` 正式欄位 (2) 新建 `CHANGELOG.md`（Keep a Changelog 格式，migrate 解析用）(3) 實作 `migrate` 工具 8 步驟（Locate Hub → Compare → Parse → Diff → Report → Confirm → Apply → Update Context）(4) teammate.yml merge 策略（新增 key、保留專案值、deprecated 標記）(5) `teammatesync_rule.mdc` 新增 Version Tracking sync 規則 |
-| 2026-02-11 | Teammate | `figma-design-audit` skill 的 Cross-Reference 區段引用外部框架的路徑和指令（`memory-bank/inventories/designInventory.md`、`/sync design`、`/spec build`、`/audit align`、`design-system-rule.mdc`），與 Teammate 架構不一致 | 待修正：Cross-Reference 應改為 Teammate 路徑 — `contracts/ui/component-specs.md`、`/teammate.figma`、`/teammate.align`、`/teammate.review`、`principles.md`（設計系統參考） |
+| 2026-02-11 | Teammate | `figma-design-audit` skill 的 Cross-Reference 區段引用外部框架的路徑和指令（`memory-bank/inventories/designInventory.md`、`/sync design`、`/spec build`、`/audit align`、`design-system-rule.mdc`），與 Teammate 架構不一致 | 已修正：Cross-Reference 改為 Teammate 路徑 — `contracts/ui/component-specs.md`、`/teammate.figma`、`/teammate.align`、`/teammate.review`、`principles.md` |
+| 2026-02-11 | Teammate | 框架升級整合：P5 全部 7 項改善（REFLECT、Smart Loading、Risk Gates、Graduation、Memory Delta、Context Layer、Insights）+ P4 指令合成（11→7 指令）+ 散落教訓（RED/GREEN 拆分、任務分流、Phase 0 測試、階段同步）一次性實施 | 完成 Wave 0-4 升級：(1) figma-design-audit 路徑修正 (2) P5-A~G 全部實施 + execute/actions/tasks 強化 (3) P5 Memory Delta Protocol 套用到全部 11 個指令 (4) P4 合併 clarify→align、tasks+actions→plan、checklist→review + 新增 /teammate.ui (5) 更新 teammate-rules.mdc + teammate.yml |
 
 ---
 
-**Last Updated**: 2026-02-11
+**Last Updated**: 2026-02-11 (Wave 0-4 升級完成)
