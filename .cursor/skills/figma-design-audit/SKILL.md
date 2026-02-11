@@ -231,7 +231,7 @@ Overall: [READY / NOT READY / NEEDS CLARIFICATION]
 
 ## Post-Audit Actions
 
-1. **If READY**: Proceed to `/spec build` or `/code start`
+1. **If READY**: Proceed to `/teammate.align` or `/teammate.tasks`
 2. **If CONDITIONAL**: Document workarounds in spec, proceed with caution
 3. **If NOT READY**: Return findings to designer, block implementation
 4. **If NEEDS CLARIFICATION**: Flag all unclear items, request designer clarification
@@ -239,11 +239,11 @@ Overall: [READY / NOT READY / NEEDS CLARIFICATION]
 ## Cross-Reference
 
 This skill integrates with:
-- `memory-bank/inventories/designInventory.md` — Figma node registry
-- `/sync design` — Figma resource synchronization
-- `/spec build` — Pre-implementation spec generation
-- `/audit align` — Design-code alignment analysis
-- `design-system-rule.mdc` — PSC token enforcement during implementation
+- `contracts/ui/component-specs.md` — UI component specifications per feature
+- `/teammate.figma` — Figma resource synchronization
+- `/teammate.align` — Pre-implementation spec generation
+- `/teammate.review` — Design-code alignment analysis (Pass E: UI Contract Consistency)
+- `principles.md` — Design system token enforcement during implementation
 
 ## Quick Reference Checklist
 
