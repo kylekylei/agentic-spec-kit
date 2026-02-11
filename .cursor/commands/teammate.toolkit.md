@@ -5,8 +5,8 @@ handoffs:
     agent: teammate.kickoff
     prompt: "healthcheck found missing or incomplete Foundation artifacts"
     send: true
-  - label: Fix with Tasks Update
-    agent: teammate.tasks
+  - label: Fix with Plan Update
+    agent: teammate.plan
     prompt: "update — healthcheck found phase compliance issues"
     send: true
   - label: Run Full Review

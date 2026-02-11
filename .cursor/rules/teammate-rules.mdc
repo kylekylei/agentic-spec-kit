@@ -25,24 +25,21 @@ Foundation → Align → Commit → Deliver
 
 | Command | Purpose |
 |---------|---------|
-| `/teammate.align` | Define what to build via Impact Mapping |
-| `/teammate.clarify` | Clarify requirements via Example Mapping |
+| `/teammate.align` | Define what to build (Impact Mapping + Example Mapping) → `spec.md` + `example-mapping.md` |
 
 ### Commit (per feature)
 
 | Command | Purpose |
 |---------|---------|
-| `/teammate.plan` | Generate Gherkin .feature files |
-| `/teammate.tasks` | Technical plan with Screenplay Pattern |
-| `/teammate.actions` | Break into atomic, verifiable actions |
+| `/teammate.plan` | Generate scenarios, technical plan, and actions → `.feature` + `tasks.md` + `actions.md` |
+| `/teammate.ui` | UI-specific: component states, interaction flows, design/i18n/a11y checklists → `contracts/ui/ui-spec.md` |
 
 ### Deliver (per feature)
 
 | Command | Purpose |
 |---------|---------|
 | `/teammate.execute` | Red-Green Loop implementation |
-| `/teammate.review` | Behavioral coverage analysis (read-only) |
-| `/teammate.checklist` | Feature readiness validation |
+| `/teammate.review` | Behavioral coverage + requirements quality + feature readiness |
 | `/teammate.assign` | Convert actions to GitHub Issues |
 
 ### Toolkit (anytime — not part of workflow)
@@ -89,15 +86,15 @@ docs/                         # External reference knowledge base
     └── figma-index.md
 
 features/[###-feature-name]/  # Per-feature artifacts
-├── spec.md                   # /teammate.align output
-├── example-mapping.md        # /teammate.clarify output
-├── scenarios/*.feature       # /teammate.plan output
-├── screenplay.md             # /teammate.tasks output
-├── tasks.md                  # /teammate.tasks output
-├── actions.md                # /teammate.actions output
+├── spec.md                   # /teammate.align output (spec)
+├── example-mapping.md        # /teammate.align output (examples)
+├── scenarios/*.feature       # /teammate.plan output (scenarios)
+├── screenplay.md             # /teammate.plan output (screenplay)
+├── tasks.md                  # /teammate.plan output (technical plan)
+├── actions.md                # /teammate.plan output (atomic actions)
 ├── insights.md               # /teammate.execute REFLECT output (dynamic cheatsheet)
-├── contracts/ui/             # Figma page links (per feature, via /teammate.tasks)
-└── checklists/               # /teammate.checklist output
+├── contracts/ui/             # /teammate.ui or /teammate.plan output (UI specs)
+└── checklists/               # /teammate.review output (readiness reports)
 ```
 
 ## Snapshots
@@ -189,8 +186,7 @@ User Layer（使用者層 — 持久 + 即時）:
 When plans need to change (design revision, verification failure, scope change):
 
 ```
-/teammate.tasks update [what changed]
-/teammate.actions update
+/teammate.plan update [what changed]
 ```
 
 Update mode preserves existing work, snapshots before overwriting, and marks changes with `[UNCHANGED]` / `[NEW]` / `[REVISED]` / `[REMOVED]` markers. Completed actions are never discarded.
@@ -201,7 +197,7 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
 - **Behavior over implementation.** Specs describe WHAT the system does, not HOW it's built.
 - **Red-Green discipline.** During `/teammate.execute`, always write step definitions first (RED), then implement (GREEN).
 - **No skipping phases.** Each command depends on artifacts from previous commands.
-- **Figma links are per-feature.** Project-level Figma URL goes in `project-context.md`. Feature-level page links go in `contracts/ui/` during `/teammate.tasks`.
+- **Figma links are per-feature.** Project-level Figma URL goes in `project-context.md`. Feature-level page links go in `contracts/ui/` during `/teammate.plan` or `/teammate.ui`.
 - **Update active-context.md using Memory Delta Protocol** after each command completes — 覆寫 Current State、追加 Session Log、更新 Blockers（見 Memory Delta Protocol 區段）。
 - **Explicit handoff required.** Every `teammate.*` command must state when to use it and the next suggested command (or handoff) so developers can follow the flow without ambiguity.
 - **Snapshot on significant changes.** When principles, plans, or scope change, create a snapshot before overwriting.

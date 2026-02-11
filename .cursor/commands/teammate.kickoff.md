@@ -80,7 +80,7 @@ Fill in the following sections of `.teammate/memory/project-context.md`:
 - **Integration Points**: External systems, protocols, contracts
 - **Design References** (optional): Design system name, Figma link, Storybook link
   - Only fill if user provides this information
-  - Feature-level Figma page links belong in `/teammate.tasks`, not here
+  - Feature-level Figma page links belong in `/teammate.plan` or `/teammate.ui`, not here
 
 #### Phase 4: Environment Bootstrap
 
@@ -190,9 +190,9 @@ Based on the **Technical Context** filled in Phase 3, set up the project's base 
 ## What Does NOT Belong Here
 
 - **Agent behavior / AI guardrails** → Define in `/teammate.principles` (optional)
-- **Feature-level Figma page links** → Provide during `/teammate.tasks` for each feature
+- **Feature-level Figma page links** → Provide during `/teammate.plan` or `/teammate.ui` for each feature
 - **Design tokens / components** → These are implementation details, not project context
-- **Feature-specific dependencies** → Add during `/teammate.tasks` or `/teammate.execute` when feature-level tech decisions are made
+- **Feature-specific dependencies** → Add during `/teammate.plan` or `/teammate.execute` when feature-level tech decisions are made
 
 ## Behavior Rules
 

@@ -1,9 +1,13 @@
 ---
-description: Perform a professional, neutral behavioral coverage analysis across spec, plan, tasks, and .feature files.
+description: Perform behavioral coverage analysis and feature readiness validation. Combines review + checklist into one comprehensive quality gate.
 handoffs:
-  - label: Run Checklist
-    agent: teammate.checklist
-    prompt: Generate Living Documentation and verify feature readiness
+  - label: Create Issues
+    agent: teammate.assign
+    prompt: Convert tasks to GitHub issues
+    send: true
+  - label: Fix Gaps
+    agent: teammate.plan
+    prompt: Update plan to address review findings
     send: true
 ---
 
@@ -17,7 +21,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-Goal: Perform a **professional, neutral** analysis of behavioral coverage and artifact consistency. This review is suitable for team collaboration and enterprise environments.
+Goal: Perform a **professional, neutral** analysis of behavioral coverage, artifact consistency, and feature readiness. This is the final verification gate — combining behavioral review and requirements quality validation into one pass.
 
 ### Operating Constraints
 
@@ -25,244 +29,244 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage and ar
 
 **Principles Authority**: The project principles (`.teammate/memory/principles.md`) are **non-negotiable**. Principles conflicts are automatically CRITICAL.
 
-**Professional Tone**: This analysis uses objective, constructive language suitable for team review. No sarcasm, criticism, or inflammatory language.
+**Professional Tone**: Objective, constructive language suitable for team review. No sarcasm or inflammatory language.
 
 ### Phase 0: Foundation Check
 
 1. **Read `.teammate/memory/project-context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found ??**ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
+   - If found → **ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
 
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found ??**ERROR**: "Principles not defined. Run `/teammate.principles` first."
+   - If found → **ERROR**: "Principles not defined. Run `/teammate.principles` first."
 
-### Execution Steps
+### Setup
 
-1. **Initialize Analysis Context**:
+Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-actions --include-actions` from repo root and parse:
+- `FEATURE_DIR`, `AVAILABLE_DOCS`
 
-   Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-actions --include-actions` from repo root and parse:
-   - `FEATURE_DIR`
-   - `AVAILABLE_DOCS`
-   
-   Derive paths:
-   - SPEC = `FEATURE_DIR/spec.md`
-   - TASKS = `FEATURE_DIR/tasks.md`
-   - ACTIONS = `FEATURE_DIR/actions.md`
-   - FEATURES = `FEATURE_DIR/scenarios/*.feature`
-   - EXAMPLE_MAPPING = `FEATURE_DIR/example-mapping.md`
-   - SCREENPLAY = `FEATURE_DIR/screenplay.md`
-   - CONTRACTS = `FEATURE_DIR/contracts/ui/*.md` (if directory exists)
-   
-   Abort if required files missing.
+Derive paths:
+- SPEC = `FEATURE_DIR/spec.md`
+- TASKS = `FEATURE_DIR/tasks.md`
+- ACTIONS = `FEATURE_DIR/actions.md`
+- FEATURES = `FEATURE_DIR/scenarios/*.feature`
+- EXAMPLE_MAPPING = `FEATURE_DIR/example-mapping.md`
+- SCREENPLAY = `FEATURE_DIR/screenplay.md`
+- CONTRACTS = `FEATURE_DIR/contracts/ui/*.md` (if directory exists)
+- INSIGHTS = `FEATURE_DIR/insights.md` (if exists)
 
-2. **Load Artifacts**:
+Abort if required files missing.
 
-   From spec.md:
-   - User stories and priorities
-   - Functional requirements
-   - Success criteria
+### Load Artifacts
 
-   From tasks.md:
-   - Architecture decisions
-   - Technical constraints
+From spec.md: User stories, functional requirements, success criteria
+From tasks.md: Architecture decisions, technical constraints
+From actions.md: Actions with [Verifies: @tag] markers, phase structure
+From scenarios/*.feature: All scenarios with tags, step definitions
+From principles: Principles and boundaries
 
-   From actions.md:
-   - Actions with [Verifies: @tag] markers
-   - Phase structure
+---
 
-   From scenarios/*.feature:
-   - All scenarios with tags
-   - Step definitions
-   - Tag distribution
+## Pass A: Behavioral Coverage Analysis
 
-   From principles:
-   - Principles and boundaries
+#### Scenario Type Distribution
 
-3. **Build Semantic Models**:
+| Type | Count | Percentage | Target |
+|------|-------|------------|--------|
+| @happy-path | [N] | [%] | 30-40% |
+| @alternative | [N] | [%] | 20-30% |
+| @negative | [N] | [%] | 20-30% |
+| @boundary | [N] | [%] | 10-15% |
+| @principles | [N] | [%] | 5-10% |
 
-   - **Requirements inventory**: Map each requirement to a key
-   - **Scenario inventory**: All scenarios with tags and status
-   - **Action coverage mapping**: Map actions to scenarios via [Verifies: @tag]
-   - **Principles rule set**: MUST/MUST NOT statements
+#### Coverage by User Story
 
-4. **Behavioral Coverage Analysis**:
+| Story | Scenarios | Happy | Negative | Principles | Status |
+|-------|-----------|-------|----------|------------|--------|
+| US1 | [N] | [N] | [N] | [N] | [Complete/Gaps] |
 
-   #### Scenario Type Distribution
-   
-   | Type | Count | Percentage | Target |
-   |------|-------|------------|--------|
-   | @happy-path | [N] | [%] | 30-40% |
-   | @alternative | [N] | [%] | 20-30% |
-   | @negative | [N] | [%] | 20-30% |
-   | @boundary | [N] | [%] | 10-15% |
-   | @principles | [N] | [%] | 5-10% |
+#### Behavior Quality Checks
 
-   #### Coverage by User Story
-   
-   | Story | Scenarios | Happy | Negative | Principles | Status |
-   |-------|-----------|-------|----------|--------------|--------|
-   | US1 | [N] | [N] | [N] | [N] | [Complete/Gaps] |
+- Are scenarios testing BEHAVIOR (what) or IMPLEMENTATION (how)?
+- Are steps declarative or imperative?
+- Are scenarios independent (can run in isolation)?
 
-   #### Behavior Quality Checks
-   
-   - Are scenarios testing BEHAVIOR (what) or IMPLEMENTATION (how)?
-   - Are steps declarative or imperative?
-   - Are scenarios independent (can run in isolation)?
+## Pass B: Consistency Analysis
 
-5. **Consistency Analysis**:
+#### B1. Traceability Verification
+- Every requirement → scenarios → actions → [Verifies: @tag]
+- Report gaps: requirements without scenarios, scenarios without actions, orphan actions
 
-   #### A. Traceability Verification
-   
-   - Every requirement should have scenarios
-   - Every scenario should have actions
-   - Every action should have [Verifies: @tag]
-   
-   Report gaps:
-   - Requirements without scenarios
-   - Scenarios without actions
-   - Actions without scenario links
+#### B2. Terminology Consistency
+- Same concepts named differently across files?
+- Entity names match between spec, model, and scenarios?
 
-   #### B. Terminology Consistency
-   
-   - Same concepts named differently across files?
-   - Entity names match between spec, model, and scenarios?
+#### B3. Principles Alignment
+- Every MUST NOT has a @principles scenario?
+- Plan decisions align with principles?
 
-   #### C. Principles Alignment
-   
-   - Every MUST NOT has a @principles scenario?
-   - Plan decisions align with principles?
+#### B4. Example Mapping Coverage
+- Every rule from example-mapping has scenarios?
+- Questions all resolved?
 
-   #### D. Example Mapping Coverage
-   
-   - Every rule from example-mapping has scenarios?
-   - Questions all resolved?
+#### B5. UI Contract Consistency (if CONTRACTS exist)
+- Component names in `contracts/ui/` match spec and tasks?
+- Props, routes, and enhanced components match tasks.md?
+- Report terminology drift
 
-   #### E. UI Contract Consistency (if CONTRACTS exist)
-   
-   - Component names in `contracts/ui/` match spec acceptance criteria and tasks component list?
-   - Component descriptions align with actual implementation (no stale names or outdated descriptions)?
-   - Props, routes, and enhanced components match tasks.md architecture?
-   - Report any terminology drift between contracts and other artifacts (e.g. old component name vs renamed component)
+## Pass C: Detection Passes
 
-6. **Detection Passes**:
+#### Duplication Detection
+- Similar scenarios testing same behavior? Redundant step definitions?
 
-   #### Duplication Detection
-   - Similar scenarios testing same behavior?
-   - Redundant step definitions?
+#### Ambiguity Detection
+- Vague scenario names? Unclear step language?
 
-   #### Ambiguity Detection
-   - Vague scenario names?
-   - Unclear step language?
+#### Underspecification
+- Scenarios missing Then assertions? Steps with unclear outcomes?
 
-   #### Underspecification
-   - Scenarios missing Then assertions?
-   - Steps with unclear outcomes?
+#### Implementation Leakage
+- Scenarios that describe HOW instead of WHAT? Technical terms in business scenarios?
 
-   #### Implementation Leakage
-   - Scenarios that describe HOW instead of WHAT?
-   - Technical terms in business scenarios?
+## Pass D: Requirements Quality Validation
 
-7. **Severity Assignment**:
+> 整合原 `/teammate.checklist` 的需求品質檢核功能。
 
-   - **CRITICAL**: Principles violations, missing coverage for P1 scenarios
-   - **HIGH**: Duplicate scenarios, ambiguous requirements, P2 coverage gaps
-   - **MEDIUM**: Terminology drift, minor coverage gaps, unclear steps
-   - **LOW**: Style improvements, optimization opportunities
+#### Completeness
+- Are all necessary requirements documented?
+- Are error handling requirements defined for all failure modes?
+- Are accessibility requirements specified?
 
-8. **Produce Analysis Report**:
+#### Clarity
+- Are requirements specific and unambiguous?
+- Are vague terms quantified with specific criteria?
+- Are success metrics measurable?
 
-   ```markdown
-   # Behavioral Coverage Analysis Report
-   
-   **Feature**: [Name]
-   **Analyzed**: [Date]
-   **Status**: [Healthy/Needs Attention/Critical Issues]
-   
-   ## Executive Summary
-   
-   [2-3 sentence overview of findings]
-   
-   ## Behavioral Coverage
-   
-   ### Scenario Distribution
-   [Table from step 4]
-   
-   ### Coverage by Story
-   [Table from step 4]
-   
-   ## Findings
-   
-   | ID | Category | Severity | Location | Finding | Recommendation |
-   |----|----------|----------|----------|---------|----------------|
-   
-   ## Traceability Summary
-   
-   | Requirement | Scenarios | Actions | Status |
-   |-------------|-----------|---------|--------|
-   
-   ## Principles Compliance
-   
-   | Principle | Coverage | Status |
-   |-----------|----------|--------|
-   
-   ## Metrics
-   
-   - Total Scenarios: [N]
-   - Total Actions: [N]
-   - Scenario Coverage: [%]
-   - Principles Coverage: [%]
-   - Critical Issues: [N]
-   - High Issues: [N]
-   
-   ## Recommendations
-   
-   [Prioritized list of actions]
-   ```
+#### Consistency
+- Do requirements align without conflicts?
+- Are patterns consistent across the feature?
 
-9. **Provide Next Actions**:
+#### Coverage
+- Are all scenarios/edge cases addressed?
+- Are boundary conditions defined?
+- Are negative paths specified?
 
-   Based on findings:
-   - If CRITICAL: Must resolve before proceeding
-   - If HIGH: Should address for quality
-   - If only LOW/MEDIUM: Can proceed with notes
-   
-   Suggest specific commands:
-   - "Add @negative scenario for [requirement] using `/teammate.plan`"
-   - "Add principles boundary scenario for [principle]"
+## Pass E: Traceability Matrix
 
-10. **Update Active Context**（Memory Delta Protocol）:
+Build traceability from behaviors to implementation:
 
-   Update `.teammate/memory/active-context.md` using delta mode:
-   - **覆寫 `## Current State`**：Phase: Deliver, Last Command: review, Next Action: [recommended command from step 9]
-   - **追加 `## Session Log`**：`| [timestamp] | review | [N] critical, [N] high findings | [recommended action] |`
-   - **更新 `## Blockers`**：如有 CRITICAL findings，記錄為 blocker
+| Scenario | Rule | Action(s) | Status |
+|----------|------|-----------|--------|
+| @us1-login-success | Rule 1 | S012-S015 | [Pass/Fail/Pending] |
+
+Identify gaps: Scenarios without actions, actions without scenarios, rules without examples.
+
+## Pass F: Living Documentation
+
+Generate `FEATURE_DIR/checklists/feature-readiness.md`:
+
+```markdown
+# Feature Readiness Report: [Feature Name]
+
+**Generated**: [Date]
+**Status**: [Ready/Not Ready/Partial]
+
+## Executive Summary
+[2-3 sentence overview]
+
+## Behavioral Coverage
+[Scenario distribution + coverage by story]
+
+## Requirements Quality
+| Dimension | Score | Issues |
+|-----------|-------|--------|
+| Completeness | [%] | [N] |
+| Clarity | [%] | [N] |
+| Consistency | [%] | [N] |
+| Coverage | [%] | [N] |
+
+## Findings
+| ID | Category | Severity | Location | Finding | Recommendation |
+|----|----------|----------|----------|---------|----------------|
+
+## Traceability Summary
+[Matrix from Pass E]
+
+## Principles Compliance
+| Principle | Coverage | Status |
+|-----------|----------|--------|
+
+## Metrics
+- Total Scenarios: [N]
+- Total Actions: [N]
+- Scenario Coverage: [%]
+- Principles Coverage: [%]
+- Critical Issues: [N]
+
+## Recommendation
+[Ready to proceed / Needs attention / Blocked]
+```
+
+---
+
+## Severity Assignment
+
+- **CRITICAL**: Principles violations, missing coverage for P1 scenarios, requirements quality < 60%
+- **HIGH**: Duplicate scenarios, ambiguous requirements, P2 coverage gaps
+- **MEDIUM**: Terminology drift, minor coverage gaps, unclear steps
+- **LOW**: Style improvements, optimization opportunities
+
+## Feature Readiness Gates
+
+| Gate | Criteria | Blocking? |
+|------|----------|-----------|
+| Requirements Quality | All dimensions > 80% | Yes |
+| Happy Path Coverage | 100% of P1 stories | Yes |
+| Negative Coverage | At least 1 per story | Yes |
+| Principles Coverage | At least 1 boundary | Yes |
+| Traceability | All scenarios linked to actions | No |
+| Open Issues | No critical/high issues | Yes |
+
+## Next Actions
+
+Based on findings:
+- If CRITICAL: Must resolve before proceeding → suggest `/teammate.plan update`
+- If HIGH: Should address for quality → suggest specific fixes
+- If only LOW/MEDIUM: Can proceed → suggest `/teammate.assign`
+
+## Update Progress
+
+Update `.teammate/memory/progress.md`: Feature verification status, coverage metrics, readiness assessment.
+
+## Update Active Context（Memory Delta Protocol）
+
+Update `.teammate/memory/active-context.md` using delta mode:
+- **覆寫 `## Current State`**：Phase: Deliver, Last Command: review, Next Action: [recommended command]
+- **追加 `## Session Log`**：`| [timestamp] | review | [N] critical, [N] high, Readiness: [status] | [recommendation] |`
+- **更新 `## Blockers`**：如有 CRITICAL findings，記錄為 blocker
+
+## Report Completion
+
+Output:
+- Path to `feature-readiness.md`
+- Executive summary (2-3 sentences)
+- Critical/High findings count
+- Readiness status
+- Recommended next steps
+- Suggested next command
 
 ## Analysis Guidelines
 
 ### Behavior vs Implementation
 
-**Good (Behavior)**:
-- "User sees confirmation message"
-- "Order is placed successfully"
-- "System rejects invalid input"
-
-**Bad (Implementation)**:
-- "API returns 200 status"
-- "Database record is created"
-- "Redis cache is updated"
+**Good**: "User sees confirmation message", "Order is placed successfully"
+**Bad**: "API returns 200 status", "Database record is created"
 
 ### Professional Language
 
-**Use**:
-- "This scenario could be enhanced with..."
-- "Consider adding coverage for..."
-- "A gap exists in..."
-
-**Avoid**:
-- "This is wrong"
-- "You forgot to..."
-- "Obviously missing..."
+**Use**: "This scenario could be enhanced with...", "Consider adding coverage for..."
+**Avoid**: "This is wrong", "You forgot to..."
 
 ### Coverage Targets
 

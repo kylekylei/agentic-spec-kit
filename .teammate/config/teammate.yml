@@ -20,32 +20,27 @@ lifecycle:
   align:
     align:
       required: true
-      description: "Align on the problem and expected outcomes"
-    clarify:
-      required: true
-      description: "Clarify ambiguities with concrete examples"
+      description: "Define what to build (Impact Mapping + Example Mapping)"
+      output: "spec.md + example-mapping.md"
 
   commit:
     plan:
       required: true
-      description: "Create executable work plan"
-    tasks:
+      description: "Generate scenarios, technical plan, and atomic actions"
+      output: ".feature + tasks.md + actions.md"
+    ui:
       required: false
-      description: "Define tasks with Screenplay Pattern"
-    actions:
-      required: true
-      description: "Break tasks into atomic verifiable actions"
+      description: "UI component states, interaction flows, design system compliance"
+      output: "contracts/ui/ui-spec.md"
 
   deliver:
     execute:
       required: true
       description: "Execute actions using Red-Green Loop"
     review:
-      required: false
-      description: "Behavioral coverage analysis"
-    checklist:
       required: true
-      description: "Feature readiness and quality checklist"
+      description: "Behavioral coverage + requirements quality + feature readiness"
+      output: "checklists/feature-readiness.md"
     assign:
       required: false
       description: "Convert to GitHub Issues"
@@ -121,12 +116,13 @@ feature_structure:
   
   # Files generated per feature
   files:
-    - spec.md              # teammate.align output
-    - example-mapping.md   # teammate.clarify output
+    - spec.md              # teammate.align output (spec)
+    - example-mapping.md   # teammate.align output (examples)
     - teammate.refs.yaml   # Context anchors
-    - screenplay.md        # teammate.tasks output
-    - tasks.md             # teammate.tasks output
-    - actions.md           # teammate.actions output
+    - screenplay.md        # teammate.plan output (screenplay)
+    - tasks.md             # teammate.plan output (technical plan)
+    - actions.md           # teammate.plan output (atomic actions)
+    - insights.md          # teammate.execute output (REFLECT dynamic cheatsheet)
     - README.md            # Feature overview
   
   # Subdirectories per feature

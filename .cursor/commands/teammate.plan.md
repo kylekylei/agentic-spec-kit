@@ -1,13 +1,14 @@
 ---
-description: Automatically generate Gherkin .feature files from spec.md and example-mapping.md, creating executable specifications.
+description: Generate Gherkin scenarios, technical plan with Screenplay Pattern, and atomic actions — all in one pass. Produces .feature + tasks.md + actions.md.
 handoffs: 
-  - label: Define Tasks
-    agent: teammate.tasks
-    prompt: Create a technical plan with Screenplay Pattern for the feature
+  - label: Execute Actions
+    agent: teammate.execute
+    prompt: Start the Red-Green Loop implementation
     send: true
-  - label: Create Actions
-    agent: teammate.actions
-    prompt: Break down the feature into atomic verifiable actions
+  - label: Review Coverage
+    agent: teammate.review
+    prompt: Run a behavioral coverage analysis before executing
+    send: true
 ---
 
 ## User Input
@@ -20,271 +21,268 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Outline
 
-Goal: **Automatically** transform Example Mapping outputs into executable Gherkin `.feature` files. This is the core BDD artifact - the **Single Source of Truth** for system behavior.
+Goal: Transform the aligned spec and examples into a complete execution plan — **Gherkin scenarios** (WHAT to verify), **technical tasks** (HOW to build), and **atomic actions** (STEPS to execute) — in one continuous pass.
 
-**Mode**: This command runs in **automatic mode** - it generates complete .feature files without interactive confirmation, optimizing for quick iteration.
+### Mode Detection
+
+Parse `$ARGUMENTS` for the keyword **`update`**:
+
+- If `$ARGUMENTS` contains "update" → **Update Mode** (preserve existing work, snapshot before changes, mark with `[UNCHANGED]`/`[NEW]`/`[REVISED]`/`[REMOVED]`)
+- Otherwise → **Create Mode** (default)
 
 ### Phase 0: Foundation Check
 
 1. **Read `.teammate/memory/project-context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found ??**ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
+   - If found → **ERROR**: "Project context not initialized. Run `/teammate.kickoff` first."
 
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found ??**ERROR**: "Principles not defined. Run `/teammate.principles` first."
+   - If found → **ERROR**: "Principles not defined. Run `/teammate.principles` first."
 
-### Execution Steps
+### Update Mode
 
-1. **Setup**: Run `.teammate/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root. Parse JSON for:
-   - `FEATURE_DIR`
-   - `FEATURE_SPEC`
-   - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot'
+When running with `update`, the command preserves existing work:
+
+1. **Pre-Update Snapshot**: Copy existing `tasks.md`, `actions.md`, `scenarios/*.feature` to `.teammate/snapshots/`
+2. **Ask user**: "What changed and why?" (one line)
+3. **Diff-Aware Processing**: Compare baseline against current spec/examples
+4. **Mark changes**: `[UNCHANGED]`, `[NEW]`, `[REVISED]`, `[REMOVED]`
+5. **Sync Contracts** (if `contracts/ui/` exists): Update stale entries
+6. **Impact Report**: Count unchanged/new/revised/removed items
+7. **Never discard completed work** — removed items are commented out, not deleted
+
+---
+
+## Stage 1: Scenario Generation
+
+> 產出：`FEATURE_DIR/scenarios/*.feature` + `teammate.refs.yaml`
+
+### Setup
+
+1. Run `.teammate/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root. Parse JSON for `FEATURE_DIR`, `FEATURE_SPEC`.
 
 2. **Load Context**:
-   
-   Required files:
+
+   Required:
    - `FEATURE_DIR/spec.md` - User stories and requirements
    - `FEATURE_DIR/example-mapping.md` - Rules and examples
    - `.teammate/memory/principles.md` - Non-negotiable boundaries
-   
-   Optional files:
+
+   Optional:
    - `.teammate/templates/feature-template.feature` - Gherkin template
-   - `FEATURE_DIR/teammate.refs.yaml` - Context anchors (if exists)
-   - `FEATURE_DIR/contracts/ui/design-principles.md` - UX 設計原則（if exists）
-   - `.teammate/memory/project-context.md` - 後端 API 合約（for conflict scan）
+   - `FEATURE_DIR/contracts/ui/design-principles.md` - UX 設計原則
 
-3. **Create Features Directory**:
-   
-   ```bash
-   mkdir -p FEATURE_DIR/scenarios
-   ```
+3. **Create Features Directory**: `mkdir -p FEATURE_DIR/scenarios`
 
-4. **UX Conflict Scan** (if `FEATURE_DIR/contracts/ui/design-principles.md` exists):
+### UX Conflict Scan (if `design-principles.md` exists)
 
-   在產生 scenarios 之前，強制執行設計原則衝突分析。
+在產生 scenarios 之前，強制執行設計原則衝突分析：
 
-   #### 4a. 設計原則 vs 核心原則交叉比對
-   
-   For each design principle:
-   - 是否需要後端 API 支援？→ 對照 `principles.md` Principle I（後端不可變）
-   - 是否需要 SSE 事件中不存在的欄位？→ 對照 `project-context.md` API 合約
-   - 是否需要新增後端 endpoint？→ 如是，標記 CONFLICT
-   
-   #### 4b. 互動元素可行性檢查
-   
-   For each design principle mentioning UI actions (buttons, links, gestures):
-   - 該操作需要什麼後端能力？（取消、重試、刪除、查詢）
-   - 後端 API 是否提供？（掃描 `project-context.md` REST APIs + SSE Streams）
-   - 若不提供 → 標記 CONFLICT，建議替代方案
-   
-   #### 4c. 參考設計語意差異
-   
-   If design principles reference external products (e.g. "參考 Google Drive"):
-   - 列出被參考的 UI 模式（佈局、互動、動畫）
-   - 對每個互動操作，比較參考產品 vs 本專案的操作語意
-   - 若語意不同（如「×」在 Google Drive = 取消上傳，但本系統無取消 API）→ 標記 SEMANTIC_GAP
-   
-   #### 4d. 產出 Conflict Report
-   
-   ```markdown
-   ### UX Conflict Scan Results
-   
-   | 設計原則 | 衝突類型 | 說明 | 建議替代 |
-   |----------|----------|------|----------|
-   | III-1 重試按鈕 | CONFLICT | 後端無重試 API | 移除重試，改為「請重新上傳」提示 |
-   | II-1 前往知識庫 | CONFLICT | SSE 不含 knowledge_id | 改為通用連結或移除 |
-   | II-2 關閉按鈕 | SEMANTIC_GAP | Google Drive「×」=取消，本系統無取消 | 改為 dismiss（processing 時 disabled） |
-   ```
-   
-   - 有 CONFLICT 或 SEMANTIC_GAP 時 → **暫停**，列出選項讓使用者決策
-   - 使用者決策後，將結果更新到 `design-principles.md` 的「不做的事項」區段
-   - 無衝突時 → 繼續產生 scenarios
+1. **設計原則 vs 核心原則交叉比對**: API 可行性、SSE 欄位存在性、是否需新增後端 endpoint
+2. **互動元素可行性檢查**: 每個 UI action 需要的後端能力是否存在
+3. **參考設計語意差異**: 外部參考產品的操作語意 vs 本專案操作語意
+4. **Conflict Report**: 有 CONFLICT 或 SEMANTIC_GAP 時暫停讓使用者決策
 
-5. **For Each User Story** (in priority order P1, P2, P3...):
+### Scenario Generation
 
-   Generate a `.feature` file following this structure:
+For each User Story (in priority order):
 
-   #### Header
-   ```gherkin
-   @[feature-tag] @P[priority]
-   Feature: [Story Title]
-     As a [actor from spec]
-     I want [capability from spec]
-     So that [business value from spec]
-   ```
+1. **Generate `.feature` file** with proper header, Background, and tagged Scenarios
+2. **Map Example Mapping** rules → scenarios, examples → Given/When/Then
+3. **Add Principles Boundary Scenarios** (`@principles @boundary`)
+4. **Consolidate data-driven scenarios** using Scenario Outline where applicable
+5. **Write** to `FEATURE_DIR/scenarios/[story-slug].feature`
 
-   #### Background (if applicable)
-   
-   Extract common preconditions shared across all scenarios:
-   ```gherkin
-   Background:
-     Given [common precondition from examples]
-     And [another common precondition]
-   ```
+### Context Anchors
 
-   #### Scenarios from Example Mapping
+Create/update `FEATURE_DIR/teammate.refs.yaml` with feature metadata, behavior references, and dependencies.
 
-   For each **Rule** in example-mapping.md:
-   - Convert each **Example** to a Scenario
-   - Apply appropriate tags based on example type:
-     - Happy path ??`@happy-path`
-     - Alternative ??`@alternative`
-     - Negative ??`@negative`
-     - Boundary ??`@boundary`
+### Coverage Validation
 
-   Transform example table rows:
-   ```
-   | Given (Context) | When (Action) | Then (Outcome) |
-   ```
-   
-   Into Gherkin:
-   ```gherkin
-   @happy-path @P1
-   Scenario: [Descriptive scenario name from rule + example]
-     Given [context from example]
-     When [action from example]
-     Then [outcome from example]
-   ```
+| Metric | Count | Status |
+|--------|-------|--------|
+| User Stories | [N] | |
+| Rules from Example Mapping | [N] | |
+| Scenarios Generated | [N] | |
+| Happy Path Coverage | [%] | |
+| Negative Path Coverage | [%] | |
+| Principles Boundaries | [N] | |
 
-   #### Principles Boundary Scenarios
+Requirements: Every rule → at least one scenario. Every P1 story → happy path + negative. Every principles boundary → a scenario.
 
-   For each principles boundary in example-mapping.md:
-   ```gherkin
-   @principles @boundary @P1
-   Scenario: System prevents [violation description]
-     Given [context that could lead to violation]
-     When [action that could violate principle]
-     Then [system prevents violation]
-     And [appropriate alternative behavior]
-   ```
+### Gherkin Quality Check
 
-   #### Data-Driven Scenarios
+- Each scenario is independent (can run in isolation)
+- Steps are declarative (WHAT, not HOW)
+- No implementation details in steps
+- Tags follow convention (@P1/@P2/@P3, @happy-path, etc.)
 
-   If multiple examples follow the same pattern, consolidate:
-   ```gherkin
-   @data-driven @P2
-   Scenario Outline: [Pattern description]
-     Given [context with "<variable>"]
-     When [action with "<variable>"]
-     Then [outcome with "<variable>"]
+---
 
-     Examples:
-       | variable | expected |
-       | value1   | result1  |
-       | value2   | result2  |
-   ```
+## Stage 2: Technical Planning
 
-6. **Write Feature Files**:
+> 產出：`FEATURE_DIR/screenplay.md` + `FEATURE_DIR/tasks.md` + `FEATURE_DIR/contracts/`
 
-   For each user story, write to:
-   `FEATURE_DIR/scenarios/[story-slug].feature`
-   
-   Naming convention:
-   - `us1-user-authentication.feature`
-   - `us2-password-reset.feature`
-   - `us3-profile-management.feature`
+### Load Additional Context
 
-7. **Generate Context Anchors**:
+Optional:
+- `docs/llms.txt` → Check for relevant external API/SDK references
+- `FEATURE_DIR/example-mapping.md`
 
-   Create or update `FEATURE_DIR/teammate.refs.yaml`:
-   
-   ```yaml
-   # Behavior References for [Feature Name]
-   # Auto-generated by /teammate.plan
-   
-   feature:
-     name: [Feature Name]
-     branch: [Branch Name]
-     created: [Date]
-   
-   behaviors:
-     - file: scenarios/us1-*.feature
-       scenarios: [count]
-       tags: [@P1, @happy-path, ...]
-     
-   principles:
-     references:
-       - principle: [Principle Name]
-         scenarios: [List of @principles scenarios]
-   
-   dependencies:
-     - [Other features this depends on]
-   ```
+### Screenplay Pattern Extraction
 
-8. **Coverage Validation**:
+From the `.feature` files, extract the Screenplay model:
 
-   Verify complete coverage:
-   
-   | Metric | Count | Status |
-   |--------|-------|--------|
-   | User Stories | [N] | |
-   | Rules from Example Mapping | [N] | |
-   | Scenarios Generated | [N] | |
-   | Happy Path Coverage | [%] | |
-   | Negative Path Coverage | [%] | |
-   | Principles Boundaries | [N] | |
-   
-   **Coverage Requirements**:
-   - Every rule must have at least one scenario
-   - Every P1 story must have happy path + negative scenarios
-   - Every principles boundary must have a scenario
+1. **Actors Discovery**: Identify actors from scenarios, define roles, goals, abilities
+2. **Abilities Definition**: Group by interaction type (BrowseTheWeb, CallAnApi, QueryDatabase, etc.)
+3. **Tasks Extraction**: Map scenarios to high-level tasks with preconditions, steps, postconditions
 
-9. **Gherkin Quality Check**:
+Write to `FEATURE_DIR/screenplay.md`.
 
-   Validate generated scenarios:
-   
-   - [ ] Each scenario is independent (can run in isolation)
-   - [ ] Steps are declarative (WHAT, not HOW)
-   - [ ] No implementation details in steps
-   - [ ] Scenario names are descriptive and unique
-   - [ ] Tags follow convention (@P1/@P2/@P3, @happy-path, etc.)
-   - [ ] Given/When/Then structure is correct
-   - [ ] No "And" or "But" without preceding Given/When/Then
+### Test Infrastructure Check (Phase 0)
 
-10. **Update Active Context**（Memory Delta Protocol）:
+1. **檢查既有測試框架**: 掃描 `package.json` (vitest/jest/playwright), `pytest.ini`, `go.mod` 等
+2. **若不存在**: 在 tasks.md 新增 Phase 0 必要 IMP（測試框架設定、測試目錄、mock setup）
+3. **若已存在**: 記錄在 Technical Context 中
 
-   Update `.teammate/memory/active-context.md` using delta mode:
-   - **覆寫 `## Current State`**：Phase: Commit, Last Command: plan, Next Action: /teammate.tasks
-   - **追加 `## Session Log`**：`| [timestamp] | plan | [N] scenarios, [coverage]% | [.feature files list] |`
+### Technical Planning
 
-11. **Report Completion**:
+1. **Technical Context**: Language/Version, Dependencies, Storage, Testing framework, Constraints
+2. **Principles Check**: Map each principle to technical decisions. *GATE: Must pass*
+3. **Project Structure**: Source structure with file markers:
+   - `[NEW]` — New file to create
+   - `[ENHANCE]` — Existing file with functional changes
+   - `[INTEGRATE]` — Existing file that must import/mount a [NEW] component (pure wiring)
 
-    Output:
-    - List of generated .feature files with paths
-    - Total scenarios generated
-    - Coverage summary
-    - Any gaps or warnings
-    - Suggested next command: `/teammate.tasks`
+### Integration Impact Analysis
+
+For every `[NEW]` component, identify its **consumer** (existing file that must import/mount it):
+- Every `[NEW]` UI component (not a child of another [NEW]) MUST have at least one `[INTEGRATE]` consumer
+- Common integration points: `+layout.svelte` (global), `+page.svelte` (route-specific), parent components
+
+### UI Interactive State Machine (if UI involved)
+
+For each UI component with interactive elements:
+
+1. **列舉所有互動元素**
+2. **產出狀態機表格**: 元素 / 觸發條件 / 狀態 / 行為
+3. **驗證**: 每個互動元素 MUST 有 enabled + disabled 狀態；每個 disabled MUST 說明原因
+
+### Design Artifacts
+
+Generate as needed:
+- `contracts/api/` — OpenAPI specs
+- `contracts/ui/` — Component specs (with Figma page link if available)
+- `contracts/ai/` — Prompt contracts
+- `data-model.md` — Entities
+
+### Research & Decisions
+
+If NEEDS CLARIFICATION items exist: Generate research tasks, consolidate in `research.md`.
+
+Write to `FEATURE_DIR/tasks.md` using `.teammate/templates/task-template.md`.
+
+---
+
+## Stage 3: Action Breakdown
+
+> 產出：`FEATURE_DIR/actions.md`
+
+### Extract Scenario Tags
+
+Parse all `.feature` files to build tag inventory:
+
+| Tag | Scenario | Priority | Type |
+|-----|----------|----------|------|
+| @us1-login-success | User successfully logs in | @P1 | @happy-path |
+
+### Generate Actions by User Story
+
+For each user story (in priority order):
+
+#### Action Format
+
+Every action MUST follow this format:
+```
+- [ ] [ActionID] [Type] [P?] [Story?] [Verifies: @scenario-tag(s)] Description with file path
+```
+
+Components:
+- `[ActionID]`: Sequential (S001, S002, S003...)
+- `[Type]`: **REQUIRED** — `[LOGIC]`, `[UI]`, or `[LOGIC+UI]`
+- `[P]`: Parallel marker (optional)
+- `[Story]`: User story marker (US1, US2...)
+- `[Verifies: @tag]`: Links to scenario tag(s) — **REQUIRED**
+
+#### RED/GREEN Forced Split
+
+`[LOGIC]` 和 `[LOGIC+UI]` 類型的 action，若涉及 util/store/service/model，MUST 拆為兩個連續 actions：
+
+```markdown
+- [ ] S010 [LOGIC] [US1] [Verifies: @us1-auth] RED: 建立 AuthService 測試 in tests/services/auth.test.ts
+- [ ] S011 [LOGIC] [US1] [Verifies: @us1-auth] GREEN: 實作 AuthService in src/services/auth.ts
+```
+
+`[UI]` 類型不強制拆分（純 UI 無可自動化的 RED 測試）。
+
+#### Integration Actions
+
+For every `[INTEGRATE]` file in tasks.md, generate a mount/import action immediately after the component creation action.
+
+### Phase Structure
+
+- **Phase 0: Setup** — Project initialization, test infrastructure
+- **Phase 1: Foundational** — Core infrastructure
+- **Phase 2+: User Stories** — Story-specific actions (step definitions first, then implementation)
+- **Phase N: Polish** — Cross-cutting concerns, documentation
+
+### Traceability Matrix
+
+```markdown
+| Scenario Tag | Actions | Status |
+|--------------|---------|--------|
+| @us1-login-success | S010, S012-S015 | Pending |
+
+**Coverage**: [X]/[Y] scenarios have linked actions ([Z]%)
+```
+
+### Coverage Validation
+
+- Every @P1 scenario has at least one action
+- Every @happy-path scenario has implementation actions
+- Every @principles scenario has verification actions
+- No orphan actions (actions without scenario links)
+
+Write to `FEATURE_DIR/actions.md` using `.teammate/templates/actions-template.md`.
+
+---
+
+## Final Steps
+
+### Update Agent Context
+
+Run `.teammate/scripts/bash/update-agent-context.sh cursor-agent`.
+
+### Update Active Context（Memory Delta Protocol）
+
+Update `.teammate/memory/active-context.md` using delta mode:
+- **覆寫 `## Current State`**：Phase: Commit (complete), Last Command: plan, Next Action: /teammate.execute
+- **追加 `## Session Log`**：`| [timestamp] | plan | [N] scenarios, [N] tasks, [N] actions, [coverage]% | [key decisions] |`
+
+### Report Completion
+
+Output:
+- Generated files list (`.feature`, `screenplay.md`, `tasks.md`, `actions.md`, contracts)
+- Scenario summary: [N] scenarios across [N] stories
+- Screenplay summary: [N] Actors, [N] Abilities, [N] Tasks
+- Action summary: [N] total actions, [N] per story, [coverage]%
+- Parallel opportunities identified
+- Suggested next command: `/teammate.execute`
+
+---
 
 ## Gherkin Writing Guidelines
-
-### Good Scenario Names
-- "User successfully logs in with valid credentials"
-- "System rejects login attempt with expired password"
-- "Admin can view all user accounts"
-
-### Bad Scenario Names
-- "Test login" (too vague)
-- "Login works" (not descriptive)
-- "Scenario 1" (not meaningful)
-
-### Step Writing Best Practices
-
-**Given** - Context/State
-- "Given the user is logged in"
-- "Given the shopping cart contains 3 items"
-- NOT: "Given I click the login button" (that's an action)
-
-**When** - Action
-- "When the user submits the form"
-- "When the payment is processed"
-- NOT: "When the button turns green" (that's an outcome)
-
-**Then** - Outcome
-- "Then the user sees a confirmation message"
-- "Then the order status is 'Completed'"
-- NOT: "Then click OK" (that's an action)
 
 ### Tag Convention
 
@@ -294,18 +292,25 @@ Goal: **Automatically** transform Example Mapping outputs into executable Gherki
 @alternative                 # Valid alternative flows
 @negative                    # Error/failure scenarios
 @boundary                    # Edge cases and limits
-@principles                # Principles boundary enforcement
+@principles                  # Principles boundary enforcement
 @data-driven                 # Parameterized scenarios
-@wip                        # Work in progress
-@manual                      # Requires manual testing
 ```
 
-## Automatic Mode Behavior
+### Step Writing Best Practices
 
-This command operates automatically:
-- No confirmation prompts for each scenario
-- Generates all .feature files in one pass
-- Reports summary at completion
-- User can review and edit generated files afterward
+**Given** — Context/State: "Given the user is logged in"
+**When** — Action: "When the user submits the form"
+**Then** — Outcome: "Then the user sees a confirmation message"
 
-For interactive/guided mode, use `/teammate.clarify` first to refine examples.
+## Screenplay Pattern Reference
+
+```
+Actor (who?) → Task (what?) → Ability (how?) → System
+```
+
+## Action Principles
+
+- **Atomic & Verifiable**: Small enough for one session, large enough to be meaningful
+- **Traceable Chain**: `Scenario (@tag) → Action (S0XX) → Implementation → Verification`
+- **Red-Green Loop Ready**: Step definitions before code, always RED first
+- **Dependencies**: Models before services, services before endpoints, foundation before stories

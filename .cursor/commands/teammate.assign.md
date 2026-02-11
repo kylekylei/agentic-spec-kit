@@ -161,7 +161,7 @@ For actions with dependencies:
 
 ## Best Practices
 
-1. **Run after `/teammate.actions`**: Ensure actions.md is complete
+1. **Run after `/teammate.plan`**: Ensure actions.md is complete
 2. **Review before assign**: Check actions.md for accuracy
 3. **Use milestones**: Organize issues by phase
 4. **Link to feature branch**: Reference the feature branch in issues

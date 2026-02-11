@@ -185,7 +185,7 @@ The principles integrate with the Teammate lifecycle:
 1. **Align** (`teammate.align`): Principles inform what behaviors are acceptable
 2. **Plan** (`teammate.plan`): Generate @principles scenarios from MUST NOT statements
 3. **Execute** (`teammate.execute`): Principles boundary tests must pass before implementation
-4. **Checklist** (`teammate.checklist`): Living docs show principles compliance status
+4. **Review** (`teammate.review`): Living docs show principles compliance status
 
 ### Example Principles Structure
 
