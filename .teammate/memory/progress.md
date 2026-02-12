@@ -1,57 +1,26 @@
-# Progress Tracker
+# Active Context
 
-## Features Overview
+> This file tracks the current working context for AI agents. Updated automatically by Teammate commands using **Memory Delta Protocol** (see teammate-rules.mdc).
 
-| ID | Feature Name | Phase | Status | Started | Completed |
-|----|--------------|-------|--------|---------|-----------|
-| 001 | [Feature Name] | Discovery/Definition/Delivery | Draft/In Progress/Complete | [Date] | [Date] |
+## Current State
 
-## Current Sprint / Iteration
+<!-- 此區塊由最近一個指令覆寫（僅此區塊） -->
 
-**Sprint**: [Sprint Name or Number]
-**Goal**: [Sprint Goal]
-**Period**: [Start Date] - [End Date]
+- **Active Feature**: [None]
+- **Feature Branch**: [None]
+- **Phase**: [Foundation / Align / Commit / Deliver]
+- **Last Command**: [None]
+- **Next Action**: [/teammate.init]
 
-### In Progress
+## Session Log
 
-| Feature | Current Stage | Assignee | Blockers |
-|---------|--------------|----------|----------|
-| [Feature] | [Stage] | [Name/AI] | [None/Blocker] |
+<!-- 此區塊為 append-only，每個指令完成時追加一行，禁止修改或刪除既有行 -->
 
-### Completed This Sprint
+| Timestamp | Command | Key Output | Notes |
+|-----------|---------|------------|-------|
 
-| Feature | Completed | Scenarios Passed | Notes |
-|---------|-----------|------------------|-------|
-| [Feature] | [Date] | [X/Y] | [Notes] |
+## Blockers
 
-## Change Log
+<!-- 有 blocker 時記錄，解決後標記 [RESOLVED] 而非刪除 -->
 
-> Simple changelog of significant changes
-
-### [DATE]
-
-- **[Feature/Area]**: [Change description]
-- **[Feature/Area]**: [Change description]
-
-### [PREVIOUS_DATE]
-
-- **[Feature/Area]**: [Change description]
-
-## Metrics
-
-### Behavior Coverage
-
-| Feature | Total Scenarios | Passing | Failing | Pending |
-|---------|----------------|---------|---------|---------|
-| [Feature] | [N] | [N] | [N] | [N] |
-| **Total** | **[N]** | **[N]** | **[N]** | **[N]** |
-
-### Velocity
-
-| Sprint | Features Completed | Scenarios Delivered | Notes |
-|--------|-------------------|---------------------|-------|
-| [Sprint] | [N] | [N] | [Notes] |
-
----
-
-**Last Updated**: [DATE]
+(None)

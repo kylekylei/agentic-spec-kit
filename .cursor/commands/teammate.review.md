@@ -34,7 +34,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage, artif
 
 ### Phase 0: Foundation Check
 
-1. **Read `.teammate/memory/project-context.md`**
+1. **Read `.teammate/memory/context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
    - If found → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
 
@@ -236,11 +236,11 @@ Based on findings:
 
 ## Update Progress
 
-Update `.teammate/memory/progress.md`: Feature verification status, coverage metrics, readiness assessment.
+Update `.teammate/memory/milestone.md`: Feature verification status, coverage metrics, readiness assessment.
 
 ## Update Active Context（Memory Delta Protocol）
 
-Update `.teammate/memory/active-context.md` using delta mode:
+Update `.teammate/memory/progress.md` using delta mode:
 - **覆寫 `## Current State`**：Phase: Deliver, Last Command: review, Next Action: [recommended command]
 - **追加 `## Session Log`**：`| [timestamp] | review | [N] critical, [N] high, Readiness: [status] | [recommendation] |`
 - **更新 `## Blockers`**：如有 CRITICAL findings，記錄為 blocker

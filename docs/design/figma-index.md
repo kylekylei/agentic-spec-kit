@@ -1,13 +1,13 @@
 # Design References Index
 
-> Centralized index of all design resources. Project-level Figma URL lives in `.teammate/memory/project-context.md`. Feature-level page links live in `features/[feature]/contracts/ui/`.
+> Centralized index of all design resources. Project-level Figma URL lives in `.teammate/memory/context.md`. Feature-level page links live in `features/[feature]/contracts/ui/`.
 
 ## Project-Level
 
 | Resource | URL | Description |
 |----------|-----|-------------|
-| Figma | See `project-context.md` → Design References | Main Figma project |
-| Storybook | See `project-context.md` → Design References | Component library |
+| Figma | See `context.md` → Design References | Main Figma project |
+| Storybook | See `context.md` → Design References | Component library |
 
 ## Feature-Level Design Pages
 

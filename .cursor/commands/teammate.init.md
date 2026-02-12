@@ -1,5 +1,5 @@
 ---
-description: Initialize or audit project foundation — check/fill project-context.md and principles.md, bootstrap environment. Combines kickoff + principles into one command.
+description: Initialize or audit project foundation — check/fill context.md and principles.md, bootstrap environment. Combines kickoff + principles into one command.
 handoffs: 
   - label: Start Alignment
     agent: teammate.align
@@ -36,7 +36,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ## Phase 1: Detect & Report
 
-1. **Read `.teammate/memory/project-context.md`**
+1. **Read `.teammate/memory/context.md`**
    - Scan for `[ALL_CAPS_IDENTIFIER]` placeholder tokens
    - Classify: Template / Partial / Complete
 
@@ -47,7 +47,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 3. **Report current status**:
    ```
    Foundation Status:
-   - project-context.md: [Template/Partial/Complete] ([N] placeholders remaining)
+   - context.md: [Template/Partial/Complete] ([N] placeholders remaining)
    - principles.md: [Template/Partial/Complete] ([N] placeholders remaining)
    ```
 
@@ -72,7 +72,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 3. **For missing required fields**: make informed guesses; only ask user if no reasonable default exists. **Maximum 5 questions**.
 
-4. **Fill `.teammate/memory/project-context.md`**:
+4. **Fill `.teammate/memory/context.md`**:
    - Project Identity (name, description, repo URL)
    - Core Behaviors (observable, testable)
    - Target Users (personas, roles, goals)
@@ -126,7 +126,7 @@ Based on Technical Context, set up the project's base environment:
 
 當兩個檔案都完整時，執行健康分析：
 
-### project-context.md 分析
+### context.md 分析
 
 - **陳舊偵測**: tech stack 描述是否與實際 package.json/go.mod 一致？
 - **缺漏偵測**: 是否有新增的 integration points 未記錄？
@@ -145,7 +145,7 @@ Output a structured report:
 ```markdown
 ## Foundation Audit Report
 
-### project-context.md
+### context.md
 - Status: ✅ Complete
 - Findings:
   - [SUGGEST] Technical Context 的 framework 版本可更新（package.json 顯示 v5.x，context 記錄 v4.x）
@@ -165,9 +165,9 @@ Output a structured report:
 
 ### Update Active Context（Memory Delta Protocol）
 
-Update `.teammate/memory/active-context.md` using delta mode:
+Update `.teammate/memory/progress.md` using delta mode:
 - **覆寫 `## Current State`**：Phase: Foundation, Last Command: init, Next Action: /teammate.align
-- **追加 `## Session Log`**：`| [timestamp] | init | [mode]: project-context [status], principles [status] | [bootstrap result] |`
+- **追加 `## Session Log`**：`| [timestamp] | init | [mode]: context [status], principles [status] | [bootstrap result] |`
 - **更新 `## Blockers`**：如有未解決的 placeholder，記錄為 blocker
 
 ### Report

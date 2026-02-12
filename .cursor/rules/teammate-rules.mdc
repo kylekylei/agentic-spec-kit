@@ -18,7 +18,7 @@ Init → Align → Plan → Execute → Review
 
 | Command | Purpose |
 |---------|---------|
-| `/teammate.init` | Initialize or audit project foundation (`project-context.md` + `principles.md`) |
+| `/teammate.init` | Initialize or audit project foundation (`context.md` + `principles.md`) |
 
 ### Per Feature
 
@@ -44,7 +44,7 @@ Init → Align → Plan → Execute → Review
 
 **Before any Align/Commit/Deliver command**, verify:
 
-1. `.teammate/memory/project-context.md` has no `[PLACEHOLDER]` tokens
+1. `.teammate/memory/context.md` has no `[PLACEHOLDER]` tokens
 2. `.teammate/memory/principles.md` has no `[PLACEHOLDER]` tokens
 
 If either fails, stop and direct the user to run `/teammate.init`.
@@ -54,10 +54,10 @@ If either fails, stop and direct the user to run `/teammate.init`.
 ```
 .teammate/
 ├── memory/
-│   ├── project-context.md    # Project identity, users, goals, tech stack
+│   ├── context.md    # Project identity, users, goals, tech stack
 │   ├── principles.md         # Non-negotiable principles (MUST / MUST NOT)
-│   ├── active-context.md     # Current session state (auto-updated)
-│   └── progress.md           # Progress tracking
+│   ├── progress.md          # Current session state (auto-updated)
+│   └── milestone.md         # Milestone tracking
 ├── snapshots/                # Decision & plan change snapshots
 ├── templates/                # Document templates
 ├── scripts/bash/             # Automation scripts
@@ -106,7 +106,7 @@ Snapshots are stored in `.teammate/snapshots/` and are meant for human review, n
 ```
 System Layer（系統層 — 跨 feature 不變）:
   - principles.md          # 不可違反的原則
-  - project-context.md     # 專案身份、技術棧、架構慣例
+  - context.md     # 專案身份、技術棧、架構慣例
 
 Task Layer（任務層 — per feature）:
   - spec.md                # WHAT: 要做什麼
@@ -129,9 +129,9 @@ User Layer（使用者層 — 持久 + 即時）:
 
 | Insight 類型 | 畢業目標 |
 |-------------|---------|
-| Codebase Conventions / Patterns | 提升到 `project-context.md` 的 Architecture Patterns |
+| Codebase Conventions / Patterns | 提升到 `context.md` 的 Architecture Patterns |
 | Gotchas / 約束 | 提升到 `principles.md` 的新 MUST/MUST NOT 規則 |
-| Technical Decisions | 記錄到 `project-context.md` 的 Key Decisions |
+| Technical Decisions | 記錄到 `context.md` 的 Key Decisions |
 
 畢業流程：
 1. AI 在 REFLECT 中發現重複 insight，建議：「此 insight 已在 3+ features 出現，建議提升到 [target]」
@@ -140,7 +140,7 @@ User Layer（使用者層 — 持久 + 即時）:
 
 ## Memory Delta Protocol
 
-`active-context.md` 採用**分區更新模式**，防止 Context Collapse（經多次全量覆寫後早期細節流失）。
+`progress.md` 採用**分區更新模式**，防止 Context Collapse（經多次全量覆寫後早期細節流失）。
 
 ### 分區結構
 
@@ -182,8 +182,8 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
 - **Behavior over implementation.** Specs describe WHAT the system does, not HOW it's built.
 - **Red-Green discipline.** During `/teammate.execute`, always write step definitions first (RED), then implement (GREEN).
 - **No skipping phases.** Each command depends on artifacts from previous commands.
-- **Figma links are per-feature.** Project-level Figma URL goes in `project-context.md`. Feature-level page links go in `contracts/ui/` during `/teammate.plan`.
-- **Update active-context.md using Memory Delta Protocol** after each command completes — 覆寫 Current State、追加 Session Log、更新 Blockers（見 Memory Delta Protocol 區段）。
+- **Figma links are per-feature.** Project-level Figma URL goes in `context.md`. Feature-level page links go in `contracts/ui/` during `/teammate.plan`.
+- **Update progress.md using Memory Delta Protocol** after each command completes — 覆寫 Current State、追加 Session Log、更新 Blockers（見 Memory Delta Protocol 區段）。
 - **Explicit handoff required.** Every `teammate.*` command must state when to use it and the next suggested command (or handoff) so developers can follow the flow without ambiguity.
 - **Snapshot on significant changes.** When principles, plans, or scope change, create a snapshot before overwriting.
 - **文件以繁體中文撰寫.** 透過 `teammate.*` 指令產生的所有文件（spec.md、example-mapping.md、scenarios/*.feature、plan.md、checklists/ 等），其內文描述 MUST 以**繁體中文**撰寫。以下項目允許使用英文：

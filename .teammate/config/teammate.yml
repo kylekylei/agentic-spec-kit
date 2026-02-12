@@ -10,8 +10,8 @@ lifecycle:
   foundation:
     init:
       required: true
-      description: "Initialize or audit project foundation (project-context + principles)"
-      output: "project-context.md + principles.md"
+      description: "Initialize or audit project foundation (context + principles)"
+      output: "context.md + principles.md"
 
   per_feature:
     align:
@@ -144,14 +144,14 @@ memory:
   
   files:
     principles: "principles.md"
-    project_context: "project-context.md"
-    active_context: "active-context.md"
+    project_context: "context.md"
     progress: "progress.md"
+    milestone: "milestone.md"
 
   # Auto-update settings
   auto_update:
-    active_context: true   # Update on each command
-    progress: true         # Update on phase completion
+    progress: true         # Update on each command
+    milestone: true        # Update on phase completion
 
 # =============================================================================
 # SCRIPT SETTINGS

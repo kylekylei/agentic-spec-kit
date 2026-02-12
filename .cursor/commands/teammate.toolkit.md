@@ -77,7 +77,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 檢查 Teammate Foundation 是否正確初始化：
 
-**1a. project-context.md**
+**1a. context.md**
 - 檔案是否存在？
 - 掃描 `[ALL_CAPS_IDENTIFIER]` placeholder tokens → 若有則 CRITICAL
 - 必要欄位是否填寫？（專案名稱、技術棧、使用者角色）
@@ -87,7 +87,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 - 掃描 `[ALL_CAPS_IDENTIFIER]` placeholder tokens → 若有則 CRITICAL
 - 是否包含至少一條核心原則（MUST / MUST NOT）？
 
-**1c. active-context.md**
+**1c. progress.md**
 - 檔案是否存在？
 - 是否記載了當前階段和下一步動作？
 
@@ -97,12 +97,12 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 #### Pass 2: Phase-Aware Artifact Inventory
 
-根據 `active-context.md` 記載的**當前階段**，判斷哪些 artifact 應該存在、哪些還不需要：
+根據 `progress.md` 記載的**當前階段**，判斷哪些 artifact 應該存在、哪些還不需要：
 
 ```
 Teammate 流程：Foundation → Align → Commit → Deliver
 
-Foundation 階段產物：project-context.md, principles.md
+Foundation 階段產物：context.md, principles.md
 Align 階段產物：spec.md, example-mapping.md（簡化流程可省略 example-mapping）
 Commit 階段產物：scenarios/*.feature, plan.md, contracts/ui/ui-spec.md
 Deliver 階段產物：checklists/*.md, 實作程式碼
@@ -112,7 +112,7 @@ Deliver 階段產物：checklists/*.md, 實作程式碼
 
 | Artifact | 所屬階段 | 當前階段應存在？ | 實際存在？ | Status |
 |----------|---------|---------------|----------|--------|
-| project-context.md | Foundation | ✅ | ✅/❌ | OK / MISSING |
+| context.md | Foundation | ✅ | ✅/❌ | OK / MISSING |
 | principles.md | Foundation | ✅ | ✅/❌ | OK / MISSING |
 | spec.md | Align | ✅/— | ✅/❌ | OK / MISSING / NOT YET |
 | example-mapping.md | Align | ✅/— | ✅/❌ | OK / MISSING / NOT YET / SKIPPED (simplified) |
@@ -136,9 +136,9 @@ Status 定義：
 - 異常：如果 `plan.md` 的時間比 `spec.md` 早 → 可能跳過了 Align 階段
 
 **3b. Active Context 一致性**
-- `active-context.md` 標記的「當前階段」是否與實際存在的 artifact 吻合？
-- 例如：active-context 說在 `Deliver`，但 `plan.md` 不存在 → CRITICAL
-- 例如：active-context 說在 `Align`，但 `plan.md` 已存在 → 可能忘記更新 active-context
+- `progress.md` 標記的「當前階段」是否與實際存在的 artifact 吻合？
+- 例如：progress 說在 `Deliver`，但 `plan.md` 不存在 → CRITICAL
+- 例如：progress 說在 `Align`，但 `plan.md` 已存在 → 可能忘記更新 progress
 
 **3c. Simplified Flow 合規**（若走簡化流程）
 - 簡化流程最低要求：`spec.md` + `plan.md` 必須存在
@@ -182,16 +182,16 @@ spec.md (FR-xxx) → scenarios/*.feature (@tag) → plan.md Part 2 (Sxxx [Verifi
 
 **Feature**: [Name]
 **Scanned**: [Date]
-**Current Phase**: [Foundation / Align / Commit / Deliver]（依 active-context.md）
+**Current Phase**: [Foundation / Align / Commit / Deliver]（依 progress.md）
 **Health**: [Healthy 🟢 / Needs Attention 🟡 / Issues Found 🔴]
 
 ## Foundation Status
 
 | Item | Status | Detail |
 |------|--------|--------|
-| project-context.md | ✅/❌ | [OK / Has placeholders / Missing] |
+| context.md | ✅/❌ | [OK / Has placeholders / Missing] |
 | principles.md | ✅/❌ | [OK / Has placeholders / Missing] |
-| active-context.md | ✅/❌ | [OK / Stale / Missing] |
+| progress.md | ✅/❌ | [OK / Stale / Missing] |
 | teammate.yml | ✅/❌ | [OK / Incomplete / Missing] |
 
 ## Phase-Aware Inventory
@@ -259,8 +259,8 @@ spec.md (FR-xxx) → scenarios/*.feature (@tag) → plan.md Part 2 (Sxxx [Verifi
 ### Execution Steps
 
 1. **載入 Context**
-   - 讀取 Foundation：`project-context.md`、`principles.md`
-   - 讀取 `active-context.md`（當前階段）
+   - 讀取 Foundation：`context.md`、`principles.md`
+   - 讀取 `progress.md`（當前階段）
    - 讀取當前 feature 的所有 artifact（如有）
    - 讀取 `PLAYBOOK.md`（歷史教訓）
    - 讀取相關的 `teammate.*.md` 指令定義（如果問題涉及特定指令）
@@ -476,7 +476,7 @@ spec.md (FR-xxx) → scenarios/*.feature (@tag) → plan.md Part 2 (Sxxx [Verifi
 
 #### Step 8: Update Active Context
 
-若專案有 `.teammate/memory/active-context.md`：
+若專案有 `.teammate/memory/progress.md`：
 - 追加 Session Log：`migrate | [project_version] → [hub_version], N files updated`
 
 ---

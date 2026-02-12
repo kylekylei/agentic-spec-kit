@@ -93,7 +93,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    - `data-model.md` - Entities
    - `research.md` - Decisions
 
-   > **反簡短偏差**：Recommended 層級的資源不得以「節省 context」為由跳過。只取最近 2 個 insights 是為了避免 context window 過載；足夠重要的 insight 會「畢業」到 project-context。
+   > **反簡短偏差**：Recommended 層級的資源不得以「節省 context」為由跳過。只取最近 2 個 insights 是為了避免 context window 過載；足夠重要的 insight 會「畢業」到 context.md。
 
 4. **Project Setup Verification**:
 
@@ -126,7 +126,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    規則：
    - 只在上述條件下暫停，不影響正常 action 的執行效率
    - 用戶可回覆「繼續」或「調整」
-   - 暫停事件記錄到 `active-context.md`
+   - 暫停事件記錄到 `progress.md`
 
 7. **Execute Red-Green Loop**:
 
@@ -238,12 +238,12 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 
     當一個 Phase 的所有 actions 都完成時，MUST 執行以下同步：
 
-    1. **更新 `progress.md`**：
+    1. **更新 `milestone.md`**：
        - Feature Registry 中該 feature 的 Status 更新為當前 Phase
        - Deliverables 反映已完成的產出
        - Metrics 更新（通過的 scenarios 數、action 完成率）
 
-    2. **更新 `active-context.md`**：
+    2. **更新 `progress.md`**：
        - Current Phase 更新為下一個 Phase
        - Next Actions 列出下一 Phase 的第一個 action
        - 記錄已完成 Phase 的摘要
@@ -252,7 +252,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 
 12. **Update Active Context**（Memory Delta Protocol）:
 
-    Update `.teammate/memory/active-context.md` using delta mode:
+    Update `.teammate/memory/progress.md` using delta mode:
     - **覆寫 `## Current State`**：Phase: Deliver, Last Command: execute [action ID], Next Action: [next action or /teammate.review]
     - **追加 `## Session Log`**：`| [timestamp] | execute [ID] | [GREEN/RED], [action description] | [insights discovered if any] |`
     - **更新 `## Blockers`**：如有 failing scenarios 或 Risk Gate 暫停，記錄為 blocker；已解決的標記 `[RESOLVED]`

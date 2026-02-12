@@ -155,8 +155,8 @@
 **狀態**: 生效中
 
 #### 2026-02-10 · 命令 · sltung-km
-**觸發**: execute 完成 Phase 後只更新 actions.md，progress.md 和 active-context.md 未同步，memory 與進度脫節
-**決策**: execute 新增「階段完成同步」步驟：Phase 完成時 MUST 更新 progress.md + active-context.md
+**觸發**: execute 完成 Phase 後只更新 actions.md，milestone.md 和 progress.md 未同步，memory 與進度脫節
+**決策**: execute 新增「階段完成同步」步驟：Phase 完成時 MUST 更新 milestone.md + progress.md
 **影響**: `teammate.execute.md`
 **成效**: memory 與執行進度自動同步
 **狀態**: 生效中
@@ -273,6 +273,13 @@
 **成效**: 待驗證（本次變更）
 **狀態**: 生效中
 
+#### 2026-02-11 · 架構 · Teammate
+**觸發**: memory 檔名語意不清：project-context 冗餘前綴、active-context 與 project-context 語意重疊、progress 和 active-context 角色混淆
+**決策**: 三檔重命名：project-context.md → context.md、active-context.md → progress.md（動態進度）、progress.md → milestone.md（靜態里程碑）
+**影響**: 3 個檔案重命名 + 12 個檔案引用更新（5 指令 + rules + toolkit + yml + README + PLAYBOOK + memory README + figma-index）
+**成效**: memory 目錄一眼可辨：context / principles / progress / milestone
+**狀態**: 生效中
+
 ---
 
 ## 2. 尚未實現（未來可實現）
@@ -356,7 +363,7 @@
 | Dynamic Cheatsheet | `tasks/[###-name]/insights.md` |
 | Reflector | execute REFLECT 步驟 |
 | Curator | Insights Graduation 機制（3+ 次重複 → 提升） |
-| Incremental Delta | Memory Delta Protocol（active-context.md 分區追加） |
+| Incremental Delta | Memory Delta Protocol（progress.md 分區追加） |
 | Combat Brevity Bias | Context Loading Discipline（Required/Recommended/Optional） |
 | HITL | Risk-Based Gates（4 個暫停條件） |
 | Observability | Decision Trace（insights.md Decision Log） |
@@ -365,7 +372,7 @@
 - A: 新增 `insights-template.md`
 - B: Red-Green Loop → Red-Green-Refactor-Reflect
 - C: Context Loading 三層（Required/Recommended/Optional）
-- D: Insights Graduation（3+ features → 提升到 project-context/principles）
+- D: Insights Graduation（3+ features → 提升到 context/principles）
 - E: Memory Delta Protocol + 全部指令改為分區更新
 - F: 4 個 Risk-Based HITL Gates
 - G: Context Layer 三層定義（System/Task/User）
@@ -481,4 +488,4 @@ User Layer（使用者層 — 持久 + 即時）:
 
 ---
 
-**Last Updated**: 2026-02-11（PLAYBOOK 全面重整：雙軌架構 + 結構化欄位 + Roadmap/Backlog）
+**Last Updated**: 2026-02-11（memory 檔名重整：context / progress / milestone）

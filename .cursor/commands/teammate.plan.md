@@ -33,7 +33,7 @@ Parse `$ARGUMENTS` for keywords:
 
 ### Phase 0: Foundation Check
 
-1. **Read `.teammate/memory/project-context.md`**
+1. **Read `.teammate/memory/context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
    - If found → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
 
@@ -254,7 +254,7 @@ Run `.teammate/scripts/bash/update-agent-context.sh cursor-agent`.
 
 ### Update Active Context（Memory Delta Protocol）
 
-Update `.teammate/memory/active-context.md` using delta mode:
+Update `.teammate/memory/progress.md` using delta mode:
 - **覆寫 `## Current State`**：Phase: Commit (complete), Last Command: plan, Next Action: /teammate.execute
 - **追加 `## Session Log`**：`| [timestamp] | plan | [N] scenarios, plan.md ([N] tasks, [N] actions), [coverage]% | [key decisions] |`
 

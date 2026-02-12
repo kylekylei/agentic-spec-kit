@@ -37,7 +37,7 @@ Parse `$ARGUMENTS` for the keyword **`update`**:
 
 ### Phase 0: Foundation Check
 
-1. **Read `.teammate/memory/project-context.md`**
+1. **Read `.teammate/memory/context.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
    - If found → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
 
@@ -46,7 +46,7 @@ Parse `$ARGUMENTS` for the keyword **`update`**:
    - If found → **ERROR**: "Principles not defined. Run `/teammate.init` first."
 
 3. **If both pass** → Load both files as working context:
-   - project-context.md provides WHO (actors), WHY (business goals), and technical constraints
+   - context.md provides WHO (actors), WHY (business goals), and technical constraints
    - principles.md provides behavioral boundaries and invariants
 
 ### Phase 1: Setup
@@ -213,7 +213,7 @@ Transform abstract user stories into concrete, testable examples. This creates t
 
 ### Phase 7: Update Active Context（Memory Delta Protocol）
 
-Update `.teammate/memory/active-context.md` using delta mode:
+Update `.teammate/memory/progress.md` using delta mode:
 - **覆寫 `## Current State`**：Active Feature: [name], Feature Branch: [branch], Phase: Align (complete), Last Command: align, Next Action: /teammate.plan
 - **追加 `## Session Log`**：`| [timestamp] | align | Feature: [name], spec.md + example-mapping.md | [rules/examples count, open questions] |`
 - **更新 `## Blockers`**：如有未解決的 high-impact questions，記錄為 blocker
