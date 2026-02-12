@@ -118,9 +118,20 @@ Requirements: Every rule → at least one scenario. Every P1 story → happy pat
 
 ### Load Additional Context
 
-Optional:
-- `docs/llms.txt` → Check for relevant external API/SDK references
+Optional（如存在則載入）:
+- `docs/llms.txt` → 外部 API/SDK 參考索引（遵循 llms.txt 標準）
 - `FEATURE_DIR/example-mapping.md`
+
+### Design Asset Detection（動態）
+
+檢查 `.teammate/design/figma-index.md` 是否存在：
+
+- **If exists**:
+  1. Load as design context
+  2. Mark: UI Deep Analysis will be triggered (or auto-triggered if ≥ 3 UI components)
+  3. Append current feature page link to `figma-index.md` Feature Pages table (if user provides)
+  4. **Enable `contracts/ui/ui-spec.md` generation** in Stage 2.5
+- **If not exists** → Skip UI-specific artifact generation (unless `--ui` flag is used)
 
 ### Compliance Detection（動態）
 
@@ -166,7 +177,12 @@ If NEEDS CLARIFICATION items exist: Generate research tasks, consolidate in plan
 
 > 產出：`FEATURE_DIR/contracts/ui/ui-spec.md`（統一 UI 規格）
 
-**觸發條件**: spec.md + Project Structure 中 `[NEW]`/`[ENHANCE]` UI 組件數量 ≥ 3，或使用者指定 `--ui`。
+**觸發條件**（滿足任一）:
+1. `.teammate/design/figma-index.md` 存在（表示專案有設計資產）
+2. spec.md + Project Structure 中 `[NEW]`/`[ENHANCE]` UI 組件數量 ≥ 3
+3. 使用者指定 `--ui` flag
+
+> 若無 `figma-index.md` 且未達觸發條件，此階段跳過，不產生 `contracts/ui/ui-spec.md`。
 
 ### Component Inventory
 

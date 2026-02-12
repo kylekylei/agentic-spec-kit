@@ -13,10 +13,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Summary
-指令精簡（11→5+audit）、artifact 合併、目錄與檔名重整、動態合規監控。**包含多項破壞性變更**，既有專案需執行 `/teammate.toolkit migrate`。
+指令精簡（11→5+audit）、artifact 合併、目錄與檔名重整、動態合規監控、設計資產動態建立。**包含多項破壞性變更**，既有專案需執行 `/teammate.toolkit migrate`。
 
 ### Added
 - `/teammate.audit` 指令 — Sarcasmotron 對抗性合規審計（Security + Design Debt + 動態 A11y + 動態 AI Risk）
+- `.teammate/design/` 目錄 — 設計資產（由 `/teammate.align` 動態建立，偵測 `context.md` 有 Figma URL 時觸發）
+- `/teammate.align` Figma URL 動態偵測 — 自動建立 `.teammate/design/figma-index.md`
+- `/teammate.plan` 設計資產偵測 — 偵測 `figma-index.md` 存在時啟用 UI Deep Analysis
 - `ai-compliance` skill — AI 風險合規實作指南 + Pass/Fail 代碼範例（動態偵測 LLM 才載入）
 - `a11y-compliance` skill 新增動態偵測邏輯（偵測前端才載入）
 - `docs/a11y-compliance/` — A11y 法規背景（LLM 友善格式）
@@ -27,6 +30,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 - `teammate.execute` Compliance Skills 載入（動態偵測後載入對應 skill）
 
 ### Changed
+- **省 Token 混合模式** — `teammate-rules.mdc` 新增 Output Mode 輸出契約（Lean / Diagnostic / Blocker），大幅縮減日常指令回覆長度
+- **下一步格式精簡** — 移除 ABCD 多選 + 時間段休息選項，改為單一推薦下一步
+- **`.cursorule` 新增省 Token 原則** — 禁止廢話、冗餘輸出、多選格式
 - **Commands 精簡 11→5**：`init → align → plan → execute → review`（+ toolkit）
 - `teammate.align` 合併 `teammate.clarify`（Example Mapping 移入 align Phase 5）
 - `teammate.plan` 合併 `teammate.tasks` + `teammate.actions`（輸出 `plan.md`）
@@ -73,6 +79,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 - `.teammate/templates/task-template.md`（併入 plan-template）
 - `.teammate/templates/actions-template.md`（併入 plan-template）
 - `.teammate/templates/screenplay-template.md`（移除）
+- `docs/llms.txt`（改為專案選用，不預設存在）
+- `docs/design/figma-index.md`（移至 `.teammate/design/`，由 align 動態建立）
 
 ### Framework Files（目前清單）
 
@@ -123,6 +131,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 - `project-context.md` → `context.md`、`active-context.md` → `progress.md`、`progress.md` → `milestone.md` 需手動重命名
 - `screenplay.md` 可安全刪除（內容已整合到 plan.md Actors & Abilities section）
 - 刪除已移除的指令檔案（kickoff/principles/clarify/tasks/actions/checklist/assign/figma/ui）
+- `docs/llms.txt` 不再預設存在；如專案使用第三方 API/SDK，可自行建立
+- `docs/design/figma-index.md` 移至 `.teammate/design/figma-index.md`；該檔案由 `/teammate.align` 動態建立（當 `context.md` 包含 Figma URL 時）
 
 ---
 

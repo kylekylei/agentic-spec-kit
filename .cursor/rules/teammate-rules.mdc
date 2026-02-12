@@ -60,10 +60,12 @@ If either fails, stop and direct the user to run `/teammate.init`.
 ```
 .teammate/
 ├── memory/
-│   ├── context.md    # Project identity, users, goals, tech stack
+│   ├── context.md            # Project identity, users, goals, tech stack
 │   ├── principles.md         # Non-negotiable principles (MUST / MUST NOT)
-│   ├── progress.md          # Current session state (auto-updated)
-│   └── milestone.md         # Milestone tracking
+│   ├── progress.md           # Current session state (auto-updated)
+│   └── milestone.md          # Milestone tracking
+├── design/                   # Design assets (created by /teammate.align when Figma URL detected)
+│   └── figma-index.md        # Figma project & feature page links
 ├── snapshots/                # Decision & plan change snapshots
 ├── templates/                # Document templates
 ├── scripts/bash/             # Automation scripts
@@ -71,13 +73,11 @@ If either fails, stop and direct the user to run `/teammate.init`.
 
 CHANGELOG.md                  # Version release notes (parsed by /teammate.toolkit migrate)
 
-docs/                         # External reference knowledge base
-├── llms.txt                  # Index of all references (llms.txt standard)
-├── [library-name]/           # Per-library API docs & llms.txt
-│   ├── llms.txt
-│   └── api-reference.md
-└── design/                   # Design system docs & Figma index
-    └── figma-index.md
+docs/                         # External reference knowledge base (optional)
+├── llms.txt                  # Index of all references (llms.txt standard, if exists)
+└── [library-name]/           # Per-library API docs & llms.txt
+    ├── llms.txt
+    └── api-reference.md
 
 tasks/[###-task-name]/        # Per-task artifacts
 ├── spec.md                   # /teammate.align output (spec)
@@ -182,6 +182,35 @@ When plans need to change (design revision, verification failure, scope change):
 
 Update mode preserves existing work, snapshots before overwriting, and marks changes with `[UNCHANGED]` / `[NEW]` / `[REVISED]` / `[REMOVED]` markers. Completed actions are never discarded.
 
+## Output Mode（省 Token 混合模式）
+
+所有 `teammate.*` 指令回覆必須遵守以下輸出契約，以降低 token 消耗：
+
+| 模式 | 適用指令 | 輸出內容 |
+|------|----------|----------|
+| **Lean** | init / align / plan / execute / toolkit | 狀態 + 產出檔案路徑 + 1 個下一步指令。**禁止**長摘要、重複內容、客套話。 |
+| **Diagnostic** | review / audit | Critical/High findings（含位置）+ Gate 結論 + 修復優先序。可展開細節。 |
+| **Blocker** | 任何指令遇阻塞 | 1 個關鍵問題 + 1 個建議動作。 |
+
+### 輸出禁令
+
+- 禁止解釋「為什麼這樣做」（除非使用者問）
+- 禁止客套話（「好的，我來幫你...」）
+- 禁止列舉多方案讓使用者選（直接給最佳解）
+- 禁止重複使用者說過的話
+- 禁止輸出不必要的註解、文件說明、README、範例程式碼（除非明確要求）
+- 修改檔案時只給變更部分，不輸出整個檔案
+
+### 下一步格式
+
+每個指令完成後，僅輸出**單一推薦下一步**（不需 ABCD 多選）：
+
+```
+下一步 → /teammate.[command]
+```
+
+若有多個合理選項，最多列 2 個，不附時間段休息選項。
+
 ## Rules
 
 - **Principles are supreme.** Defined principles override all other decisions. Violations are always CRITICAL.
@@ -198,23 +227,7 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
   - 框架或技術專有名詞（如 Gherkin、Svelte、SSE、Tailwind、Scenario Outline）
   - Gherkin 關鍵字（`Feature`、`Scenario`、`Given`、`When`、`Then`、`And`、`But`、`Background`、`Examples`）
   - Markdown 結構標記與表格欄位標題（可中可英，但內容描述必須中文）
-- **主動提供下一步選項.** 每個 `teammate.*` 指令完成後，AI 必須在回覆末尾以結構化格式列出可選的下一步動作，格式如下：
-
-```
-接下來要做什麼？
-
-- [A] 動作描述（對應的 /teammate.* 指令）
-- [B] 動作描述
-- [C] 動作描述
-- [D] {根據當前時間選擇，產出前先用 `date +%H:%M` 取得本機時間}
-  - 06:00-08:59 → 先吃個早餐，回來再繼續
-  - 09:00-11:59 → 休息一下，喝杯咖啡
-  - 12:00-13:29 → 先去吃午餐
-  - 13:30-17:29 → 休息一下，喝杯咖啡
-  - 17:30-19:29 → 先去吃晚餐
-  - 19:30-22:59 → 今天先到這，明天繼續
-  - 23:00-05:59 → 太晚了，先去睡覺
-```
+- **主動提供下一步.** 每個 `teammate.*` 指令完成後，僅輸出單一推薦下一步（見 Output Mode 區段），不需多選格式。
 
 ## Simplified Flow (for small, focused tasks)
 

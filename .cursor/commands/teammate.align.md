@@ -49,6 +49,32 @@ Parse `$ARGUMENTS` for the keyword **`update`**:
    - context.md provides WHO (actors), WHY (business goals), and technical constraints
    - principles.md provides behavioral boundaries and invariants
 
+4. **Figma URL Detection（動態設計資產建立）**
+   - Scan `context.md` for Figma URL patterns: `figma.com/design/`, `figma.com/file/`, `figma.com/proto/`
+   - **If Figma URL found**:
+     1. Create `.teammate/design/` directory if not exists
+     2. Create/update `.teammate/design/figma-index.md` using template:
+        ```markdown
+        # Figma Design Index
+        
+        > 此檔案由 `/teammate.align` 自動建立，當 `context.md` 包含 Figma URL 時觸發。
+        
+        ## Project Figma
+        
+        | 名稱 | URL | 說明 |
+        |------|-----|------|
+        | [從 context.md 提取的名稱或 "Main Design"] | [URL] | 專案主設計檔 |
+        
+        ## Feature Pages
+        
+        <!-- /teammate.plan 執行時會在此追加 feature-specific 頁面連結 -->
+        
+        | Feature | Page URL | 狀態 |
+        |---------|----------|------|
+        ```
+     3. Log: "Figma URL detected → `.teammate/design/figma-index.md` created"
+   - **If no Figma URL** → Skip (no design artifact created)
+
 ### Phase 1: Setup
 
 1. **Generate a concise short name** (2-4 words) for the branch:

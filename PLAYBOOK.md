@@ -287,6 +287,20 @@
 **成效**: 待驗證（首次實戰）
 **狀態**: 生效中
 
+#### 2026-02-12 · 架構 · Teammate
+**觸發**: 設計資產路徑混亂：`docs/design/figma-index.md` 已被刪除但文件仍引用；`docs/llms.txt` 框架預設但多數專案不需要；設計資產應由流程動態產生
+**決策**: (1) `.teammate/design/figma-index.md` 由 `/teammate.align` 動態建立（偵測 context.md 有 Figma URL 時觸發）(2) `docs/design/` 移除 (3) `docs/llms.txt` 改為專案選用（不預設存在）(4) plan.md 偵測 `figma-index.md` 存在時才產生 `contracts/ui/ui-spec.md`
+**影響**: `teammate.align.md`、`teammate.plan.md`、`teammate-rules.mdc`、`README.md`；刪除 `docs/llms.txt`、`docs/design/`
+**成效**: 待驗證
+**狀態**: 生效中
+
+#### 2026-02-12 · 規則 · Teammate
+**觸發**: 使用者反映 AI 回覆過度冗長，消耗大量 token，要求極簡輸出
+**決策**: (1) `teammate-rules.mdc` 新增 Output Mode 區段，定義 Lean / Diagnostic / Blocker 三層輸出契約 (2) 移除 ABCD 多選下一步格式，改為單一推薦 (3) `.cursorule` 新增省 Token 原則
+**影響**: `teammate-rules.mdc`、`.cursorule`、`CHANGELOG.md`
+**成效**: 待驗證
+**狀態**: 生效中
+
 ---
 
 ## 2. 尚未實現（未來可實現）
@@ -495,4 +509,4 @@ User Layer（使用者層 — 持久 + 即時）:
 
 ---
 
-**Last Updated**: 2026-02-12（/teammate.audit + 動態合規監控全生命週期整合）
+**Last Updated**: 2026-02-12（設計資產動態建立 + docs 結構精簡）
