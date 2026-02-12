@@ -33,7 +33,7 @@ Parse `$ARGUMENTS` for special keywords:
 
 #### `next` 模式流程
 
-1. 讀取 `FEATURE_DIR/actions.md`
+1. 讀取 `FEATURE_DIR/plan.md` 的 Part 2（Actions）
 2. 掃描所有 action 行，找到第一個 `- [ ]`（未完成）的 action
 3. 跳過所有 `- [x]`（已完成）的 action
 4. 顯示：「**執行 S0XX**: [action 描述]」
@@ -78,16 +78,14 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 3. **Load Implementation Context**:
 
    **Required**（必載）:
-   - `actions.md` - Actions with [Verifies: @tag] markers
-   - `tasks.md` - Tech stack and structure
+   - `plan.md` - Part 1 (Tasks: tech stack, architecture) + Part 2 (Actions: phased execution checklist)
    - `scenarios/*.feature` - Gherkin scenarios
 
    **Recommended**（條件必載 — 存在即載入，不得跳過）:
    - `FEATURE_DIR/insights.md` — 當前 feature 的動態備忘錄（如存在）
-   - 最近 2 個已完成 feature 的 `insights.md` — 跨 feature 知識傳遞（掃描 `features/` 目錄，按序號倒序取最近 2 個含 `insights.md` 的 feature）
-   - `docs/llms.txt` — Read the root index to discover available external references. For any third-party API/SDK used by this feature, load the corresponding `docs/[library]/llms.txt` for implementation guidance (e.g., correct method signatures, authentication patterns, error handling).
-   - `contracts/` — API / UI / AI contracts（如目錄存在）
-   - `screenplay.md` — Task definitions（如存在）
+   - 最近 2 個已完成 feature 的 `insights.md` — 跨 feature 知識傳遞
+   - `docs/llms.txt` — Read the root index, load corresponding `docs/[library]/llms.txt` for implementation guidance
+   - `contracts/` — API / UI / AI contracts（如目錄存在，UI specs 在 `contracts/ui/ui-spec.md`）
 
    **Optional**（輔助參考）:
    - `data-model.md` - Entities
@@ -103,12 +101,13 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    - `.eslintignore` (if ESLint detected)
    - etc.
 
-5. **Parse Tasks Structure**:
+5. **Parse Plan Structure**:
 
-   Extract from actions.md:
+   Extract from `plan.md` Part 2 (Actions):
    - Phases and their actions
    - `[Verifies: @tag]` markers for each action
    - Parallel markers `[P]`
+   - Action types `[LOGIC]`/`[UI]`/`[LOGIC+UI]`
    - Dependencies
 
 6. **Risk-Based HITL Gates**（風險暫停）:
@@ -164,7 +163,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 
    1. **Test Pre-Check**（`[LOGIC]` 和 `[LOGIC+UI]` 類型）：
       - 檢查此 action 對應的 test 檔案是否已存在
-      - 若不存在且 actions.md 中有對應的 RED:test action 未完成 → 警告：「對應的測試 action [S0XX] 尚未完成，建議先執行測試 action」
+      - 若不存在且 plan.md 中有對應的 RED:test action 未完成 → 警告：「對應的測試 action [S0XX] 尚未完成，建議先執行測試 action」
       - 用戶可選擇繼續或先執行測試
    2. **Identify which step definitions** this action supports (from `[Verifies: @tag]`)
    3. **Write minimum implementation** to make those steps pass
@@ -216,7 +215,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 9. **Progress Tracking**:
 
    After each completed action:
-   - Mark as `[X]` in actions.md
+   - Mark as `[X]` in plan.md (Part 2: Actions)
    - Report progress
    - Update `.teammate/memory/progress.md`
 

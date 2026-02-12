@@ -9,8 +9,8 @@
 #
 # OPTIONS:
 #   --json              Output in JSON format
-#   --require-actions   Require actions.md to exist (for implementation phase)
-#   --include-actions   Include actions.md in AVAILABLE_DOCS list
+#   --require-plan      Require plan.md to exist (for implementation phase)
+#   --include-plan      Include plan.md in AVAILABLE_DOCS list
 #   --paths-only        Only output path variables (no validation)
 #   --help, -h          Show help message
 #
@@ -23,20 +23,21 @@ set -e
 
 # Parse command line arguments
 JSON_MODE=false
-REQUIRE_ACTIONS=false
-INCLUDE_ACTIONS=false
+REQUIRE_PLAN=false
+INCLUDE_PLAN=false
 PATHS_ONLY=false
 
+# Legacy flag support (backward compatibility)
 for arg in "$@"; do
     case "$arg" in
         --json)
             JSON_MODE=true
             ;;
-        --require-actions)
-            REQUIRE_ACTIONS=true
+        --require-plan|--require-actions)
+            REQUIRE_PLAN=true
             ;;
-        --include-actions)
-            INCLUDE_ACTIONS=true
+        --include-plan|--include-actions)
+            INCLUDE_PLAN=true
             ;;
         --paths-only)
             PATHS_ONLY=true
@@ -49,17 +50,17 @@ Consolidated prerequisite checking for Teammate workflow.
 
 OPTIONS:
   --json              Output in JSON format
-  --require-actions   Require actions.md to exist (for implementation phase)
-  --include-actions   Include actions.md in AVAILABLE_DOCS list
+  --require-plan      Require plan.md to exist (for implementation phase)
+  --include-plan      Include plan.md in AVAILABLE_DOCS list
   --paths-only        Only output path variables (no prerequisite validation)
   --help, -h          Show this help message
 
 EXAMPLES:
-  # Check prerequisites (tasks.md required)
+  # Check prerequisites (plan.md required)
   ./check-prerequisites.sh --json
   
-  # Check implementation prerequisites (tasks.md + actions.md required)
-  ./check-prerequisites.sh --json --require-actions --include-actions
+  # Check implementation prerequisites (plan.md required + included)
+  ./check-prerequisites.sh --json --require-plan --include-plan
   
   # Get feature paths only (no validation)
   ./check-prerequisites.sh --paths-only
@@ -86,15 +87,14 @@ check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 if $PATHS_ONLY; then
     if $JSON_MODE; then
         # Minimal JSON paths payload (no validation performed)
-        printf '{"REPO_ROOT":"%s","BRANCH":"%s","FEATURE_DIR":"%s","FEATURE_SPEC":"%s","IMPL_TASKS":"%s","ACTIONS":"%s"}\n' \
-            "$REPO_ROOT" "$CURRENT_BRANCH" "$FEATURE_DIR" "$FEATURE_SPEC" "$IMPL_TASKS" "$ACTIONS"
+        printf '{"REPO_ROOT":"%s","BRANCH":"%s","FEATURE_DIR":"%s","FEATURE_SPEC":"%s","IMPL_PLAN":"%s"}\n' \
+            "$REPO_ROOT" "$CURRENT_BRANCH" "$FEATURE_DIR" "$FEATURE_SPEC" "$IMPL_PLAN"
     else
         echo "REPO_ROOT: $REPO_ROOT"
         echo "BRANCH: $CURRENT_BRANCH"
         echo "FEATURE_DIR: $FEATURE_DIR"
         echo "FEATURE_SPEC: $FEATURE_SPEC"
-        echo "IMPL_TASKS: $IMPL_TASKS"
-        echo "ACTIONS: $ACTIONS"
+        echo "IMPL_PLAN: $IMPL_PLAN"
     fi
     exit 0
 fi
@@ -106,16 +106,9 @@ if [[ ! -d "$FEATURE_DIR" ]]; then
     exit 1
 fi
 
-if [[ ! -f "$IMPL_TASKS" ]]; then
-    echo "ERROR: tasks.md not found in $FEATURE_DIR" >&2
-    echo "Run /teammate.tasks first to create the technical plan." >&2
-    exit 1
-fi
-
-# Check for actions.md if required
-if $REQUIRE_ACTIONS && [[ ! -f "$ACTIONS" ]]; then
-    echo "ERROR: actions.md not found in $FEATURE_DIR" >&2
-    echo "Run /teammate.actions first to create the action list." >&2
+if [[ ! -f "$IMPL_PLAN" ]]; then
+    echo "ERROR: plan.md not found in $FEATURE_DIR" >&2
+    echo "Run /teammate.plan first to create the implementation plan." >&2
     exit 1
 fi
 
@@ -133,9 +126,9 @@ fi
 
 [[ -f "$QUICKSTART" ]] && docs+=("quickstart.md")
 
-# Include actions.md if requested and it exists
-if $INCLUDE_ACTIONS && [[ -f "$ACTIONS" ]]; then
-    docs+=("actions.md")
+# Include plan.md if requested and it exists
+if $INCLUDE_PLAN && [[ -f "$IMPL_PLAN" ]]; then
+    docs+=("plan.md")
 fi
 
 # Output results
@@ -160,7 +153,7 @@ else
     check_dir "$CONTRACTS_DIR" "contracts/"
     check_file "$QUICKSTART" "quickstart.md"
     
-    if $INCLUDE_ACTIONS; then
-        check_file "$ACTIONS" "actions.md"
+    if $INCLUDE_PLAN; then
+        check_file "$IMPL_PLAN" "plan.md"
     fi
 fi

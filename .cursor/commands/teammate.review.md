@@ -48,24 +48,22 @@ Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-actions --in
 - `FEATURE_DIR`, `AVAILABLE_DOCS`
 
 Derive paths:
-- SPEC = `FEATURE_DIR/spec.md`
-- TASKS = `FEATURE_DIR/tasks.md`
-- ACTIONS = `FEATURE_DIR/actions.md`
-- FEATURES = `FEATURE_DIR/scenarios/*.feature`
-- EXAMPLE_MAPPING = `FEATURE_DIR/example-mapping.md`
-- SCREENPLAY = `FEATURE_DIR/screenplay.md`
-- CONTRACTS = `FEATURE_DIR/contracts/ui/*.md` (if directory exists)
-- INSIGHTS = `FEATURE_DIR/insights.md` (if exists)
+   - SPEC = `FEATURE_DIR/spec.md`
+   - PLAN = `FEATURE_DIR/plan.md` (Part 1: Tasks + Part 2: Actions)
+   - FEATURES = `FEATURE_DIR/scenarios/*.feature`
+   - EXAMPLE_MAPPING = `FEATURE_DIR/example-mapping.md`
+   - UI_SPEC = `FEATURE_DIR/contracts/ui/ui-spec.md` (if exists)
+   - INSIGHTS = `FEATURE_DIR/insights.md` (if exists)
 
 Abort if required files missing.
 
 ### Load Artifacts
 
-From spec.md: User stories, functional requirements, success criteria
-From tasks.md: Architecture decisions, technical constraints
-From actions.md: Actions with [Verifies: @tag] markers, phase structure
-From scenarios/*.feature: All scenarios with tags, step definitions
-From principles: Principles and boundaries
+   From spec.md: User stories, functional requirements, success criteria
+   From plan.md Part 1 (Tasks): Architecture decisions, technical constraints
+   From plan.md Part 2 (Actions): Actions with [Verifies: @tag] markers, phase structure
+   From scenarios/*.feature: All scenarios with tags, step definitions
+   From principles: Principles and boundaries
 
 ---
 
@@ -113,7 +111,7 @@ From principles: Principles and boundaries
 
 #### B5. UI Contract Consistency (if CONTRACTS exist)
 - Component names in `contracts/ui/` match spec and tasks?
-- Props, routes, and enhanced components match tasks.md?
+- Props, routes, and enhanced components match plan.md architecture?
 - Report terminology drift
 
 ## Pass C: Detection Passes

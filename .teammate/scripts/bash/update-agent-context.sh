@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Update agent context files with information from tasks.md
+# Update agent context files with information from plan.md
 #
 # This script maintains AI agent context files by parsing feature specifications 
 # and updating agent-specific configuration files with project information.
@@ -8,11 +8,11 @@
 # MAIN FUNCTIONS:
 # 1. Environment Validation
 #    - Verifies git repository structure and branch information
-#    - Checks for required tasks.md files and templates
+#    - Checks for required plan.md files and templates
 #    - Validates file permissions and accessibility
 #
 # 2. Plan Data Extraction
-#    - Parses tasks.md files to extract project metadata
+#    - Parses plan.md files to extract project metadata
 #    - Identifies language/version, frameworks, databases, and project types
 #    - Handles missing or incomplete specification data gracefully
 #
@@ -55,7 +55,7 @@ source "$SCRIPT_DIR/common.sh"
 # Get all paths and variables from common functions
 eval $(get_feature_paths)
 
-NEW_PLAN="$IMPL_TASKS"  # Alias for compatibility with existing code
+NEW_PLAN="$IMPL_PLAN"
 AGENT_TYPE="${1:-}"
 
 # Agent-specific file paths  
@@ -132,9 +132,9 @@ validate_environment() {
         exit 1
     fi
     
-    # Check if tasks.md exists
+    # Check if plan.md exists
     if [[ ! -f "$NEW_PLAN" ]]; then
-        log_error "No tasks.md found at $NEW_PLAN"
+        log_error "No plan.md found at $NEW_PLAN"
         log_info "Make sure you're working on a feature with a corresponding spec directory"
         if [[ "$HAS_GIT" != "true" ]]; then
             log_info "Use: export TEAMMATE_FEATURE=your-feature-name or create a new feature first"

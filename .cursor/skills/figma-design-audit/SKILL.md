@@ -239,7 +239,7 @@ Overall: [READY / NOT READY / NEEDS CLARIFICATION]
 ## Cross-Reference
 
 This skill integrates with:
-- `contracts/ui/component-specs.md` — UI component specifications per feature
+- `contracts/ui/ui-spec.md` — UI component specifications per feature
 - `figma-sync` skill — Figma resource synchronization (write to Figma)
 - `/teammate.align` — Pre-implementation spec generation
 - `/teammate.review` — Design-code alignment analysis (Pass E: UI Contract Consistency)

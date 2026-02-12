@@ -25,7 +25,7 @@ Init → Align → Plan → Execute → Review
 | Command | Purpose |
 |---------|---------|
 | `/teammate.align` | Define what to build (Impact Mapping + Example Mapping) → `spec.md` + `example-mapping.md` |
-| `/teammate.plan` | Generate scenarios, technical plan, and actions → `.feature` + `tasks.md` + `actions.md`（UI 深度分析自動觸發） |
+| `/teammate.plan` | Generate scenarios and unified implementation plan → `.feature` + `plan.md` + `contracts/ui/ui-spec.md`（UI 深度分析自動觸發） |
 | `/teammate.execute` | Red-Green-Refactor-Reflect Loop implementation |
 | `/teammate.review` | Behavioral coverage + requirements quality + feature readiness |
 
@@ -77,11 +77,9 @@ features/[###-feature-name]/  # Per-feature artifacts
 ├── spec.md                   # /teammate.align output (spec)
 ├── example-mapping.md        # /teammate.align output (examples)
 ├── scenarios/*.feature       # /teammate.plan output (scenarios)
-├── screenplay.md             # /teammate.plan output (screenplay)
-├── tasks.md                  # /teammate.plan output (technical plan)
-├── actions.md                # /teammate.plan output (atomic actions)
+├── plan.md                   # /teammate.plan output (Part 1: Tasks + Part 2: Actions)
 ├── insights.md               # /teammate.execute REFLECT output (dynamic cheatsheet)
-├── contracts/ui/             # /teammate.plan output (UI specs)
+├── contracts/ui/ui-spec.md   # /teammate.plan output (UI specs, auto-triggered)
 └── checklists/               # /teammate.review output (readiness reports)
 ```
 
@@ -112,11 +110,10 @@ System Layer（系統層 — 跨 feature 不變）:
 
 Task Layer（任務層 — per feature）:
   - spec.md                # WHAT: 要做什麼
-  - tasks.md               # HOW: 怎麼做
-  - actions.md             # STEPS: 逐步拆解
+  - plan.md                # HOW + STEPS: 技術規劃 + 執行清單
   - scenarios/*.feature    # VERIFY: 驗證條件
   - insights.md            # LEARNED: 執行中學到的
-  - contracts/             # CONTRACTS: 介面規格
+  - contracts/ui/ui-spec.md  # UI: 組件規格（如有）
 
 User Layer（使用者層 — 持久 + 即時）:
   - .cursorule             # 持久偏好（如存在）
@@ -189,7 +186,7 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
 - **Update active-context.md using Memory Delta Protocol** after each command completes — 覆寫 Current State、追加 Session Log、更新 Blockers（見 Memory Delta Protocol 區段）。
 - **Explicit handoff required.** Every `teammate.*` command must state when to use it and the next suggested command (or handoff) so developers can follow the flow without ambiguity.
 - **Snapshot on significant changes.** When principles, plans, or scope change, create a snapshot before overwriting.
-- **文件以繁體中文撰寫.** 透過 `teammate.*` 指令產生的所有文件（spec.md、example-mapping.md、scenarios/*.feature、tasks.md、actions.md、screenplay.md、checklists/ 等），其內文描述 MUST 以**繁體中文**撰寫。以下項目允許使用英文：
+- **文件以繁體中文撰寫.** 透過 `teammate.*` 指令產生的所有文件（spec.md、example-mapping.md、scenarios/*.feature、plan.md、checklists/ 等），其內文描述 MUST 以**繁體中文**撰寫。以下項目允許使用英文：
   - 代號與識別碼（Feature ID、Story ID、Rule ID、Tag 如 `@happy-path`）
   - 程式碼片段、檔案路徑、指令名稱（如 `EventSource.close()`、`src/lib/components/`）
   - 框架或技術專有名詞（如 Gherkin、Svelte、SSE、Tailwind、Scenario Outline）
@@ -225,18 +222,16 @@ When the AI evaluates a task as small enough to skip full BDD scenarios, the fol
 
 **Minimum artifacts required** (even in simplified flow):
 1. `spec.md` — WHAT is being built and WHY (always required)
-2. `tasks.md` — HOW it will be implemented (always required)
+2. `plan.md` — HOW it will be implemented + execution steps (always required)
 3. Tests — at least unit tests for the new code
 
 **Skippable in simplified flow**:
 - `example-mapping.md`
 - `scenarios/*.feature`
-- `screenplay.md`
-- `actions.md`
 
 **AI must explicitly**:
 1. State: "This task qualifies for simplified flow because [reason]"
-2. Ask: "Proceed with simplified flow (spec + tasks then execute), or full BDD?"
+2. Ask: "Proceed with simplified flow (spec + plan then execute), or full BDD?"
 3. Wait for user confirmation before executing
 
 **Never simplify when**:

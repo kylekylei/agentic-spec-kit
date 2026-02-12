@@ -36,7 +36,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 | `healthcheck` | 工作流程健康診斷（Foundation、階段合規、追溯骨架、Hub 同步） | ✅ 可用 |
 | `consult [問題]` | 流程問診（使用者提問 → 分析 → 改善提案） | ✅ 可用 |
 | `migrate` | 版本遷移工具（比對 Hub 版本、產出遷移計畫、套用更新） | ✅ 可用 |
-| `assign` | 將 actions.md 轉為 GitHub Issues（需 GitHub MCP） | ✅ 可用 |
+| `assign` | 將 plan.md Actions 轉為 GitHub Issues（需 GitHub MCP） | ✅ 可用 |
 | （空或無法辨識） | 顯示可用工具清單 | ✅ 可用 |
 
 若 `$ARGUMENTS` 為空或無法辨識，輸出可用工具清單並結束：
@@ -104,7 +104,7 @@ Teammate 流程：Foundation → Align → Commit → Deliver
 
 Foundation 階段產物：project-context.md, principles.md
 Align 階段產物：spec.md, example-mapping.md（簡化流程可省略 example-mapping）
-Commit 階段產物：scenarios/*.feature, tasks.md, actions.md, screenplay.md, contracts/ui/*.md
+Commit 階段產物：scenarios/*.feature, plan.md, contracts/ui/ui-spec.md
 Deliver 階段產物：checklists/*.md, 實作程式碼
 ```
 
@@ -117,8 +117,7 @@ Deliver 階段產物：checklists/*.md, 實作程式碼
 | spec.md | Align | ✅/— | ✅/❌ | OK / MISSING / NOT YET |
 | example-mapping.md | Align | ✅/— | ✅/❌ | OK / MISSING / NOT YET / SKIPPED (simplified) |
 | scenarios/*.feature | Commit | ✅/— | ✅/❌ | OK / MISSING / NOT YET |
-| tasks.md | Commit | ✅/— | ✅/❌ | OK / MISSING / NOT YET |
-| actions.md | Commit | ✅/— | ✅/❌ | OK / MISSING / NOT YET |
+| plan.md | Commit | ✅/— | ✅/❌ | OK / MISSING / NOT YET |
 | ... | | | | |
 
 Status 定義：
@@ -133,16 +132,16 @@ Status 定義：
 
 **3a. 建立時間序列**
 - 讀取每個 artifact 的建立/修改時間
-- 檢查時間順序是否符合：`spec.md` ≤ `tasks.md` ≤ `actions.md` ≤ `scenarios/*.feature`
-- 異常：如果 `tasks.md` 的時間比 `spec.md` 早 → 可能跳過了 Align 階段
+- 檢查時間順序是否符合：`spec.md` ≤ `scenarios/*.feature` ≤ `plan.md`
+- 異常：如果 `plan.md` 的時間比 `spec.md` 早 → 可能跳過了 Align 階段
 
 **3b. Active Context 一致性**
 - `active-context.md` 標記的「當前階段」是否與實際存在的 artifact 吻合？
-- 例如：active-context 說在 `Deliver`，但 `actions.md` 不存在 → CRITICAL
-- 例如：active-context 說在 `Align`，但 `tasks.md` 已存在 → 可能忘記更新 active-context
+- 例如：active-context 說在 `Deliver`，但 `plan.md` 不存在 → CRITICAL
+- 例如：active-context 說在 `Align`，但 `plan.md` 已存在 → 可能忘記更新 active-context
 
 **3c. Simplified Flow 合規**（若走簡化流程）
-- 簡化流程最低要求：`spec.md` + `tasks.md` 必須存在
+- 簡化流程最低要求：`spec.md` + `plan.md` 必須存在
 - 是否滿足簡化條件？（單一模組、非行為變更、不涉及 Principles）
 - 是否有遺漏測試？（簡化流程仍需至少 unit test）
 
@@ -151,13 +150,13 @@ Status 定義：
 僅檢查追溯鏈的**結構是否存在**，不深入語意分析（語意完整性是 `review` 的職責）：
 
 ```
-spec.md (FR-xxx) → scenarios/*.feature (@tag) → actions.md (Sxxx [Verifies: @tag]) → tasks.md (IMP-xxx)
+spec.md (FR-xxx) → scenarios/*.feature (@tag) → plan.md Part 2 (Sxxx [Verifies: @tag]) → plan.md Part 1 (architecture)
 ```
 
 快速檢查項目：
 - 每個 FR-xxx 是否至少有一個對應的 `@tag` 出現在 `.feature` 中？
-- 每個 `.feature` 的 `@tag` 是否至少有一個 `[Verifies: @tag]` 出現在 `actions.md` 中？
-- `actions.md` 中的 action 是否都引用了存在的 scenario tag？
+- 每個 `.feature` 的 `@tag` 是否至少有一個 `[Verifies: @tag]` 出現在 `plan.md` Part 2 中？
+- `plan.md` Part 2 中的 action 是否都引用了存在的 scenario tag？
 
 > **注意**：healthcheck 只確認「鏈的骨架存在」，不深入語意分析。
 
@@ -486,7 +485,7 @@ spec.md (FR-xxx) → scenarios/*.feature (@tag) → actions.md (Sxxx [Verifies: 
 
 ## Tool 4: `assign`
 
-**定位**：將 `actions.md` 轉為 GitHub Issues，用於專案管理和團隊協作。
+**定位**：將 `plan.md` Part 2 (Actions) 轉為 GitHub Issues，用於專案管理和團隊協作。
 
 ### Operating Constraints
 
@@ -495,13 +494,13 @@ spec.md (FR-xxx) → scenarios/*.feature (@tag) → actions.md (Sxxx [Verifies: 
 
 ### Execution Steps
 
-1. **Load** `FEATURE_DIR/actions.md`，解析所有 actions（ID、phase、story、tags、dependencies）
+1. **Load** `FEATURE_DIR/plan.md` Part 2 (Actions)，解析所有 actions（ID、phase、story、tags、dependencies）
 2. **Verify** Git remote 是 GitHub URL
 3. **For each action** 建立 GitHub Issue：
    - Title: `[ActionID] [Story] Description`
    - Body: Action details、acceptance criteria、related scenarios、dependencies
    - Labels: `action`, `phase-N`, `story-USN`, `parallel`（if [P]）, `priority-P1/P2/P3`
-4. **Update** `actions.md`：在每個 action 後附加 Issue number（如 `(#123)`）
+4. **Update** `plan.md` Part 2：在每個 action 後附加 Issue number（如 `(#123)`）
 5. **Update Active Context**（Memory Delta Protocol）：追加 Session Log
 
 ### Error Handling
