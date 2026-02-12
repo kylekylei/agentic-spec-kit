@@ -38,14 +38,19 @@ When framework files are changed in the Hub, the AI SHOULD remind the user to:
 
 Whenever the AI discovers a workflow improvement, rule addition, or process insight during project work, it MUST append the learning to:
 
-- `[TEAMMATE_HUB_PATH]/PLAYBOOK.md` → "從實戰中學到的教訓" table
+- `[TEAMMATE_HUB_PATH]/PLAYBOOK.md` → Section 1「歷史修改軌跡」
 
-Format:
+Format（結構化欄位，每筆一個 block）:
 ```
-| 日期 | 專案 | 教訓 | 改善 |
-|------|------|------|------|
-| YYYY-MM-DD | [project-name] | [what went wrong or could be better] | [what was changed] |
+#### YYYY-MM-DD · 類型 · 專案
+**觸發**: [what went wrong or could be better]
+**決策**: [what was changed]
+**影響**: [affected files/commands]
+**成效**: [observed improvement, or 待驗證]
+**狀態**: 生效中
 ```
+
+類型可選：規則 / 命令 / 架構 / 模板 / 腳本 / 文件 / 技能
 
 This ensures all projects contribute to a centralized memory that any future AI session can learn from.
 
@@ -55,7 +60,7 @@ This ensures all projects contribute to a centralized memory that any future AI 
 - **Announce the sync**: After updating, explicitly confirm which files were synced
 - **Do not ask for permission to sync**: The sync is automatic as long as this rule is active
 - **Preserve project-specific content**: Only sync Teammate framework files, not project-specific rules or features
-- **PLAYBOOK is append-only**: Never remove existing entries from the lessons learned table
+- **PLAYBOOK is append-only**: Never remove existing entries from the history track (Section 1)
 
 ## What to Sync vs What NOT to Sync
 
