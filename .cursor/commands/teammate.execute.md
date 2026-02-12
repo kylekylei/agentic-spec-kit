@@ -77,6 +77,8 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 
 3. **Load Implementation Context**:
 
+   **Staleness Check**：比對 `spec.md` 和 `plan.md` 的修改時間。若 spec.md 比 plan.md 新 → 警告：「spec.md 在 plan.md 之後被更新，plan 可能已過期。建議先執行 `/teammate.plan update`，或確認變更不影響 plan 後繼續。」用戶可選擇繼續或先更新。
+
    **Required**（必載）:
    - `plan.md` - Part 1 (Architecture: tech stack, project structure) + Part 2 (Actions: phased execution checklist)
    - `scenarios/*.feature` - Gherkin scenarios

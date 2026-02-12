@@ -182,14 +182,43 @@ Transform abstract user stories into concrete, testable examples. This creates t
    | Open questions | [N] | 0 high-impact | [Pass/Fail] |
    | Principles boundaries | [N] | 1+ per story | [Pass/Fail] |
 
-### Phase 6: Update Active Context（Memory Delta Protocol）
+### Phase 6: Downstream Impact Check（Update Mode only）
+
+若為 Update Mode 且 `FEATURE_DIR/plan.md` 已存在：
+
+1. **比對 spec.md 修改內容與 plan.md**：
+   - 新增/移除的 User Story → plan.md 的 scenarios + actions 需更新
+   - 需求變更（FR 修改、Success Criteria 變更） → Architecture decisions 可能需調整
+   - Example Mapping 新增 rules/examples → scenarios 可能需新增
+
+2. **產出影響摘要**：
+   ```
+   ## Downstream Impact
+   
+   plan.md 狀態：[OUTDATED / UP-TO-DATE]
+   
+   受影響區域：
+   - [N] User Stories 新增/修改 → scenarios 需更新
+   - [N] FR 變更 → Architecture 可能需調整
+   - [N] 新 rules → 可能需新增 scenarios
+   
+   建議：執行 `/teammate.plan update` 同步更新
+   ```
+
+3. **判斷規則**：
+   - 有結構性變更（新增/移除 story、FR 修改） → 標記 `OUTDATED`，強烈建議 plan update
+   - 僅 wording 修正（無結構變更） → 標記 `UP-TO-DATE`，plan.md 無需更新
+
+> Create Mode 時跳過此步驟（plan.md 尚不存在）。
+
+### Phase 7: Update Active Context（Memory Delta Protocol）
 
 Update `.teammate/memory/active-context.md` using delta mode:
 - **覆寫 `## Current State`**：Active Feature: [name], Feature Branch: [branch], Phase: Align (complete), Last Command: align, Next Action: /teammate.plan
 - **追加 `## Session Log`**：`| [timestamp] | align | Feature: [name], spec.md + example-mapping.md | [rules/examples count, open questions] |`
 - **更新 `## Blockers`**：如有未解決的 high-impact questions，記錄為 blocker
 
-### Phase 7: Report Completion
+### Phase 8: Report Completion
 
 Output:
 - Branch name
