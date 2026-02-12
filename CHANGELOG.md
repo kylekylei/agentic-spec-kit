@@ -13,7 +13,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Summary
-指令精簡（11→5）、artifact 合併、目錄與檔名重整。**包含多項破壞性變更**，既有專案需執行 `/teammate.toolkit migrate`。
+指令精簡（11→5+audit）、artifact 合併、目錄與檔名重整、動態合規監控。**包含多項破壞性變更**，既有專案需執行 `/teammate.toolkit migrate`。
+
+### Added
+- `/teammate.audit` 指令 — Sarcasmotron 對抗性合規審計（Security + Design Debt + 動態 A11y + 動態 AI Risk）
+- `ai-compliance` skill — AI 風險合規實作指南 + Pass/Fail 代碼範例（動態偵測 LLM 才載入）
+- `a11y-compliance` skill 新增動態偵測邏輯（偵測前端才載入）
+- `docs/a11y-compliance/` — A11y 法規背景（LLM 友善格式）
+- `docs/ai-compliance/` — AI 法規背景（LLM 友善格式）
+- `teammate.review` Pass G: Design System Compliance（Token 合規 + 視覺偏移）
+- `teammate.review` Pass D: Compliance Coverage（動態 A11y + AI Risk 初步檢查）
+- `teammate.plan` Compliance Detection（動態偵測前端/AI 並提醒合規要求）
+- `teammate.execute` Compliance Skills 載入（動態偵測後載入對應 skill）
 
 ### Changed
 - **Commands 精簡 11→5**：`init → align → plan → execute → review`（+ toolkit）

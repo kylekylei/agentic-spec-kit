@@ -122,6 +122,18 @@ Optional:
 - `docs/llms.txt` → Check for relevant external API/SDK references
 - `FEATURE_DIR/example-mapping.md`
 
+### Compliance Detection（動態）
+
+掃描 `context.md` tech stack + codebase 自動偵測：
+
+1. **前端偵測**（*.tsx/*.vue/*.svelte/*.html 或 react/vue/svelte 依賴）→ 在 Architecture 區段標記：
+   > ⚠️ **A11y Compliance 已啟用**：所有 UI 組件需符合 WCAG 2.2 AA。建議為每個互動元素規劃 aria 屬性、鍵盤導航與色彩對比。參考 `.cursor/skills/a11y-compliance/SKILL.md`。
+
+2. **AI/LLM 偵測**（openai/anthropic/langchain import 或 chat/completion API）→ 在 Architecture 區段標記：
+   > ⚠️ **AI Risk Compliance 已啟用**：AI 互動介面需符合 EU AI Act Art. 50 透明度義務。建議規劃 AI 揭露標籤、同意機制、內容標示、人類覆寫控制。參考 `.cursor/skills/ai-compliance/SKILL.md`。
+
+若 context.md 無標記但 codebase 偵測到 → 額外提示更新 context.md。
+
 ### Test Infrastructure Check
 
 1. **檢查既有測試框架**: 掃描 `package.json` (vitest/jest/playwright), `pytest.ini`, `go.mod` 等

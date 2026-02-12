@@ -280,6 +280,13 @@
 **成效**: memory 目錄一眼可辨：context / principles / progress / milestone
 **狀態**: 生效中
 
+#### 2026-02-12 · 架構 · Teammate
+**觸發**: 全球 A11y 與 AI 法規（EU AI Act 2026/8 生效、EAA、Section 508、加州/科羅拉多 AI 法）要求產品合規，但框架缺乏合規審計機制；designkit 5 個指令的功能需整合
+**決策**: (1) 新建 `/teammate.audit`（Sarcasmotron 對抗性審計，4 維度動態啟用）(2) 新建 `ai-compliance` skill（AI 風險規則 + Pass/Fail 代碼範例）(3) `a11y-compliance` skill 補充動態偵測 (4) 全生命週期動態合規介入（plan 提醒 → execute 參考 → review 初檢 → audit 判決）(5) review 新增 Pass G Design System Compliance (6) docs 精簡為 LLM 友善法規背景
+**影響**: 新增 `teammate.audit.md` + `ai-compliance/SKILL.md` + `docs/a11y-compliance/` + `docs/ai-compliance/`；修改 plan + execute + review + rules + yml + README + CHANGELOG
+**成效**: 待驗證（首次實戰）
+**狀態**: 生效中
+
 ---
 
 ## 2. 尚未實現（未來可實現）
@@ -488,4 +495,4 @@ User Layer（使用者層 — 持久 + 即時）:
 
 ---
 
-**Last Updated**: 2026-02-11（memory 檔名重整：context / progress / milestone）
+**Last Updated**: 2026-02-12（/teammate.audit + 動態合規監控全生命週期整合）

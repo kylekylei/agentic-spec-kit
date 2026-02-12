@@ -151,6 +151,24 @@ Abort if required files missing.
 - Are boundary conditions defined?
 - Are negative paths specified?
 
+#### Compliance Coverage（動態，偵測到才執行）
+
+掃描 `context.md` tech stack + codebase 偵測前端/AI 特性：
+
+**A11y**（偵測到前端 UI 時）:
+- 所有互動 UI 元件是否有適當的 aria 屬性？
+- 鍵盤導航是否覆蓋所有功能？
+- 色彩對比是否達 WCAG 2.2 AA 標準？
+- 表單是否有錯誤提示與 `aria-invalid`？
+
+**AI Risk**（偵測到 LLM/AI 時）:
+- AI 互動是否有首次揭露機制？
+- AI 生成內容是否有標示（可見 + 機器可讀）？
+- 同意流程是否具同等視覺顯著性？
+- 高風險決策是否有人類覆寫機制？
+
+> 此為初步檢查。完整對抗性審計請執行 `/teammate.audit`。
+
 ## Pass E: Traceability Matrix
 
 Build traceability from behaviors to implementation:
@@ -233,6 +251,33 @@ Based on findings:
 - If CRITICAL: Must resolve before proceeding → suggest `/teammate.plan update`
 - If HIGH: Should address for quality → suggest specific fixes
 - If only LOW/MEDIUM: Can proceed → suggest `/teammate.toolkit assign`
+
+## Pass G: Design System Compliance（偵測到前端才啟用）
+
+若 Phase 1 偵測到前端 UI 代碼，執行以下檢查：
+
+#### Token 合規
+- 搜尋硬編碼顏色值（`#[0-9a-fA-F]{3,8}` 且非在 token 定義檔中）
+- 搜尋硬編碼間距值（`margin: Npx`、`padding: Npx` 等非 token 值）
+- 統計 Token 覆蓋率：使用 design token 的樣式 vs 硬編碼值
+
+#### 視覺一致性
+- 偵測非 Token 樣式（原生 px 值、inline style）
+- 品牌調性一致性（字體、圓角、陰影是否使用統一 token）
+
+#### 輸出
+
+```markdown
+### Design System Compliance
+
+| 檢查項 | 狀態 | 數量 |
+|--------|------|------|
+| 硬編碼顏色值 | [PASS/FAIL] | [N] |
+| 硬編碼間距值 | [PASS/FAIL] | [N] |
+| Token 覆蓋率 | [%] | — |
+```
+
+> 完整 Design Debt 審計請執行 `/teammate.audit design-debt`。
 
 ## Update Progress
 

@@ -89,6 +89,10 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    - `docs/llms.txt` — Read the root index, load corresponding `docs/[library]/llms.txt` for implementation guidance
    - `contracts/` — API / UI / AI contracts（如目錄存在，UI specs 在 `contracts/ui/ui-spec.md`）
 
+   **Compliance Skills**（動態偵測，偵測到才載入）:
+   - 前端偵測到 → 載入 `.cursor/skills/a11y-compliance/SKILL.md`（`[UI]` 和 `[LOGIC+UI]` action 實作時參考 POUR 原則與代碼範例）
+   - AI/LLM 偵測到 → 載入 `.cursor/skills/ai-compliance/SKILL.md`（AI 相關 action 實作時參考合規規則與代碼範例）
+
    **Optional**（輔助參考）:
    - `data-model.md` - Entities
    - `research.md` - Decisions

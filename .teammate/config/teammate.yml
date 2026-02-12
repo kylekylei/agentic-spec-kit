@@ -30,6 +30,15 @@ lifecycle:
       description: "Behavioral coverage + requirements quality + feature readiness"
       output: "checklists/feature-readiness.md"
 
+  quality_gate:
+    audit:
+      required: false
+      description: "Sarcasmotron adversarial compliance audit (Security + Design Debt + dynamic A11y + AI Risk)"
+      output: "Roast Report (stdout)"
+      dynamic_dimensions:
+        a11y: "auto-detect frontend"
+        ai_risk: "auto-detect LLM/AI"
+
 # =============================================================================
 # GHERKIN SETTINGS
 # =============================================================================

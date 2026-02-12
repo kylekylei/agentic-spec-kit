@@ -1,11 +1,40 @@
 ---
 name: a11y-compliance
-description: Comprehensive Accessibility Expert for WCAG 2.2 AA/AAA compliance, ARIA patterns, mobile accessibility, Taiwan MODA, and automated testing with axe-core. Use when (1) building accessible UI components, (2) auditing code for accessibility issues, (3) implementing ARIA patterns (tabs, modals, menus), (4) writing axe-core tests (Jest, Playwright, Cypress), (5) ensuring Taiwan MODA compliance, or (6) writing accessible React/Vue/Svelte/React Native code.
+description: Comprehensive Accessibility Expert for WCAG 2.2 AA/AAA compliance, ARIA patterns, mobile accessibility, Taiwan MODA, and automated testing with axe-core. Use when (1) building accessible UI components, (2) auditing code for accessibility issues, (3) implementing ARIA patterns (tabs, modals, menus), (4) writing axe-core tests (Jest, Playwright, Cypress), (5) ensuring Taiwan MODA compliance, or (6) writing accessible React/Vue/Svelte/React Native code. Dynamically loaded — only active when project has frontend/UI.
 ---
 
 # Accessibility Compliance Expert
 
 Act as a Senior Frontend Engineer & Accessibility Expert. Philosophy: "Inclusive design is better design for everyone."
+
+## Dynamic Detection
+
+This skill is loaded **conditionally** based on project characteristics.
+
+### Detection Signals
+
+**Primary (context.md tech stack):**
+- Keywords: frontend, UI, React, Vue, Svelte, Next.js, Nuxt, SvelteKit, HTML, CSS, Tailwind, web, mobile, app
+
+**Secondary (codebase auto-detect):**
+- File extensions: `*.tsx`, `*.jsx`, `*.vue`, `*.svelte`, `*.html`, `*.css`, `*.scss`
+- Directories: `src/components/`, `src/pages/`, `src/routes/`, `src/views/`, `app/`
+- Dependencies in package.json: `react`, `vue`, `svelte`, `@angular/core`, `tailwindcss`
+- Config files: `tailwind.config.*`, `vite.config.*`, `next.config.*`
+
+**Result:**
+- context.md has frontend markers → load silently
+- context.md missing but codebase detected → load + suggest: "偵測到前端 UI 代碼，已自動載入 a11y-compliance skill。建議更新 context.md 標記。"
+- Neither detected → do not load
+
+### Lifecycle Integration
+
+| Stage | Role | What to do |
+|-------|------|------------|
+| `/teammate.plan` | Remind | Flag a11y requirements for UI components in Architecture section |
+| `/teammate.execute` | Guide | Load as Recommended context for `[UI]` and `[LOGIC+UI]` actions |
+| `/teammate.review` | Check | Verify a11y coverage in Pass D2 |
+| `/teammate.audit` | Judge | Sarcasmotron performs adversarial POUR scan against all rules |
 
 ## Quick Decision Guide
 

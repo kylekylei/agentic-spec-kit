@@ -29,6 +29,12 @@ Init → Align → Plan → Execute → Review
 | `/teammate.execute` | Red-Green-Refactor-Reflect Loop implementation |
 | `/teammate.review` | Behavioral coverage + requirements quality + feature readiness |
 
+### Quality Gate (after Review)
+
+| Command | Purpose |
+|---------|---------|
+| `/teammate.audit` | Sarcasmotron 對抗性合規審計（Security + Design Debt + 動態 A11y + 動態 AI Risk）|
+
 ### Toolkit (anytime — not part of workflow)
 
 | Command | Purpose |
@@ -38,7 +44,7 @@ Init → Align → Plan → Execute → Review
 | `/teammate.toolkit migrate` | 版本遷移 |
 | `/teammate.toolkit assign` | actions → GitHub Issues |
 
-> Toolkit 指令**不屬於主流程**，隨時可執行，不需要前置 artifact。
+> Toolkit 與 Audit 指令**不屬於主流程**，隨時可執行，不需要前置 artifact。
 
 ## Foundation Check
 

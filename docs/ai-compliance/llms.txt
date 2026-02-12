@@ -1,0 +1,14 @@
+# AI Compliance Reference
+
+> Regulatory background for AI risk compliance. For implementation rules and code examples, see `.cursor/skills/ai-compliance/SKILL.md`.
+
+## Files
+
+- [regulations.md](regulations.md): Global AI regulatory framework (EU AI Act, US state laws, South Korea)
+
+## Quick Reference
+
+- Risk framework: EU AI Act 4-tier risk classification
+- Key deadline: 2026-08-02 (EU AI Act high-risk + transparency obligations)
+- Jurisdictions: EU, US-Federal, US-CA, US-CO, US-TX, KR
+- Skill: `.cursor/skills/ai-compliance/SKILL.md`
