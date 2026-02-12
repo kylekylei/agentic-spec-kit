@@ -13,7 +13,105 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Summary
-（待定）
+指令精簡（11→5）、artifact 合併、目錄與檔名重整。**包含多項破壞性變更**，既有專案需執行 `/teammate.toolkit migrate`。
+
+### Changed
+- **Commands 精簡 11→5**：`init → align → plan → execute → review`（+ toolkit）
+- `teammate.align` 合併 `teammate.clarify`（Example Mapping 移入 align Phase 5）
+- `teammate.plan` 合併 `teammate.tasks` + `teammate.actions`（輸出 `plan.md`）
+- `teammate.review` 合併 `teammate.checklist`
+- `teammate.init` 合併 `teammate.kickoff` + `teammate.principles`（Init/Complete/Audit 三模式）
+- `teammate.assign` 降為 `/teammate.toolkit assign`
+- `teammate.figma` 降為 `figma-sync` skill
+- `teammate.ui` 併入 `teammate.plan`（UI Deep Analysis 自動偵測 ≥3 組件觸發）
+- `tasks.md` + `actions.md` 合併為 `plan.md`（Part 1: Architecture + Part 2: Actions）
+- `component-specs.md` + `ui-spec.md` 統一為 `contracts/ui/ui-spec.md`
+- `screenplay.md` 移除
+- `features/` 目錄重命名為 `tasks/`
+- Memory 檔名重整：`project-context.md` → `context.md`、`active-context.md` → `progress.md`、`progress.md` → `milestone.md`
+- `create-new-feature.sh` 重命名為 `create-new-task.sh`
+- `plan.md` Part 1 從 "Tasks" 改為 "Architecture"
+- `teammate.execute` 新增 Red-Green-Refactor-Reflect 四步迴圈（加入 REFLECT）
+- `teammate.execute` 新增任務類型分流（`[LOGIC]`/`[UI]`/`[LOGIC+UI]`）
+- `teammate.execute` 新增 Risk-Based HITL Gates（4 個暫停條件）
+- `teammate.execute` 新增 Staleness Check（spec.md vs plan.md 時間比對）
+- `teammate.align` update 模式新增 Downstream Impact Check
+- Memory Delta Protocol：`progress.md`（原 active-context）改為分區更新模式
+- Context Loading 改為 Required/Recommended/Optional 三層
+
+### Added
+- `/teammate.init` 指令（合併 kickoff + principles）
+- `/teammate.toolkit assign` 子指令
+- `figma-sync` skill（從 teammate.figma 降級）
+- `.teammate/templates/insights-template.md`
+- `.teammate/templates/plan-template.md`（合併 task + actions template）
+- Insights Graduation 機制（3+ 次重複 → 提升到 context/principles）
+- Context Layer 形式化（System/Task/User 三層）
+- `teammate-rules.mdc` > UX 灰色地帶主動分析規則
+
+### Removed
+- `teammate.kickoff.md`（併入 init）
+- `teammate.principles.md`（併入 init）
+- `teammate.clarify.md`（併入 align）
+- `teammate.tasks.md`（併入 plan）
+- `teammate.actions.md`（併入 plan）
+- `teammate.checklist.md`（併入 review）
+- `teammate.assign.md`（降為 toolkit）
+- `teammate.figma.md`（降為 skill）
+- `teammate.ui.md`（併入 plan）
+- `.teammate/templates/task-template.md`（併入 plan-template）
+- `.teammate/templates/actions-template.md`（併入 plan-template）
+- `.teammate/templates/screenplay-template.md`（移除）
+
+### Framework Files（目前清單）
+
+**Rules**
+- `.cursor/rules/teammate-rules.mdc`
+- `.cursor/rules/teammatesync_rule.mdc`
+
+**Commands（6 個）**
+- `.cursor/commands/teammate.init.md`
+- `.cursor/commands/teammate.align.md`
+- `.cursor/commands/teammate.plan.md`
+- `.cursor/commands/teammate.execute.md`
+- `.cursor/commands/teammate.review.md`
+- `.cursor/commands/teammate.toolkit.md`
+
+**Templates**
+- `.teammate/templates/spec-template.md`
+- `.teammate/templates/example-mapping-template.md`
+- `.teammate/templates/feature-template.feature`
+- `.teammate/templates/plan-template.md`
+- `.teammate/templates/insights-template.md`
+- `.teammate/templates/checklist-template.md`
+- `.teammate/templates/agent-file-template.md`
+
+**Scripts**
+- `.teammate/scripts/bash/common.sh`
+- `.teammate/scripts/bash/check-prerequisites.sh`
+- `.teammate/scripts/bash/create-new-task.sh`
+- `.teammate/scripts/bash/setup-task.sh`
+- `.teammate/scripts/bash/update-agent-context.sh`
+
+**Skills**
+- `.cursor/skills/figma-sync/SKILL.md`
+- `.cursor/skills/figma-design-audit/SKILL.md`
+
+**Config**
+- `.teammate/config/teammate.yml`
+
+**Memory**
+- `.teammate/memory/context.md`
+- `.teammate/memory/principles.md`
+- `.teammate/memory/progress.md`
+- `.teammate/memory/milestone.md`
+
+### Migration Notes
+- 既有專案的 `features/` 目錄需手動重命名為 `tasks/`
+- `tasks.md` + `actions.md` 需手動合併為 `plan.md`（或重新執行 `/teammate.plan`）
+- `project-context.md` → `context.md`、`active-context.md` → `progress.md`、`progress.md` → `milestone.md` 需手動重命名
+- `screenplay.md` 可安全刪除（內容已整合到 plan.md Actors & Abilities section）
+- 刪除已移除的指令檔案（kickoff/principles/clarify/tasks/actions/checklist/assign/figma/ui）
 
 ---
 

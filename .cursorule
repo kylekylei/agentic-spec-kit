@@ -15,8 +15,8 @@
 - 單一真實來源：避免重複語意文件，降低 drift 與返工。
 - 以結果衡量：啟動阻力、文件摩擦、決策負擔、上下文切換、返工率、可追溯性。
 
-強制同步規範：
+強制同步規範（Definition of Done）：
 - 任何流程、命令、artifact、目錄結構或操作方式有修正，必須同步更新 README.md。
 - 任何流程、命令、artifact、目錄結構或操作方式有修正，必須同步更新 PLAYBOOK.md（記錄問題、原因、改善與影響）。
-- README.md 未同步，視為該次優化未完成（Definition of Done 未達成）。
-- PLAYBOOK.md 未同步，視為該次優化未完成（Definition of Done 未達成）。
+- 任何影響其他專案引用的變更（檔名、路徑、指令名、artifact 名），必須同步更新 CHANGELOG.md（[Unreleased] 區段）。
+- 以上任一項未同步，視為該次優化未完成。
