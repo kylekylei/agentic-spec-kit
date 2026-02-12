@@ -112,9 +112,9 @@ Requirements: Every rule → at least one scenario. Every P1 story → happy pat
 
 ---
 
-## Stage 2: Implementation Plan — Part 1: Tasks
+## Stage 2: Implementation Plan — Part 1: Architecture
 
-> 產出：`FEATURE_DIR/plan.md` 的 Part 1（技術規劃）
+> 產出：`FEATURE_DIR/plan.md` 的 Part 1（技術架構）
 
 ### Load Additional Context
 
@@ -263,7 +263,7 @@ Update `.teammate/memory/active-context.md` using delta mode:
 Output:
 - Generated files list (`.feature`, `plan.md`, `contracts/ui/ui-spec.md` if triggered)
 - Scenario summary: [N] scenarios across [N] stories
-- Plan summary: Part 1 ([N] technical decisions), Part 2 ([N] actions, [coverage]%)
+- Plan summary: Part 1 Architecture ([N] technical decisions), Part 2 Actions ([N] actions, [coverage]%)
 - Parallel opportunities identified
 - Suggested next command: `/teammate.execute`
 

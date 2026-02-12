@@ -68,7 +68,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 1. Run `.teammate/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root
 2. Parse `FEATURE_DIR`
-3. If no feature found → scan `features/` for the most recent feature directory
+3. If no task found → scan `tasks/` for the most recent task directory
 4. If no feature found at all → 只執行 Pass 1（Foundation）和 Pass 5（Hub Sync）
 
 ### Execution Steps
@@ -332,7 +332,7 @@ spec.md (FR-xxx) → scenarios/*.feature (@tag) → plan.md Part 2 (Sxxx [Verifi
 不可遷移（專案私有）:
   .teammate/memory/*
   .teammate/snapshots/*
-  features/*
+  tasks/*
   .cursor/rules/*（非 teammate 的規則）
   .cursorule（User Profile）
   docs/*（專案文件）
@@ -521,5 +521,5 @@ spec.md (FR-xxx) → scenarios/*.feature (@tag) → plan.md Part 2 (Sxxx [Verifi
 - **Non-blocking** — 不需要所有 artifact 都存在才能執行
 - **Extensible** — 新工具只需在 Parameter Routing 表格新增一行 + 在下方新增對應區段
 - **遵循 teammatesync_rule** — 改善確認後回饋到 Hub 的 PLAYBOOK.md
-- **migrate 不碰專案私有檔案** — `.teammate/memory/`、`features/`、`.cursorule`、`docs/` 永遠不被遷移覆寫
+- **migrate 不碰專案私有檔案** — `.teammate/memory/`、`tasks/`、`.cursorule`、`docs/` 永遠不被遷移覆寫
 - **teammate.yml 用 merge 不用覆寫** — 保留專案自訂值，只新增 Hub 的新欄位

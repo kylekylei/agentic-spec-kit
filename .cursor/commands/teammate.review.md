@@ -60,7 +60,7 @@ Abort if required files missing.
 ### Load Artifacts
 
    From spec.md: User stories, functional requirements, success criteria
-   From plan.md Part 1 (Tasks): Architecture decisions, technical constraints
+   From plan.md Part 1 (Architecture): Technical decisions, project structure, constraints
    From plan.md Part 2 (Actions): Actions with [Verifies: @tag] markers, phase structure
    From scenarios/*.feature: All scenarios with tags, step definitions
    From principles: Principles and boundaries

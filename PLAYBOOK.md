@@ -532,6 +532,8 @@ User Layer（使用者層 — 持久 + 即時）:
 | 2026-02-11 | Teammate | P4 合併後仍有 7 個指令，kickoff/principles 對有經驗的開發者過度引導、teammate.ui 的範例含專案識別度、teammate.figma 是工具不是流程、teammate.assign 是純機械操作不在核心迴路 | 二次精簡（7→5 核心指令）：(1) kickoff+principles 合併為 `/teammate.init`（Init/Complete/Audit 三模式）(2) teammate.ui 併入 plan（UI Deep Analysis 自動偵測 ≥3 組件觸發，泛化範例）(3) teammate.figma 降為 `figma-sync` skill (4) teammate.assign 降為 `/teammate.toolkit assign`。最終：`init → align → plan → execute → review` |
 | 2026-02-11 | Teammate | feature 產出檔案過多（spec + example-mapping + screenplay + tasks + actions + component-specs = 6 檔），tasks 和 actions 邊界模糊、execute 需同時開兩檔、update 需同步兩檔；screenplay 獨立價值低；component-specs 和 ui-spec 重疊 | Artifact 精簡：(1) tasks.md + actions.md 合併為 `plan.md`（Part 1: Tasks + Part 2: Actions，結構分明）(2) screenplay.md 移除（精簡為 plan.md 的 optional Actors & Abilities section）(3) component-specs.md + ui-spec.md 統一為 `contracts/ui/ui-spec.md`。合併 3 個 template、更新 5 個指令 + rules + yml + 3 scripts + 2 skills |
 
+| 2026-02-11 | Teammate | `features/` 目錄名稱無法涵蓋所有開發面向（bug fix、重構、基礎設施、研究等都不是 feature）；plan.md Part 1 叫「Tasks」和目錄名稱衝突 | (1) `features/` 重新命名為 `tasks/`（涵蓋所有工作類型）(2) plan.md Part 1 從 "Tasks" 改為 "Architecture"（避免命名衝突）(3) `create-new-feature.sh` 改名為 `create-new-task.sh` (4) 更新所有指令、rules、scripts、templates 的引用 |
+
 ---
 
-**Last Updated**: 2026-02-11 (Artifact 精簡完成)
+**Last Updated**: 2026-02-11 (features → tasks 重新命名)

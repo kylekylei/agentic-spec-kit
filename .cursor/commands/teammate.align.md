@@ -66,11 +66,11 @@ Parse `$ARGUMENTS` for the keyword **`update`**:
    b. Find the highest feature number across all sources for the short-name:
       - Remote branches: `git ls-remote --heads origin | grep -E 'refs/heads/[0-9]+-<short-name>$'`
       - Local branches: `git branch | grep -E '^[* ]*[0-9]+-<short-name>$'`
-      - Feature directories: Check for directories matching `features/[0-9]+-<short-name>`
+      - Task directories: Check for directories matching `tasks/[0-9]+-<short-name>`
 
    c. Use N+1 for the new branch number.
 
-   d. Run `.teammate/scripts/bash/create-new-feature.sh --json "$ARGUMENTS"` with the calculated number and short-name.
+   d. Run `.teammate/scripts/bash/create-new-task.sh --json "$ARGUMENTS"` with the calculated number and short-name.
       - For single quotes in args, use escape syntax: e.g 'I'\''m Groot'
 
 ### Phase 2: Impact Mapping

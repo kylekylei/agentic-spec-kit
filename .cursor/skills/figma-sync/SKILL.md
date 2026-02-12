@@ -45,7 +45,7 @@ Required:
 
 Optional:
 - `spec.md` — User scenario descriptions
-- `plan.md` — Visual descriptions from technical plan (Part 1: Tasks)
+- `plan.md` — Visual descriptions from technical plan (Part 1: Architecture)
 
 ### Step 2: Determine Scope
 

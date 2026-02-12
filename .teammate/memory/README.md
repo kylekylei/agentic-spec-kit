@@ -14,4 +14,4 @@
 - **`project-context.md` 和 `principles.md` 是人類的文件。** AI 只在指令執行時協助填寫，但最終內容由人類決定。
 - **`active-context.md` 和 `progress.md` 是 AI 的工作筆記。** 人類可以閱讀，但不需要手動維護。
 - **任何對 `principles.md` 的修改都應該先建立 snapshot**，記錄修改原因。原則的變更會影響所有後續工作。
-- **`project-context.md` 中不應出現 feature 級別的細節。** Feature 相關的資訊屬於 `features/[###-feature]/` 目錄。
+- **`project-context.md` 中不應出現 task 級別的細節。** Task 相關的資訊屬於 `tasks/[###-task]/` 目錄。

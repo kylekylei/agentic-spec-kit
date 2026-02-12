@@ -1,10 +1,10 @@
-# Implementation Plan: [FEATURE]
+# Implementation Plan: [TASK_NAME]
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: `spec.md`
+**Branch**: `[###-task-name]` | **Date**: [DATE] | **Spec**: `spec.md`
 
 ---
 
-# Part 1: Tasks（技術規劃）
+# Part 1: Architecture（技術架構）
 
 ## Summary
 

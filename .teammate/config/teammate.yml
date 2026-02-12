@@ -97,14 +97,14 @@ verification:
 # =============================================================================
 
 feature_structure:
-  base_dir: "features"
+  base_dir: "tasks"
   
   # Files generated per feature
   files:
     - spec.md              # teammate.align output (spec)
     - example-mapping.md   # teammate.align output (examples)
     - teammate.refs.yaml   # Context anchors
-    - plan.md              # teammate.plan output (Part 1: Tasks + Part 2: Actions)
+    - plan.md              # teammate.plan output (Part 1: Architecture + Part 2: Actions)
     - insights.md          # teammate.execute output (REFLECT dynamic cheatsheet)
     - README.md            # Feature overview
   

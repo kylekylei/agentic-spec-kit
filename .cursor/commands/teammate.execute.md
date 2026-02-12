@@ -78,7 +78,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 3. **Load Implementation Context**:
 
    **Required**（必載）:
-   - `plan.md` - Part 1 (Tasks: tech stack, architecture) + Part 2 (Actions: phased execution checklist)
+   - `plan.md` - Part 1 (Architecture: tech stack, project structure) + Part 2 (Actions: phased execution checklist)
    - `scenarios/*.feature` - Gherkin scenarios
 
    **Recommended**（條件必載 — 存在即載入，不得跳過）:

@@ -73,11 +73,11 @@ docs/                         # External reference knowledge base
 └── design/                   # Design system docs & Figma index
     └── figma-index.md
 
-features/[###-feature-name]/  # Per-feature artifacts
+tasks/[###-task-name]/        # Per-task artifacts
 ├── spec.md                   # /teammate.align output (spec)
 ├── example-mapping.md        # /teammate.align output (examples)
 ├── scenarios/*.feature       # /teammate.plan output (scenarios)
-├── plan.md                   # /teammate.plan output (Part 1: Tasks + Part 2: Actions)
+├── plan.md                   # /teammate.plan output (Part 1: Architecture + Part 2: Actions)
 ├── insights.md               # /teammate.execute REFLECT output (dynamic cheatsheet)
 ├── contracts/ui/ui-spec.md   # /teammate.plan output (UI specs, auto-triggered)
 └── checklists/               # /teammate.review output (readiness reports)
@@ -110,7 +110,7 @@ System Layer（系統層 — 跨 feature 不變）:
 
 Task Layer（任務層 — per feature）:
   - spec.md                # WHAT: 要做什麼
-  - plan.md                # HOW + STEPS: 技術規劃 + 執行清單
+  - plan.md                # HOW + STEPS: 技術架構 + 執行清單
   - scenarios/*.feature    # VERIFY: 驗證條件
   - insights.md            # LEARNED: 執行中學到的
   - contracts/ui/ui-spec.md  # UI: 組件規格（如有）
