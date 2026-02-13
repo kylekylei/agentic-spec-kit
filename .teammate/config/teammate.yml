@@ -180,6 +180,9 @@ scripts:
 # SNAPSHOT SETTINGS
 # =============================================================================
 
+# Note: This controls automated snapshots (on phase/verification completion).
+# Event-driven snapshots (on principles/plan/scope changes) are enforced by
+# command logic (e.g. teammate.plan update) regardless of this setting.
 snapshots:
   enabled: false
   location: ".teammate/snapshots"

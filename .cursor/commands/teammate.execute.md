@@ -25,7 +25,7 @@ Parse `$ARGUMENTS` for special keywords:
 
 | Keyword | Behavior |
 |---------|----------|
-| `next` | 自動找到 `actions.md` 中下一個未完成的 action（`- [ ]`），直接執行它 |
+| `next` | 自動找到 `plan.md` Part 2 中下一個未完成的 action（`- [ ]`），直接執行它 |
 | `S0XX` | 執行指定 Action ID（如 `S006`） |
 | `S0XX-S0YY` | 執行指定範圍的 actions（如 `S006-S010`） |
 | _(empty)_ | 從頭開始，或從上次中斷處繼續 |
