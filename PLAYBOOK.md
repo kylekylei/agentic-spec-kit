@@ -42,6 +42,16 @@
 
 ## 1. 歷史修改軌跡（Append-Only）
 
+#### 2026-02-13 · 規則 · OpenWebUI_Frontend
+**觸發**: `/teammate.execute` Phase D 執行 5 個 actions 後，AI 完全跳過 REFLECT 步驟，未寫入 `insights.md`，直到使用者手動提醒才補寫。原始規則寫「有新發現才寫入，無則跳過」，AI 利用此彈性直接略過整個步驟。
+**決策**: 
+- 將 REFLECT 從 optional 升級為 **mandatory hard gate**
+- `teammate.execute.md`：REFLECT Phase 標題加 `Hard Gate — 不可跳過`，每個 action 必須寫入 `insights.md`（有發現寫內容，無發現寫 `No new insights`），回報須含 `REFLECT: done`
+- `teammate-rules.mdc`：`Red-Green discipline` → `Red-Green-Reflect discipline`，明確 REFLECT 為 hard gate，禁止批次補寫
+**影響**: `teammate.execute.md`（2 處）、`teammate-rules.mdc`（1 處）、`CHANGELOG.md`
+**成效**: 待驗證 — 下次 execute 時確認 AI 是否逐 action 即時寫入 insights.md
+**狀態**: 生效中
+
 #### 2026-02-13 · 規則 · Teammate
 **觸發**: 使用者提出需要 AI 提供多選項時，能讓使用者快速輸入 A/B/C 選擇，減少打字負擔
 **決策**: 
@@ -543,4 +553,24 @@ User Layer（使用者層 — 持久 + 即時）:
 
 ---
 
-**Last Updated**: 2026-02-12（設計資產動態建立 + docs 結構精簡）
+#### 2026-02-13 · 規則 · open-webui
+**觸發**: AI 在收到使用者口頭規格修正（step_description fade-out 動畫）後，直接實作程式碼而未先更新任務文件（plan.md、component-specs.md），違反文件先行原則。且 principles.md 中的流程原則未被主動讀取，因為它不在 always-applied rules 中。
+**決策**: 1) 在 `teammate-rules.mdc` 的 Rules 段落新增「文件先行（Documentation-First）」和「Principles 比對」兩條 always-applied 規則。2) 在 `principles.md` 新增 GOV-001 文件先行原則。
+**影響**: `teammate-rules.mdc`（Rules 段落）、`.teammate/memory/principles.md`（GOV-001）
+**成效**: 確保 AI 在任何操作（不限 teammate.* 指令）都會讀取 principles.md 並先更新文件再實作
+**狀態**: 生效中
+
+---
+
+---
+
+#### 2026-02-13 · 命令 · open-webui
+**觸發**: `/teammate.review` 執行時 Pass B3 (Principles Alignment) 僅做淺層檢查（「有沒有 @principles scenario」），未實際驗證程式碼是否符合 principles.md 中的每條 MUST/MUST NOT 規則。導致 `CircularProgress.svelte` 缺少 `aria-label`（違反原則 IV 無障礙優先）被標記為 MINOR 而非 MEDIUM，且未列入 Findings 表。
+**決策**: 強化 `teammate.review.md` 的 Phase 0 + B3：1) Phase 0 讀取 principles.md 後解析每條規則到內存 checklist；2) B3 改為逐條比對，包含 scenario 覆蓋 + 程式碼實際合規驗證，輸出結構化表格。
+**影響**: `.cursor/commands/teammate.review.md`（Phase 0、B3 段落）
+**成效**: 待驗證 — 下次 review 時應能逐條比對 principles，避免遺漏
+**狀態**: 生效中
+
+---
+
+**Last Updated**: 2026-02-13（teammate.review principles 逐條比對強化）

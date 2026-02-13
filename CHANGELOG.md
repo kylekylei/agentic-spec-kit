@@ -19,6 +19,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 ### Changed
 - Smart Context Loading 更新：`teammate.execute` 和 `teammate.plan` 在 Recommended 層級加入 `agent-spec.md`（如存在則載入）
 - **互動式選項格式規範**：AI 提供多選項時，統一使用 `[A] / [B] / [C]` 字母標籤格式，讓使用者可快速回覆字母選擇
+- **REFLECT Hard Gate**：`teammate.execute` 的 REFLECT 步驟從 optional 升級為 mandatory gate — 每個 action 完成後必須寫入 `insights.md`（有發現寫內容，無發現寫 `No new insights`），禁止批次補寫
+- **Red-Green → Red-Green-Reflect**：`teammate-rules.mdc` Rules 區段將 discipline 名稱更新，明確 REFLECT 為 hard gate
 
 ### Documentation
 - 更新 README.md 專案結構，加入 `agent-spec.md` 說明

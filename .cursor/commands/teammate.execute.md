@@ -186,9 +186,9 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    3. Ensure tests still GREEN
    4. Commit with story reference
 
-   #### REFLECT Phase:
+   #### REFLECT Phase（Hard Gate — 不可跳過）:
 
-   每個 action GREEN 後，進行 ≤ 30 秒的快速自檢：
+   每個 action GREEN 後，**必須**進行 ≤ 30 秒的快速自檢：
 
    1. 發現了 codebase 慣例或 pattern？
    2. 踩到了陷阱或需要注意的事項？
@@ -196,11 +196,13 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    4. 做了涉及替代方案取捨的選擇？（→ Decision Log）
    5. 先前 insight 需修正？
 
-   規則：
-   - **有新發現才寫入** `TASK_DIR/insights.md`，無則跳過（避免噪音）
+   **Hard Gate 規則**：
+   - REFLECT 是 **mandatory gate**，每個 action 完成後**必須**寫入 `TASK_DIR/insights.md`
+   - **有新發現**：寫入 `- [S0XX] 發現內容`（歸入對應分類）
+   - **無新發現**：寫入 `- [S0XX] No new insights`（證明已執行自檢）
    - 首次寫入時，從 `.teammate/templates/insights-template.md` 複製模板
-   - 寫入時標記 Action ID（如 `[S003]`）保留可追溯性
-   - 格式範例：`- [S003] Svelte reactive 一律使用 $derived，不用 $: IIFE`
+   - **完成證據**：每個 action 回報時必須包含 `REFLECT: done`（或 `REFLECT: [N] insights`）
+   - **禁止批次補寫**：不可在多個 action 完成後才一次補寫所有 REFLECT，必須逐 action 即時寫入
 
 7. **Phase-by-Phase Execution**:
 
@@ -325,13 +327,14 @@ After GREEN:
 - Run tests after each change
 - Keep GREEN throughout
 
-### REFLECT Quickly
+### REFLECT Quickly (Hard Gate)
 
 After REFACTOR:
 - ≤ 30 秒的快速自檢，不是長篇報告
-- 只在有實質發現時才寫入 `insights.md`
+- **每個 action 必須寫入 `insights.md`**（有發現寫內容，無發現寫 `No new insights`）
 - 記錄格式：`- [S0XX] 發現內容`
 - 五個固定問題：慣例？陷阱？決策？取捨？修正？
+- **禁止跳過、禁止批次補寫**
 
 ## Implementation Execution Rules
 

@@ -249,7 +249,7 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
 
 - **Principles are supreme.** Defined principles override all other decisions. Violations are always CRITICAL.
 - **Behavior over implementation.** Specs describe WHAT the system does, not HOW it's built.
-- **Red-Green discipline.** During `/teammate.execute`, always write step definitions first (RED), then implement (GREEN).
+- **Red-Green-Reflect discipline.** During `/teammate.execute`, always write step definitions first (RED), then implement (GREEN), then **REFLECT is a hard gate** — every action MUST write to `insights.md` immediately after completion (findings or `No new insights`). Batch back-filling is forbidden.
 - **No skipping phases.** Each command depends on artifacts from previous commands.
 - **Figma links are per-feature.** Project-level Figma URL goes in `context.md`. Feature-level page links go in `contracts/ui/` during `/teammate.plan`.
 - **Update progress.md using Memory Delta Protocol** after each command completes — 覆寫 Current State、追加 Session Log、更新 Blockers（見 Memory Delta Protocol 區段）。
@@ -262,6 +262,7 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
   - Gherkin 關鍵字（`Feature`、`Scenario`、`Given`、`When`、`Then`、`And`、`But`、`Background`、`Examples`）
   - Markdown 結構標記與表格欄位標題（可中可英，但內容描述必須中文）
 - **主動提供下一步.** 每個 `teammate.*` 指令完成後，輸出推薦下一步（見 Output Mode 區段），最多 2 個選項。
+- **文件先行（Documentation-First）.** 任何規格修正（設計稿釐清、狀態定義變更、UI 行為調整、新增需求），**MUST** 先更新對應的任務文件（plan.md、component-specs.md、spec.md 等），確認文件一致後才可進入實作。禁止程式碼改完才回頭補文件。
 
 ## Simplified Flow (for small, focused tasks)
 

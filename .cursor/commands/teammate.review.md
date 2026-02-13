@@ -41,6 +41,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage, artif
 2. **Read `.teammate/memory/principles.md`**
    - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
    - If found → **ERROR**: "Principles not defined. Run `/teammate.init` first."
+   - **Parse all principles**: Extract every MUST / MUST NOT / SHOULD rule with its ID (e.g. `BB-001`, `III-D`) into an in-memory checklist. This checklist is the **authoritative reference** for Pass B3, Pass D Compliance, and Pass G.
 
 ### Setup
 
@@ -101,9 +102,21 @@ Abort if required files missing.
 - Same concepts named differently across files?
 - Entity names match between spec, model, and scenarios?
 
-#### B3. Principles Alignment
-- Every MUST NOT has a @principles scenario?
-- Plan decisions align with principles?
+#### B3. Principles Alignment（逐條比對）
+
+Using the principles checklist parsed in Phase 0, perform **item-by-item** verification:
+
+1. **For each principle (MUST / MUST NOT / SHOULD)**:
+   - Does it have at least one `@principles` or `@boundary` scenario in `*.feature`?
+   - Does the implementation code comply? (spot-check relevant source files)
+   - If the principle relates to accessibility (e.g. aria attributes, keyboard navigation), verify the **actual code** has the required attributes — do not assume compliance from scenario existence alone.
+2. **Plan decisions alignment**: Do technical decisions in `plan.md` contradict any principle?
+3. **Severity**: Any violation of a MUST / MUST NOT principle is automatically **CRITICAL**. Missing scenario coverage for a principle is at least **MEDIUM**.
+
+Output a table:
+
+| Principle ID | Statement (summary) | Scenario Coverage | Code Compliance | Status |
+|---|---|---|---|---|
 
 #### B4. Example Mapping Coverage
 - Every rule from example-mapping has scenarios?
