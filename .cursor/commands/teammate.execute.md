@@ -33,7 +33,7 @@ Parse `$ARGUMENTS` for special keywords:
 
 #### `next` 模式流程
 
-1. 讀取 `FEATURE_DIR/plan.md` 的 Part 2（Actions）
+1. 讀取 `TASK_DIR/plan.md` 的 Part 2（Actions）
 2. 掃描所有 action 行，找到第一個 `- [ ]`（未完成）的 action
 3. 跳過所有 `- [x]`（已完成）的 action
 4. 顯示：「**執行 S0XX**: [action 描述]」
@@ -55,11 +55,11 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 ### Execution Steps
 
 1. **Setup**: Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-actions --include-actions` from repo root and parse:
-   - `FEATURE_DIR`
+   - `TASK_DIR`
    - `AVAILABLE_DOCS`
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot'
 
-2. **Check Checklists Status** (if `FEATURE_DIR/checklists/` exists):
+2. **Check Checklists Status** (if `TASK_DIR/checklists/` exists):
 
    Scan all checklist files:
    - Count total, completed, incomplete items
@@ -84,7 +84,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    - `scenarios/*.feature` - Gherkin scenarios
 
    **Recommended**（條件必載 — 存在即載入，不得跳過）:
-   - `FEATURE_DIR/insights.md` — 當前 feature 的動態備忘錄（如存在）
+   - `TASK_DIR/insights.md` — 當前 feature 的動態備忘錄（如存在）
    - 最近 2 個已完成 feature 的 `insights.md` — 跨 feature 知識傳遞
    - `docs/llms.txt` — Read the root index, load corresponding `docs/[library]/llms.txt` for implementation guidance
    - `contracts/` — API / UI / AI contracts（如目錄存在，UI specs 在 `contracts/ui/ui-spec.md`）
@@ -196,7 +196,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    5. 先前 insight 需修正？
 
    規則：
-   - **有新發現才寫入** `FEATURE_DIR/insights.md`，無則跳過（避免噪音）
+   - **有新發現才寫入** `TASK_DIR/insights.md`，無則跳過（避免噪音）
    - 首次寫入時，從 `.teammate/templates/insights-template.md` 複製模板
    - 寫入時標記 Action ID（如 `[S003]`）保留可追溯性
    - 格式範例：`- [S003] Svelte reactive 一律使用 $derived，不用 $: IIFE`

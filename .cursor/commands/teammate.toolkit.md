@@ -67,7 +67,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 ### Phase 0: Locate Feature
 
 1. Run `.teammate/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root
-2. Parse `FEATURE_DIR`
+2. Parse `TASK_DIR`
 3. If no task found → scan `tasks/` for the most recent task directory
 4. If no feature found at all → 只執行 Pass 1（Foundation）和 Pass 5（Hub Sync）
 
@@ -494,7 +494,7 @@ spec.md (FR-xxx) → scenarios/*.feature (@tag) → plan.md Part 2 (Sxxx [Verifi
 
 ### Execution Steps
 
-1. **Load** `FEATURE_DIR/plan.md` Part 2 (Actions)，解析所有 actions（ID、phase、story、tags、dependencies）
+1. **Load** `TASK_DIR/plan.md` Part 2 (Actions)，解析所有 actions（ID、phase、story、tags、dependencies）
 2. **Verify** Git remote 是 GitHub URL
 3. **For each action** 建立 GitHub Issue：
    - Title: `[ActionID] [Story] Description`

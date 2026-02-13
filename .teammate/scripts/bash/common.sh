@@ -81,19 +81,19 @@ check_feature_branch() {
     return 0
 }
 
-get_feature_dir() { echo "$1/tasks/$2"; }
+get_task_dir() { echo "$1/tasks/$2"; }
 
-# Find feature directory by numeric prefix instead of exact branch match
+# Find task directory by numeric prefix instead of exact branch match
 # This allows multiple branches to work on the same spec (e.g., 004-fix-bug, 004-add-feature)
-find_feature_dir_by_prefix() {
+find_task_dir_by_prefix() {
     local repo_root="$1"
     local branch_name="$2"
-    local specs_dir="$repo_root/tasks"
+    local tasks_dir="$repo_root/tasks"
 
     # Extract numeric prefix from branch (e.g., "004" from "004-whatever")
     if [[ ! "$branch_name" =~ ^([0-9]{3})- ]]; then
         # If branch doesn't have numeric prefix, fall back to exact match
-        echo "$specs_dir/$branch_name"
+        echo "$tasks_dir/$branch_name"
         return
     fi
 
@@ -101,8 +101,8 @@ find_feature_dir_by_prefix() {
 
     # Search for directories in tasks/ that start with this prefix
     local matches=()
-    if [[ -d "$specs_dir" ]]; then
-        for dir in "$specs_dir"/"$prefix"-*; do
+    if [[ -d "$tasks_dir" ]]; then
+        for dir in "$tasks_dir"/"$prefix"-*; do
             if [[ -d "$dir" ]]; then
                 matches+=("$(basename "$dir")")
             fi
@@ -112,19 +112,19 @@ find_feature_dir_by_prefix() {
     # Handle results
     if [[ ${#matches[@]} -eq 0 ]]; then
         # No match found - return the branch name path (will fail later with clear error)
-        echo "$specs_dir/$branch_name"
+        echo "$tasks_dir/$branch_name"
     elif [[ ${#matches[@]} -eq 1 ]]; then
         # Exactly one match - perfect!
-        echo "$specs_dir/${matches[0]}"
+        echo "$tasks_dir/${matches[0]}"
     else
         # Multiple matches - this shouldn't happen with proper naming convention
-        echo "ERROR: Multiple spec directories found with prefix '$prefix': ${matches[*]}" >&2
-        echo "Please ensure only one spec directory exists per numeric prefix." >&2
-        echo "$specs_dir/$branch_name"  # Return something to avoid breaking the script
+        echo "ERROR: Multiple task directories found with prefix '$prefix': ${matches[*]}" >&2
+        echo "Please ensure only one task directory exists per numeric prefix." >&2
+        echo "$tasks_dir/$branch_name"  # Return something to avoid breaking the script
     fi
 }
 
-get_feature_paths() {
+get_task_paths() {
     local repo_root=$(get_repo_root)
     local current_branch=$(get_current_branch)
     local has_git_repo="false"
@@ -133,20 +133,20 @@ get_feature_paths() {
         has_git_repo="true"
     fi
 
-    # Use prefix-based lookup to support multiple branches per spec
-    local feature_dir=$(find_feature_dir_by_prefix "$repo_root" "$current_branch")
+    # Use prefix-based lookup to support multiple branches per task
+    local task_dir=$(find_task_dir_by_prefix "$repo_root" "$current_branch")
 
     cat <<EOF
 REPO_ROOT='$repo_root'
 CURRENT_BRANCH='$current_branch'
 HAS_GIT='$has_git_repo'
-FEATURE_DIR='$feature_dir'
-FEATURE_SPEC='$feature_dir/spec.md'
-IMPL_PLAN='$feature_dir/plan.md'
-RESEARCH='$feature_dir/research.md'
-DATA_MODEL='$feature_dir/data-model.md'
-QUICKSTART='$feature_dir/quickstart.md'
-CONTRACTS_DIR='$feature_dir/contracts'
+TASK_DIR='$task_dir'
+TASK_SPEC='$task_dir/spec.md'
+IMPL_PLAN='$task_dir/plan.md'
+RESEARCH='$task_dir/research.md'
+DATA_MODEL='$task_dir/data-model.md'
+QUICKSTART='$task_dir/quickstart.md'
+CONTRACTS_DIR='$task_dir/contracts'
 EOF
 }
 

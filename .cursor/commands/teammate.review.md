@@ -45,15 +45,15 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage, artif
 ### Setup
 
 Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-actions --include-actions` from repo root and parse:
-- `FEATURE_DIR`, `AVAILABLE_DOCS`
+- `TASK_DIR`, `AVAILABLE_DOCS`
 
 Derive paths:
-   - SPEC = `FEATURE_DIR/spec.md`
-   - PLAN = `FEATURE_DIR/plan.md` (Part 1: Tasks + Part 2: Actions)
-   - FEATURES = `FEATURE_DIR/scenarios/*.feature`
-   - EXAMPLE_MAPPING = `FEATURE_DIR/example-mapping.md`
-   - UI_SPEC = `FEATURE_DIR/contracts/ui/ui-spec.md` (if exists)
-   - INSIGHTS = `FEATURE_DIR/insights.md` (if exists)
+   - SPEC = `TASK_DIR/spec.md`
+   - PLAN = `TASK_DIR/plan.md` (Part 1: Tasks + Part 2: Actions)
+   - FEATURES = `TASK_DIR/scenarios/*.feature`
+   - EXAMPLE_MAPPING = `TASK_DIR/example-mapping.md`
+   - UI_SPEC = `TASK_DIR/contracts/ui/ui-spec.md` (if exists)
+   - INSIGHTS = `TASK_DIR/insights.md` (if exists)
 
 Abort if required files missing.
 
@@ -181,7 +181,7 @@ Identify gaps: Scenarios without actions, actions without scenarios, rules witho
 
 ## Pass F: Living Documentation
 
-Generate `FEATURE_DIR/checklists/feature-readiness.md`:
+Generate `TASK_DIR/checklists/feature-readiness.md`:
 
 ```markdown
 # Feature Readiness Report: [Feature Name]

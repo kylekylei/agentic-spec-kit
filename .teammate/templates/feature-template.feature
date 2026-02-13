@@ -90,24 +90,24 @@ Feature: [FEATURE_NAME]
       | [VALUE_5]  | [VALUE_6]  | [RESULT_3]      |
 
   # ============================================================================
-  # principles BOUNDARY SCENARIOS
+  # PRINCIPLES BOUNDARY SCENARIOS
   # Behaviors that MUST NOT occur (Negative Prompting)
   # Reference: .teammate/memory/principles.md
   # ============================================================================
 
   @principles @boundary @P1
-  Scenario: [principles_VIOLATION_PREVENTION_NAME]
-    # This scenario verifies the system respects principlesal boundaries
+  Scenario: [PRINCIPLES_VIOLATION_PREVENTION_NAME]
+    # This scenario verifies the system respects Principles boundaries
     Given [CONTEXT_THAT_COULD_LEAD_TO_VIOLATION]
     When [ACTION_THAT_COULD_VIOLATE_PRINCIPLE]
     Then [SYSTEM_MUST_PREVENT_VIOLATION]
     And [APPROPRIATE_ALTERNATIVE_BEHAVIOR]
 
   @principles @boundary @P1
-  Scenario: [ANOTHER_principles_BOUNDARY]
+  Scenario: [ANOTHER_PRINCIPLES_BOUNDARY]
     Given [CONTEXT]
     When [POTENTIALLY_VIOLATING_ACTION]
-    Then [principlesAL_CONSTRAINT_ENFORCED]
+    Then [PRINCIPLES_CONSTRAINT_ENFORCED]
 
 # ============================================================================
 # TAG REFERENCE
@@ -123,7 +123,7 @@ Feature: [FEATURE_NAME]
 #   @negative     - Error and failure scenarios
 #   @boundary     - Edge cases and limits
 #   @data-driven  - Parameterized scenarios
-#   @principles - principlesal boundary enforcement
+#   @principles - Principles boundary enforcement
 #
 # Custom Tags:
 #   @wip          - Work in progress

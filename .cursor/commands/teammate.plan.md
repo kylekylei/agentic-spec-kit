@@ -57,24 +57,24 @@ When running with `update`, the command preserves existing work:
 
 ## Stage 1: Scenario Generation
 
-> 產出：`FEATURE_DIR/scenarios/*.feature` + `teammate.refs.yaml`
+> 產出：`TASK_DIR/scenarios/*.feature` + `teammate.refs.yaml`
 
 ### Setup
 
-1. Run `.teammate/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root. Parse JSON for `FEATURE_DIR`, `FEATURE_SPEC`.
+1. Run `.teammate/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root. Parse JSON for `TASK_DIR`, `TASK_SPEC`.
 
 2. **Load Context**:
 
    Required:
-   - `FEATURE_DIR/spec.md` - User stories and requirements
-   - `FEATURE_DIR/example-mapping.md` - Rules and examples
+   - `TASK_DIR/spec.md` - User stories and requirements
+   - `TASK_DIR/example-mapping.md` - Rules and examples
    - `.teammate/memory/principles.md` - Non-negotiable boundaries
 
    Optional:
    - `.teammate/templates/feature-template.feature` - Gherkin template
-   - `FEATURE_DIR/contracts/ui/design-principles.md` - UX 設計原則
+   - `TASK_DIR/contracts/ui/design-principles.md` - UX 設計原則
 
-3. **Create Features Directory**: `mkdir -p FEATURE_DIR/scenarios`
+3. **Create Features Directory**: `mkdir -p TASK_DIR/scenarios`
 
 ### UX Conflict Scan (if `design-principles.md` exists)
 
@@ -93,11 +93,11 @@ For each User Story (in priority order):
 2. **Map Example Mapping** rules → scenarios, examples → Given/When/Then
 3. **Add Principles Boundary Scenarios** (`@principles @boundary`)
 4. **Consolidate data-driven scenarios** using Scenario Outline where applicable
-5. **Write** to `FEATURE_DIR/scenarios/[story-slug].feature`
+5. **Write** to `TASK_DIR/scenarios/[story-slug].feature`
 
 ### Context Anchors
 
-Create/update `FEATURE_DIR/teammate.refs.yaml` with feature metadata, behavior references, and dependencies.
+Create/update `TASK_DIR/teammate.refs.yaml` with feature metadata, behavior references, and dependencies.
 
 ### Coverage Validation
 
@@ -114,13 +114,13 @@ Requirements: Every rule → at least one scenario. Every P1 story → happy pat
 
 ## Stage 2: Implementation Plan — Part 1: Architecture
 
-> 產出：`FEATURE_DIR/plan.md` 的 Part 1（技術架構）
+> 產出：`TASK_DIR/plan.md` 的 Part 1（技術架構）
 
 ### Load Additional Context
 
 Optional（如存在則載入）:
 - `docs/llms.txt` → 外部 API/SDK 參考索引（遵循 llms.txt 標準）
-- `FEATURE_DIR/example-mapping.md`
+- `TASK_DIR/example-mapping.md`
 
 ### Design Asset Detection（動態）
 
@@ -175,7 +175,7 @@ If NEEDS CLARIFICATION items exist: Generate research tasks, consolidate in plan
 
 ## Stage 2.5: UI Deep Analysis (auto-triggered or --ui)
 
-> 產出：`FEATURE_DIR/contracts/ui/ui-spec.md`（統一 UI 規格）
+> 產出：`TASK_DIR/contracts/ui/ui-spec.md`（統一 UI 規格）
 
 **觸發條件**（滿足任一）:
 1. `.teammate/design/figma-index.md` 存在（表示專案有設計資產）
@@ -226,13 +226,13 @@ Rules: 每個互動元素 MUST 有 enabled + disabled；若引用外部設計 MU
 - i18n: all visible text uses i18n keys, synced to all locales
 - a11y: aria-label, keyboard nav, focus management, contrast ≥ 4.5:1
 
-Write all to `FEATURE_DIR/contracts/ui/ui-spec.md`.
+Write all to `TASK_DIR/contracts/ui/ui-spec.md`.
 
 ---
 
 ## Stage 3: Implementation Plan — Part 2: Actions
 
-> 產出：`FEATURE_DIR/plan.md` 的 Part 2（執行清單）
+> 產出：`TASK_DIR/plan.md` 的 Part 2（執行清單）
 
 ### Extract Scenario Tags
 
@@ -270,15 +270,11 @@ Coverage: [X]/[Y] scenarios ([Z]%)
 
 ### Write plan.md
 
-Write the complete plan (Part 1 + Part 2) to `FEATURE_DIR/plan.md` using `.teammate/templates/plan-template.md`.
+Write the complete plan (Part 1 + Part 2) to `TASK_DIR/plan.md` using `.teammate/templates/plan-template.md`.
 
 ---
 
 ## Final Steps
-
-### Update Agent Context
-
-Run `.teammate/scripts/bash/update-agent-context.sh cursor-agent`.
 
 ### Update Active Context（Memory Delta Protocol）
 

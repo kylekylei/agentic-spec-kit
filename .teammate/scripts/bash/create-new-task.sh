@@ -277,11 +277,11 @@ else
     >&2 echo "[teammate] Warning: Git repository not detected; skipped branch creation for $BRANCH_NAME"
 fi
 
-FEATURE_DIR="$SPECS_DIR/$BRANCH_NAME"
-mkdir -p "$FEATURE_DIR"
+TASK_DIR="$SPECS_DIR/$BRANCH_NAME"
+mkdir -p "$TASK_DIR"
 
 TEMPLATE="$REPO_ROOT/.teammate/templates/spec-template.md"
-SPEC_FILE="$FEATURE_DIR/spec.md"
+SPEC_FILE="$TASK_DIR/spec.md"
 if [ -f "$TEMPLATE" ]; then cp "$TEMPLATE" "$SPEC_FILE"; else touch "$SPEC_FILE"; fi
 
 # Set the TEAMMATE_FEATURE environment variable for the current session

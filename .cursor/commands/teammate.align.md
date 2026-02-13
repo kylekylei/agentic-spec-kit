@@ -146,11 +146,11 @@ Execute the Impact Mapping framework to derive valuable behaviors:
    - Define Success Criteria (measurable, technology-agnostic)
    - Identify Key Entities (if data involved)
 
-3. Write the specification to `FEATURE_DIR/spec.md`.
+3. Write the specification to `TASK_DIR/spec.md`.
 
 ### Phase 4: Specification Validation
 
-1. **Create Spec Quality Checklist**: Generate `FEATURE_DIR/checklists/requirements.md`
+1. **Create Spec Quality Checklist**: Generate `TASK_DIR/checklists/requirements.md`
 
 2. **Validate** against criteria:
    - No implementation details (languages, frameworks, APIs)
@@ -197,7 +197,7 @@ Transform abstract user stories into concrete, testable examples. This creates t
 
 2. **Principles Boundary Check**: For each rule and example, verify against principles. Add explicit boundary examples.
 
-3. **Generate Example Mapping Document**: Write to `FEATURE_DIR/example-mapping.md` using `.teammate/templates/example-mapping-template.md`
+3. **Generate Example Mapping Document**: Write to `TASK_DIR/example-mapping.md` using `.teammate/templates/example-mapping-template.md`
 
 4. **Readiness Assessment**:
 
@@ -210,7 +210,7 @@ Transform abstract user stories into concrete, testable examples. This creates t
 
 ### Phase 6: Downstream Impact Check（Update Mode only）
 
-若為 Update Mode 且 `FEATURE_DIR/plan.md` 已存在：
+若為 Update Mode 且 `TASK_DIR/plan.md` 已存在：
 
 1. **比對 spec.md 修改內容與 plan.md**：
    - 新增/移除的 User Story → plan.md 的 scenarios + actions 需更新

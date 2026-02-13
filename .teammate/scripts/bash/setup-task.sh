@@ -28,13 +28,13 @@ SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
 # Get all paths and variables from common functions
-eval $(get_feature_paths)
+eval $(get_task_paths)
 
 # Check if we're on a proper feature branch (only for git repos)
 check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 
-# Ensure the feature directory exists
-mkdir -p "$FEATURE_DIR"
+# Ensure the task directory exists
+mkdir -p "$TASK_DIR"
 
 # Copy plan template if it exists
 TEMPLATE="$REPO_ROOT/.teammate/templates/plan-template.md"
@@ -49,12 +49,12 @@ fi
 
 # Output results
 if $JSON_MODE; then
-    printf '{"FEATURE_SPEC":"%s","IMPL_TASKS":"%s","SPECS_DIR":"%s","BRANCH":"%s","HAS_GIT":"%s"}\n' \
-        "$FEATURE_SPEC" "$IMPL_TASKS" "$FEATURE_DIR" "$CURRENT_BRANCH" "$HAS_GIT"
+    printf '{"TASK_SPEC":"%s","IMPL_TASKS":"%s","TASK_DIR":"%s","BRANCH":"%s","HAS_GIT":"%s"}\n' \
+        "$TASK_SPEC" "$IMPL_TASKS" "$TASK_DIR" "$CURRENT_BRANCH" "$HAS_GIT"
 else
-    echo "FEATURE_SPEC: $FEATURE_SPEC"
+    echo "TASK_SPEC: $TASK_SPEC"
     echo "IMPL_TASKS: $IMPL_TASKS" 
-    echo "SPECS_DIR: $FEATURE_DIR"
+    echo "TASK_DIR: $TASK_DIR"
     echo "BRANCH: $CURRENT_BRANCH"
     echo "HAS_GIT: $HAS_GIT"
 fi

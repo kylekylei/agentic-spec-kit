@@ -15,9 +15,9 @@
 #   --help, -h          Show help message
 #
 # OUTPUTS:
-#   JSON mode: {"FEATURE_DIR":"...", "AVAILABLE_DOCS":["..."]}
-#   Text mode: FEATURE_DIR:... \n AVAILABLE_DOCS: \n ✓/✗ file.md
-#   Paths only: REPO_ROOT: ... \n BRANCH: ... \n FEATURE_DIR: ... etc.
+#   JSON mode: {"TASK_DIR":"...", "AVAILABLE_DOCS":["..."]}
+#   Text mode: TASK_DIR:... \n AVAILABLE_DOCS: \n ✓/✗ file.md
+#   Paths only: REPO_ROOT: ... \n BRANCH: ... \n TASK_DIR: ... etc.
 
 set -e
 
@@ -79,35 +79,35 @@ done
 SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
-# Get feature paths and validate branch
-eval $(get_feature_paths)
+# Get task paths and validate branch
+eval $(get_task_paths)
 check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
 
 # If paths-only mode, output paths and exit (support JSON + paths-only combined)
 if $PATHS_ONLY; then
     if $JSON_MODE; then
         # Minimal JSON paths payload (no validation performed)
-        printf '{"REPO_ROOT":"%s","BRANCH":"%s","FEATURE_DIR":"%s","FEATURE_SPEC":"%s","IMPL_PLAN":"%s"}\n' \
-            "$REPO_ROOT" "$CURRENT_BRANCH" "$FEATURE_DIR" "$FEATURE_SPEC" "$IMPL_PLAN"
+        printf '{"REPO_ROOT":"%s","BRANCH":"%s","TASK_DIR":"%s","TASK_SPEC":"%s","IMPL_PLAN":"%s"}\n' \
+            "$REPO_ROOT" "$CURRENT_BRANCH" "$TASK_DIR" "$TASK_SPEC" "$IMPL_PLAN"
     else
         echo "REPO_ROOT: $REPO_ROOT"
         echo "BRANCH: $CURRENT_BRANCH"
-        echo "FEATURE_DIR: $FEATURE_DIR"
-        echo "FEATURE_SPEC: $FEATURE_SPEC"
+        echo "TASK_DIR: $TASK_DIR"
+        echo "TASK_SPEC: $TASK_SPEC"
         echo "IMPL_PLAN: $IMPL_PLAN"
     fi
     exit 0
 fi
 
 # Validate required directories and files
-if [[ ! -d "$FEATURE_DIR" ]]; then
-    echo "ERROR: Feature directory not found: $FEATURE_DIR" >&2
-    echo "Run /teammate.align first to create the feature structure." >&2
+if [[ ! -d "$TASK_DIR" ]]; then
+    echo "ERROR: Task directory not found: $TASK_DIR" >&2
+    echo "Run /teammate.align first to create the task structure." >&2
     exit 1
 fi
 
 if [[ ! -f "$IMPL_PLAN" ]]; then
-    echo "ERROR: plan.md not found in $FEATURE_DIR" >&2
+    echo "ERROR: plan.md not found in $TASK_DIR" >&2
     echo "Run /teammate.plan first to create the implementation plan." >&2
     exit 1
 fi
@@ -141,10 +141,10 @@ if $JSON_MODE; then
         json_docs="[${json_docs%,}]"
     fi
     
-    printf '{"FEATURE_DIR":"%s","AVAILABLE_DOCS":%s}\n' "$FEATURE_DIR" "$json_docs"
+    printf '{"TASK_DIR":"%s","AVAILABLE_DOCS":%s}\n' "$TASK_DIR" "$json_docs"
 else
     # Text output
-    echo "FEATURE_DIR:$FEATURE_DIR"
+    echo "TASK_DIR:$TASK_DIR"
     echo "AVAILABLE_DOCS:"
     
     # Show status of each potential document
