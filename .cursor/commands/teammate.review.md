@@ -44,7 +44,7 @@ Goal: Perform a **professional, neutral** analysis of behavioral coverage, artif
 
 ### Setup
 
-Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-actions --include-actions` from repo root and parse:
+Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan` from repo root and parse:
 - `TASK_DIR`, `AVAILABLE_DOCS`
 
 Derive paths:

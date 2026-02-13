@@ -82,7 +82,7 @@
 
 ---
 
-## principles Boundaries
+## Principles Boundaries
 
 > Rules from principles.md that apply to this story
 

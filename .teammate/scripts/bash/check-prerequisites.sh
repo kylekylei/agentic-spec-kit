@@ -33,10 +33,10 @@ for arg in "$@"; do
         --json)
             JSON_MODE=true
             ;;
-        --require-plan|--require-actions)
+        --require-plan)
             REQUIRE_PLAN=true
             ;;
-        --include-plan|--include-actions)
+        --include-plan)
             INCLUDE_PLAN=true
             ;;
         --paths-only)
@@ -77,6 +77,10 @@ done
 
 # Source common functions
 SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ ! -f "$SCRIPT_DIR/common.sh" ]]; then
+    echo "ERROR: common.sh not found in $SCRIPT_DIR" >&2
+    exit 1
+fi
 source "$SCRIPT_DIR/common.sh"
 
 # Get task paths and validate branch

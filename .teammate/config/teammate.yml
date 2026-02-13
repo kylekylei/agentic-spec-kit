@@ -1,5 +1,5 @@
 # Teammate Configuration
-version: "0.0.1"
+version: "0.1.0"
 
 # =============================================================================
 # LIFECYCLE PHASES
@@ -44,7 +44,8 @@ lifecycle:
 # =============================================================================
 
 gherkin:
-  # Default language for feature files
+  # Default language for Gherkin keywords (Given/When/Then)
+  # Note: Step descriptions should be written in Traditional Chinese per teammate-rules.mdc
   language: en
 
   # Tag conventions
@@ -134,13 +135,15 @@ docs:
   location: "docs"
   
   # llms.txt standard — index file for LLM-friendly reference discovery
+  # Note: docs/llms.txt is optional (project chooses whether to use it)
   llms_txt:
-    enabled: true
+    enabled: false  # Set to true if project uses llms.txt
     root: "docs/llms.txt"
   
   # Subdirectory conventions
+  # Note: Design assets are managed in .teammate/design/ (created dynamically by /teammate.align)
   directories:
-    design: "docs/design"           # Design system docs, Figma index
+    # design: ".teammate/design"  # Managed by align command, not here
     # Add per-library directories as needed:
     # fubon_neo: "docs/fubon-neo"
 

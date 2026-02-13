@@ -48,7 +48,7 @@ Init → Align → Plan → Execute → Review
 
 ## Foundation Check
 
-**Before any Align/Commit/Deliver command**, verify:
+**Before any Plan/Execute/Review command**, verify:
 
 1. `.teammate/memory/context.md` has no `[PLACEHOLDER]` tokens
 2. `.teammate/memory/principles.md` has no `[PLACEHOLDER]` tokens
@@ -62,8 +62,8 @@ If either fails, stop and direct the user to run `/teammate.init`.
 ├── memory/
 │   ├── context.md            # Project identity, users, goals, tech stack
 │   ├── principles.md         # Non-negotiable principles (MUST / MUST NOT)
-│   ├── progress.md           # Current session state (auto-updated)
-│   └── milestone.md          # Milestone tracking
+│   ├── progress.md           # Current session state (auto-updated per command)
+│   └── milestone.md          # Milestone tracking (updated per phase completion)
 ├── design/                   # Design assets (created by /teammate.align when Figma URL detected)
 │   └── figma-index.md        # Figma project & feature page links
 ├── snapshots/                # Decision & plan change snapshots
@@ -203,13 +203,15 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
 
 ### 下一步格式
 
-每個指令完成後，僅輸出**單一推薦下一步**（不需 ABCD 多選）：
+每個指令完成後，輸出**推薦下一步**：
 
 ```
 下一步 → /teammate.[command]
 ```
 
-若有多個合理選項，最多列 2 個，不附時間段休息選項。
+若有多個合理選項，最多列 2 個（如 [A] / [B]），不附休息選項。
+
+> **Note**: `handoffs` 由 Cursor UI 渲染，不受此限制。
 
 ## Rules
 
@@ -227,7 +229,7 @@ Update mode preserves existing work, snapshots before overwriting, and marks cha
   - 框架或技術專有名詞（如 Gherkin、Svelte、SSE、Tailwind、Scenario Outline）
   - Gherkin 關鍵字（`Feature`、`Scenario`、`Given`、`When`、`Then`、`And`、`But`、`Background`、`Examples`）
   - Markdown 結構標記與表格欄位標題（可中可英，但內容描述必須中文）
-- **主動提供下一步.** 每個 `teammate.*` 指令完成後，僅輸出單一推薦下一步（見 Output Mode 區段），不需多選格式。
+- **主動提供下一步.** 每個 `teammate.*` 指令完成後，輸出推薦下一步（見 Output Mode 區段），最多 2 個選項。
 
 ## Simplified Flow (for small, focused tasks)
 

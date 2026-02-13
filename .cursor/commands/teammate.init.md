@@ -72,7 +72,9 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 3. **For missing required fields**: make informed guesses; only ask user if no reasonable default exists. **Maximum 5 questions**.
 
-4. **Fill `.teammate/memory/context.md`**:
+4. **Copy template and fill `.teammate/memory/context.md`**:
+   - If file doesn't exist or is template: copy from `.teammate/templates/context-template.md`
+   - Fill the following sections:
    - Project Identity (name, description, repo URL)
    - Core Behaviors (observable, testable)
    - Target Users (personas, roles, goals)
@@ -95,7 +97,9 @@ You **MUST** consider the user input before proceeding (if not empty).
    - System Invariants (INV-001, INV-002, ...)
    - Governance rules
 
-3. **Write `.teammate/memory/principles.md`**
+3. **Copy template and write `.teammate/memory/principles.md`**:
+   - If file doesn't exist or is template: copy from `.teammate/templates/principles-template.md`
+   - Fill with derived principles
 
 ### Step 3: Environment Bootstrap
 

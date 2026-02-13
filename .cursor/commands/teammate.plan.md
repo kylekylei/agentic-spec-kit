@@ -126,12 +126,11 @@ Optional（如存在則載入）:
 
 檢查 `.teammate/design/figma-index.md` 是否存在：
 
-- **If exists**:
+- **If exists** → UI Deep Analysis **必定觸發**（無需滿足 ≥3 組件條件）
   1. Load as design context
-  2. Mark: UI Deep Analysis will be triggered (or auto-triggered if ≥ 3 UI components)
-  3. Append current feature page link to `figma-index.md` Feature Pages table (if user provides)
-  4. **Enable `contracts/ui/ui-spec.md` generation** in Stage 2.5
-- **If not exists** → Skip UI-specific artifact generation (unless `--ui` flag is used)
+  2. Append current feature page link to `figma-index.md` Feature Pages table (if user provides)
+  3. **Enable `contracts/ui/ui-spec.md` generation** in Stage 2.5
+- **If not exists** → 僅在 `--ui` flag 或 ≥3 UI 組件時觸發 UI Deep Analysis
 
 ### Compliance Detection（動態）
 

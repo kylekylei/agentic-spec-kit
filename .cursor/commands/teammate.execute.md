@@ -54,7 +54,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 
 ### Execution Steps
 
-1. **Setup**: Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-actions --include-actions` from repo root and parse:
+1. **Setup**: Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan` from repo root and parse:
    - `TASK_DIR`
    - `AVAILABLE_DOCS`
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot'

@@ -50,7 +50,7 @@ Format（結構化欄位，每筆一個 block）:
 **狀態**: 生效中
 ```
 
-類型可選：規則 / 命令 / 架構 / 模板 / 腳本 / 文件 / 技能
+類型可選：規則 / 命令 / 架構 / 模板 / 腳本 / 文件 / 技能 / 測試
 
 This ensures all projects contribute to a centralized memory that any future AI session can learn from.
 

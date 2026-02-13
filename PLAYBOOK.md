@@ -301,6 +301,13 @@
 **成效**: 待驗證
 **狀態**: 生效中
 
+#### 2026-02-13 · 架構 · Teammate
+**觸發**: 流程體驗架構師審計發現多項一致性問題：模板角色模糊、phase 名稱過時、腳本 flag 別名冗餘、文件路徑不一致
+**決策**: (1) 建立獨立模板 `context-template.md` / `principles-template.md` (2) 更新 phase 名稱 `Commit/Deliver` → `Plan/Execute/Review` (3) 移除 `--actions` 別名統一用 `--plan` (4) 明確 `figma-index.md` 存在必定觸發 UI Deep Analysis (5) 更新 `teammate.yml` docs 區段 (6) Output Mode 允許最多 2 個選項 (7) 加入「測試」類型到 PLAYBOOK (8) 版本升級至 0.1.0
+**影響**: `teammate.init.md`、`teammate-rules.mdc`、`teammate.plan.md`、`teammate.execute.md`、`teammate.review.md`、`check-prerequisites.sh`、`teammate.yml`、`teammatesync_rule.mdc`、`example-mapping-template.md`、`CHANGELOG.md`、新增 2 個模板檔案
+**成效**: 框架一致性提升，模板角色明確
+**狀態**: 生效中
+
 ---
 
 ## 2. 尚未實現（未來可實現）

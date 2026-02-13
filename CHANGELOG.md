@@ -12,11 +12,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
+(No unreleased changes)
+
+---
+
+## [0.1.0] - 2026-02-13
+
 ### Summary
 指令精簡（11→5+audit）、artifact 合併、目錄與檔名重整、動態合規監控、設計資產動態建立。**包含多項破壞性變更**，既有專案需執行 `/teammate.toolkit migrate`。
 
 ### Added
 - `/teammate.audit` 指令 — Sarcasmotron 對抗性合規審計（Security + Design Debt + 動態 A11y + 動態 AI Risk）
+- `.teammate/templates/context-template.md` — context.md 的獨立模板檔案
+- `.teammate/templates/principles-template.md` — principles.md 的獨立模板檔案
 - `.teammate/design/` 目錄 — 設計資產（由 `/teammate.align` 動態建立，偵測 `context.md` 有 Figma URL 時觸發）
 - `/teammate.align` Figma URL 動態偵測 — 自動建立 `.teammate/design/figma-index.md`
 - `/teammate.plan` 設計資產偵測 — 偵測 `figma-index.md` 存在時啟用 UI Deep Analysis
