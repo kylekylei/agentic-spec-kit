@@ -62,6 +62,7 @@ If either fails, stop and direct the user to run `/teammate.init`.
 ├── memory/
 │   ├── context.md            # Project identity, users, goals, tech stack
 │   ├── principles.md         # Non-negotiable principles (MUST / MUST NOT)
+│   ├── agent-spec.md         # AI Agent behavior spec (role, guardrails, dialogue strategies)
 │   ├── progress.md           # Current session state (auto-updated per command)
 │   └── milestone.md          # Milestone tracking (updated per phase completion)
 ├── design/                   # Design assets (created by /teammate.align when Figma URL detected)
@@ -112,7 +113,8 @@ Snapshots are stored in `.teammate/snapshots/` and are meant for human review, n
 ```
 System Layer（系統層 — 跨 feature 不變）:
   - principles.md          # 不可違反的原則
-  - context.md     # 專案身份、技術棧、架構慣例
+  - context.md             # 專案身份、技術棧、架構慣例
+  - agent-spec.md          # AI Agent 行為規範（如有 AI Agent 角色則載入）
 
 Task Layer（任務層 — per feature）:
   - spec.md                # WHAT: 要做什麼

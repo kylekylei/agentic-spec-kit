@@ -86,6 +86,7 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    **Recommended**（條件必載 — 存在即載入，不得跳過）:
    - `TASK_DIR/insights.md` — 當前 feature 的動態備忘錄（如存在）
    - 最近 2 個已完成 feature 的 `insights.md` — 跨 feature 知識傳遞
+   - `.teammate/memory/agent-spec.md` — AI Agent 行為規範（如存在）
    - `docs/llms.txt` — Read the root index, load corresponding `docs/[library]/llms.txt` for implementation guidance
    - `contracts/` — API / UI / AI contracts（如目錄存在，UI specs 在 `contracts/ui/ui-spec.md`）
 

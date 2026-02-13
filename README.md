@@ -122,6 +122,7 @@ Teammate/
 │   ├── memory/
 │   │   ├── context.md           # 專案背景（含 Figma URL 時觸發設計資產建立）
 │   │   ├── principles.md        # 合作原則
+│   │   ├── agent-spec.md        # AI Agent 行為規範（角色、安全圍欄、對話策略）
 │   │   ├── progress.md          # 當前工作狀態
 │   │   └── milestone.md         # 里程碑追蹤
 │   ├── design/                  # 設計資產（/teammate.align 偵測到 Figma URL 時建立）

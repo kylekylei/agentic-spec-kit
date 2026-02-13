@@ -11,7 +11,7 @@ Reverse-audit a Figma design file (via Dev Mode link or node reference) to verif
 
 Activate when:
 - User provides or selects a Figma dev link (e.g., `figma.com/design/...?node-id=...&m=dev`)
-- User references a node from `memory-bank/inventories/designInventory.md`
+- User references a node from `.teammate/design/figma-index.md`
 - User requests Figma design review or readiness check
 - Pre-implementation design quality gate is needed
 

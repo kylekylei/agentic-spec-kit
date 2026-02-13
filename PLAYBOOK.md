@@ -42,6 +42,22 @@
 
 ## 1. 歷史修改軌跡（Append-Only）
 
+#### 2026-02-13 · 架構 · open-webui-embeddable-widget
+**觸發**: 其他專案實作 `.teammate/inventories/promptInventory.md` 和 `designInventory.md`，需確認 Teammate 框架是否支援此類檔案的標準位置
+**決策**: 
+- 新增 `.teammate/memory/agent-spec.md`（原 `prompt-inventory.md`），定義為 AI Agent 行為規範的標準位置
+- 保持 `.teammate/design/figma-index.md` 專注於外部資源索引
+- 更新 Context Layer System Layer，加入 `agent-spec.md` 為可選檔案
+- 更新 Smart Context Loading，在 Recommended 層級加入 `agent-spec.md`
+**影響**: 
+- `README.md` 專案結構
+- `.teammate/memory/README.md` 修改時機對照
+- `teammate-rules.mdc` Context Layer 說明
+- `teammate.execute.md` 和 `teammate.plan.md` 載入邏輯
+- `figma-design-audit` skill 路徑引用
+**成效**: 為有 AI Agent 角色的專案提供標準化的 System Prompt 管理位置，與 `principles.md` 並列為 System Layer 知識
+**狀態**: 生效中
+
 #### 2026-02-08 · 規則 · oReady
 **觸發**: AI 跳過規劃直接動手，缺少 spec.md
 **決策**: `teammate-rules.mdc` 新增 Simplified Flow 區段（簡化條件 + 最低 artifact 要求 + 使用者確認機制）

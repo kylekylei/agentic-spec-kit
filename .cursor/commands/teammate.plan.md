@@ -119,6 +119,7 @@ Requirements: Every rule → at least one scenario. Every P1 story → happy pat
 ### Load Additional Context
 
 Optional（如存在則載入）:
+- `.teammate/memory/agent-spec.md` → AI Agent 行為規範（如專案有 AI Agent 角色）
 - `docs/llms.txt` → 外部 API/SDK 參考索引（遵循 llms.txt 標準）
 - `TASK_DIR/example-mapping.md`
 
