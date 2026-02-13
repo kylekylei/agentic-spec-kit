@@ -7,7 +7,7 @@
  * Environment Variables:
  *   TARGET_URL - URL to test (default: http://localhost:5173)
  *   BEAD_ID - Current bead ID (required for file naming)
- *   SNAPSHOT_DIR - Directory for screenshots (default: ../../../memory-bank/snapshots)
+ *   SNAPSHOT_DIR - Directory for screenshots (default: .teammate/snapshots)
  */
 
 const { chromium } = require('playwright');
@@ -17,7 +17,7 @@ const path = require('path');
 // Configuration
 const TARGET_URL = process.env.TARGET_URL || 'http://localhost:5173';
 const BEAD_ID = process.env.BEAD_ID || 'bead-unknown';
-const SNAPSHOT_DIR = process.env.SNAPSHOT_DIR || path.resolve(__dirname, '../../../memory-bank/snapshots');
+const SNAPSHOT_DIR = process.env.SNAPSHOT_DIR || path.resolve(__dirname, '../../../.teammate/snapshots');
 
 (async () => {
   console.log('📸 Starting Visual Regression Test');

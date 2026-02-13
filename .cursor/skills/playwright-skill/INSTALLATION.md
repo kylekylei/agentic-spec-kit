@@ -100,7 +100,7 @@ TARGET_URL=http://localhost:5173 BEAD_ID=test node run.js examples/screenshot-te
 测试运行后，应该会创建以下文件：
 
 ```
-memory-bank/snapshots/
+.teammate/snapshots/
 ├── test-baseline.png    # 基线截图
 ├── test-current.png     # 当前截图
 ├── test-mobile.png      # 移动端视图 (375x667)

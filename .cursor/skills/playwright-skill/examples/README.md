@@ -68,11 +68,11 @@ TARGET_URL=http://localhost:5173 BEAD_ID=bead-001 \
 **環境變數：**
 - `TARGET_URL` - 要測試的 URL（預設：http://localhost:5173）
 - `BEAD_ID` - Bead ID，用於檔案命名（預設：bead-unknown）
-- `SNAPSHOT_DIR` - 截圖儲存目錄（預設：../../../memory-bank/snapshots）
+- `SNAPSHOT_DIR` - 截圖儲存目錄（預設：.teammate/snapshots）
 
 **輸出檔案：**
 ```
-memory-bank/snapshots/
+.teammate/snapshots/
 ├── bead-001-baseline.png    # 基線截圖（首次自動建立）
 ├── bead-001-current.png     # 當前截圖
 ├── bead-001-mobile.png      # 行動裝置視圖 (375x667)
