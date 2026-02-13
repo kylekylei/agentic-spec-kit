@@ -42,6 +42,17 @@
 
 ## 1. 歷史修改軌跡（Append-Only）
 
+#### 2026-02-13 · 規則 · Teammate
+**觸發**: 使用者提出需要 AI 提供多選項時，能讓使用者快速輸入 A/B/C 選擇，減少打字負擔
+**決策**: 
+- 在 `teammate-rules.mdc` Output Mode 區段強化「下一步格式」與「互動式決策格式」規範
+- 明確要求 AI 提供選項時必須使用 `[A]`, `[B]`, `[C]` 字母標籤
+- 定義選項說明簡潔規則（≤ 20 字）與最多選項數量（4 個）
+- 區分「下一步指令」（最多 2 個）與「方案選擇」（最多 4 個）的使用場景
+**影響**: `teammate-rules.mdc` Output Mode 區段、CHANGELOG.md
+**成效**: 使用者可直接回覆字母（如 `A`）快速選擇，減少互動摩擦
+**狀態**: 生效中
+
 #### 2026-02-13 · 架構 · open-webui-embeddable-widget
 **觸發**: 其他專案實作 `.teammate/inventories/promptInventory.md` 和 `designInventory.md`，需確認 Teammate 框架是否支援此類檔案的標準位置
 **決策**: 

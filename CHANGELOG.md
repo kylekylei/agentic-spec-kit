@@ -12,21 +12,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
-## [Unreleased]
-
-> 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
-
 ### Added
 - `.teammate/memory/agent-spec.md` — AI Agent 行為規範（角色、安全圍欄、對話策略），適用於有明確 AI Agent 的專案
 - Context Layer System Layer 新增 `agent-spec.md` 載入支援
 
 ### Changed
 - Smart Context Loading 更新：`teammate.execute` 和 `teammate.plan` 在 Recommended 層級加入 `agent-spec.md`（如存在則載入）
+- **互動式選項格式規範**：AI 提供多選項時，統一使用 `[A] / [B] / [C]` 字母標籤格式，讓使用者可快速回覆字母選擇
 
 ### Documentation
 - 更新 README.md 專案結構，加入 `agent-spec.md` 說明
 - 更新 `.teammate/memory/README.md`，加入 `agent-spec.md` 修改時機對照
 - 更新 `teammate-rules.mdc` Context Layer 說明，System Layer 加入 `agent-spec.md`
+- 強化 `teammate-rules.mdc` Output Mode 區段，明確定義「下一步格式」與「互動式決策格式」
 - 修正 `figma-design-audit` skill 的 inventory 路徑引用（`inventories/` → `.teammate/design/`）
 
 ---
