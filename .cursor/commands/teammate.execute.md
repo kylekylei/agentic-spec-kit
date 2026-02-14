@@ -1,29 +1,29 @@
 ---
-description: Execute the Red-Green Loop implementation - write step definitions first (RED), then implement until GREEN, following the Actions.
+description: 執行 Red-Green 迴圈實作 — 先寫步驟定義（RED），再實作至 GREEN，依 Actions 順序進行。
 handoffs:
-  - label: Review Coverage
+  - label: 行為覆蓋審查
     agent: teammate.review
-    prompt: Run a behavioral coverage analysis
+    prompt: 執行行為覆蓋率分析
     send: true
 ---
 
-## User Input
+## 使用者輸入
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+若使用者輸入非空，**必須**先考量後再繼續。
 
-## Outline
+## 大綱
 
-Goal: Execute implementation using the **Red-Green Loop** discipline, ensuring every line of code is driven by failing tests (step definitions).
+目標：依 **Red-Green 迴圈**紀律執行實作，確保每行程式碼皆由失敗測試（步驟定義）驅動。
 
-### Argument Parsing
+### 參數解析
 
-Parse `$ARGUMENTS` for special keywords:
+解析 `$ARGUMENTS` 的特殊關鍵字：
 
-| Keyword | Behavior |
+| 關鍵字 | 行為 |
 |---------|----------|
 | `next` | 自動找到 `plan.md` Part 2 中下一個未完成的 action（`- [ ]`），直接執行它 |
 | `S0XX` | 執行指定 Action ID（如 `S006`） |
@@ -40,30 +40,30 @@ Parse `$ARGUMENTS` for special keywords:
 5. 直接進入該 action 的 Red-Green Loop
 6. 完成後標記為 `- [x]`，並報告下一個待執行的 action
 
-### Red-Green Loop
+### Red-Green 迴圈
 
 ```
 RED → GREEN → REFACTOR → REFLECT → REPEAT
 ```
 
-1. **RED**: Write step definitions that FAIL (scenario not implemented)
-2. **GREEN**: Write minimum code to make step definitions PASS
-3. **REFACTOR**: Clean up code while keeping tests GREEN
-4. **REFLECT**: 快速自檢（≤ 30 秒），有新發現才寫入 `insights.md`
-5. **REPEAT**: Move to next action
+1. **RED**：撰寫會失敗的步驟定義（情境尚未實作）
+2. **GREEN**：撰寫最小程式碼使步驟定義通過
+3. **REFACTOR**：清理程式碼，保持測試 GREEN
+4. **REFLECT**：快速自檢（≤ 30 秒），有新發現才寫入 `insights.md`
+5. **REPEAT**：移至下一個 action
 
-### Execution Steps
+### 執行步驟
 
-1. **Setup**: Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan` from repo root and parse:
+1. **Setup**：從 repo 根目錄執行 `.teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan` 並解析：
    - `TASK_DIR`
    - `AVAILABLE_DOCS`
-   - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot'
+   - 參數含單引號（如 "I'm Groot"）時使用 escape 語法：例如 `'I'\''m Groot'`
 
-2. **Check Checklists Status** (if `TASK_DIR/checklists/` exists):
+2. **檢查清單狀態**（若 `TASK_DIR/checklists/` 存在）：
 
-   Scan all checklist files:
-   - Count total, completed, incomplete items
-   - Create status table
+   掃描所有 checklist 檔案：
+   - 統計總數、已完成、未完成項目
+   - 建立狀態表
    
    ```
    | Checklist | Total | Completed | Incomplete | Status |
@@ -72,50 +72,50 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    | test.md   | 8     | 5         | 3          | FAIL |
    ```
    
-   - **If any incomplete**: STOP and ask user to confirm proceeding
-   - **If all complete**: Auto-proceed
+   - **若有未完成**：暫停並詢問使用者是否繼續
+   - **若全部完成**：自動繼續
 
-3. **Load Implementation Context**:
+3. **載入實作脈絡**：
 
    **Staleness Check**：比對 `spec.md` 和 `plan.md` 的修改時間。若 spec.md 比 plan.md 新 → 警告：「spec.md 在 plan.md 之後被更新，plan 可能已過期。建議先執行 `/teammate.plan update`，或確認變更不影響 plan 後繼續。」用戶可選擇繼續或先更新。
 
-   **Required**（必載）:
-   - `plan.md` - Part 1 (Architecture: tech stack, project structure) + Part 2 (Actions: phased execution checklist)
-   - `scenarios/*.feature` - Gherkin scenarios
+   **必載**:
+   - `plan.md` — Part 1（架構：技術棧、專案結構）+ Part 2（Actions：分階段執行清單）
+   - `scenarios/*.feature` — Gherkin 情境
 
-   **Recommended**（條件必載 — 存在即載入，不得跳過）:
-   - `TASK_DIR/insights.md` — 當前 feature 的動態備忘錄（如存在）
-   - 最近 2 個已完成 feature 的 `insights.md` — 跨 feature 知識傳遞
+   **條件必載**（存在即載入，不得跳過）:
+   - `TASK_DIR/insights.md` — 當前任務的動態備忘錄（如存在）
+   - 最近 2 個已完成任務的 `insights.md` — 跨任務知識傳遞
    - `.teammate/memory/agent-spec.md` — AI Agent 行為規範（如存在）
-   - `docs/llms.txt` — Read the root index, load corresponding `docs/[library]/llms.txt` for implementation guidance
-   - `contracts/` — API / UI / AI contracts（如目錄存在，UI specs 在 `contracts/ui/ui-spec.md`）
+   - `docs/llms.txt` — 讀取根索引，載入對應 `docs/[library]/llms.txt` 作為實作指引
+   - `contracts/` — API / UI / AI 合約（如目錄存在，UI 規格在 `contracts/ui/ui-spec.md`）
 
    **Compliance Skills**（動態偵測，偵測到才載入）:
    - 前端偵測到 → 載入 `.cursor/skills/a11y-compliance/SKILL.md`（`[UI]` 和 `[LOGIC+UI]` action 實作時參考 POUR 原則與代碼範例）
    - AI/LLM 偵測到 → 載入 `.cursor/skills/ai-compliance/SKILL.md`（AI 相關 action 實作時參考合規規則與代碼範例）
 
-   **Optional**（輔助參考）:
-   - `data-model.md` - Entities
-   - `research.md` - Decisions
+   **輔助參考**:
+   - `data-model.md` — 實體
+   - `research.md` — 決策紀錄
 
    > **反簡短偏差**：Recommended 層級的資源不得以「節省 context」為由跳過。只取最近 2 個 insights 是為了避免 context window 過載；足夠重要的 insight 會「畢業」到 context.md。
 
-4. **Project Setup Verification**:
+4. **專案設定驗證**：
 
-   Create/verify ignore files based on detected technology:
-   - `.gitignore` (if git repo)
-   - `.dockerignore` (if Docker detected)
-   - `.eslintignore` (if ESLint detected)
-   - etc.
+   依偵測到的技術建立/驗證 ignore 檔案：
+   - `.gitignore`（若為 git repo）
+   - `.dockerignore`（若偵測到 Docker）
+   - `.eslintignore`（若偵測到 ESLint）
+   - 等
 
-5. **Parse Plan Structure**:
+5. **解析計畫結構**：
 
-   Extract from `plan.md` Part 2 (Actions):
-   - Phases and their actions
-   - `[Verifies: @tag]` markers for each action
-   - Parallel markers `[P]`
-   - Action types `[LOGIC]`/`[UI]`/`[LOGIC+UI]`
-   - Dependencies
+   從 `plan.md` Part 2（Actions）擷取：
+   - 各 Phase 及其 actions
+   - 每個 action 的 `[Verifies: @tag]` 標記
+   - 平行標記 `[P]`
+   - Action 類型 `[LOGIC]`/`[UI]`/`[LOGIC+UI]`
+   - 相依關係
 
 6. **Risk-Based HITL Gates**（風險暫停）:
 
@@ -133,11 +133,11 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    - 用戶可回覆「繼續」或「調整」
    - 暫停事件記錄到 `progress.md`
 
-7. **Execute Red-Green Loop**:
+7. **執行 Red-Green 迴圈**：
 
-   For each phase, for each action:
+   對每個 phase、每個 action：
 
-   #### Action Type Detection
+   #### Action 類型偵測
 
    根據 action 的類型標記（`[LOGIC]`/`[UI]`/`[LOGIC+UI]`）決定執行策略：
 
@@ -158,33 +158,33 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
 
    推斷依據：`contracts/ui/`、`principles.md` 設計系統、`insights.md` 記錄的兄弟組件慣例。
 
-   #### If Action is Step Definition:
+   #### 若 Action 為步驟定義：
    
-   1. **Read the scenario** from `.feature` file (use the @tag from `[Verifies: @tag]`)
-   2. **Write step definitions** that map to the Gherkin steps
-   3. **Run the scenario** - expect **RED** (steps not implemented yet)
-   4. **If RED**: Mark action in progress, proceed to implementation actions
-   5. **If GREEN**: Warning - scenario already passes, verify correctness
+   1. 從 `.feature` 檔案**讀取情境**（使用 `[Verifies: @tag]` 的 @tag）
+   2. **撰寫步驟定義**對應 Gherkin 步驟
+   3. **執行情境** — 預期 **RED**（步驟尚未實作）
+   4. **若 RED**：標記 action 進行中，繼續實作 actions
+   5. **若 GREEN**：警告 — 情境已通過，需驗證正確性
 
-   #### If Action is Implementation:
+   #### 若 Action 為實作：
 
-   1. **Test Pre-Check**（`[LOGIC]` 和 `[LOGIC+UI]` 類型）：
+   1. **Test Pre-Check**（`[LOGIC]` 與 `[LOGIC+UI]` 類型）：
       - 檢查此 action 對應的 test 檔案是否已存在
       - 若不存在且 plan.md 中有對應的 RED:test action 未完成 → 警告：「對應的測試 action [S0XX] 尚未完成，建議先執行測試 action」
       - 用戶可選擇繼續或先執行測試
-   2. **Identify which step definitions** this action supports (from `[Verifies: @tag]`)
-   3. **Write minimum implementation** to make those steps pass
-   4. **Run the scenario** - aim for **GREEN**
-   5. **If GREEN**: Mark action complete, proceed to next
-   6. **If RED**: Debug, fix, re-run until GREEN
+   2. **識別此 action 支援的步驟定義**（來自 `[Verifies: @tag]`）
+   3. **撰寫最小實作**使該步驟通過
+   4. **執行情境** — 目標 **GREEN**
+   5. **若 GREEN**：標記 action 完成，繼續下一個
+   6. **若 RED**：除錯、修正、重跑直至 GREEN
 
-   #### Refactor Phase:
+   #### 重構階段：
    
-   After each story's actions are GREEN:
-   1. Review code for duplication
-   2. Apply appropriate patterns
-   3. Ensure tests still GREEN
-   4. Commit with story reference
+   每個 story 的 actions 皆 GREEN 後：
+   1. 檢視程式碼重複
+   2. 套用適當 pattern
+   3. 確保測試仍 GREEN
+   4. 以 story 參照提交
 
    #### REFLECT Phase（Hard Gate — 不可跳過）:
 
@@ -204,49 +204,49 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    - **完成證據**：每個 action 回報時必須包含 `REFLECT: done`（或 `REFLECT: [N] insights`）
    - **禁止批次補寫**：不可在多個 action 完成後才一次補寫所有 REFLECT，必須逐 action 即時寫入
 
-7. **Phase-by-Phase Execution**:
+7. **各階段執行**：
 
-   - **Setup Phase**: Initialize project, dependencies, configuration
-   - **Foundational Phase**: Core infrastructure (blocks all stories)
-   - **Story Phases**: One phase per user story in priority order
-     - Step definitions first (RED)
-     - Implementation (aim for GREEN)
-     - Integration if needed
-   - **Polish Phase**: Cross-cutting concerns, documentation
+   - **Setup Phase**：初始化專案、相依、設定
+   - **Foundational Phase**：核心基礎設施（阻擋所有 stories）
+   - **Story Phases**：依優先序，每個 user story 一 phase
+     - 先寫步驟定義（RED）
+     - 實作（目標 GREEN）
+     - 必要時整合
+   - **Polish Phase**：橫切關注點、文件
 
-8. **Parallel Execution Rules**:
+8. **平行執行規則**：
 
-   Actions marked `[P]` can run in parallel if:
-   - They modify different files
-   - They have no dependencies on incomplete actions
-   - They verify independent scenarios
+   標記 `[P]` 的 actions 可平行執行，若：
+   - 修改不同檔案
+   - 無相依於未完成的 actions
+   - 驗證獨立情境
 
-9. **Progress Tracking**:
+9. **進度追蹤**：
 
-   After each completed action:
-   - Mark as `[X]` in plan.md (Part 2: Actions)
-   - Report progress
-   - Update `.teammate/memory/progress.md`
+   每個 action 完成後：
+   - 在 plan.md（Part 2: Actions）標記 `[x]`
+   - 回報進度
+   - 更新 `.teammate/memory/progress.md`
 
-   For failed actions:
-   - Report error with context
-   - Suggest debugging steps
-   - Do not proceed to dependent actions
+   失敗的 actions：
+   - 回報錯誤與脈絡
+   - 建議除錯步驟
+   - 不繼續執行相依 actions
 
-10. **Completion Validation**:
+10. **完成驗證**：
 
-    At phase completion:
-    - All actions in phase marked complete
-    - All scenarios for that phase are GREEN
-    - No failing tests
-    - Code follows project conventions
+    階段完成時：
+    - 該 phase 所有 actions 已標記完成
+    - 該 phase 所有情境皆 GREEN
+    - 無失敗測試
+    - 程式碼符合專案慣例
 
 11. **Phase Completion Sync**（階段完成同步）:
 
     當一個 Phase 的所有 actions 都完成時，MUST 執行以下同步：
 
     1. **更新 `milestone.md`**：
-       - Feature Registry 中該 feature 的 Status 更新為當前 Phase
+       - 任務清單中該任務的 Status 更新為當前 Phase
        - Deliverables 反映已完成的產出
        - Metrics 更新（通過的 scenarios 數、action 完成率）
 
@@ -255,42 +255,42 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
        - Next Actions 列出下一 Phase 的第一個 action
        - 記錄已完成 Phase 的摘要
 
-    > 此步驟確保 memory 與實際進度同步，避免 Feature Registry 仍顯示 Pending 的脫節問題。
+    > 此步驟確保 memory 與實際進度同步，避免任務清單仍顯示 Pending 的脫節問題。
 
-12. **Update Active Context**（Memory Delta Protocol）:
+12. **更新 Active Context**（Memory Delta Protocol）:
 
-    Update `.teammate/memory/progress.md` using delta mode:
+    以差量模式更新 `.teammate/memory/progress.md`：
     - **覆寫 `## Current State`**：Phase: Deliver, Last Command: execute [action ID], Next Action: [next action or /teammate.review]
     - **追加 `## Session Log`**：`| [timestamp] | execute [ID] | [GREEN/RED], [action description] | [insights discovered if any] |`
     - **更新 `## Blockers`**：如有 failing scenarios 或 Risk Gate 暫停，記錄為 blocker；已解決的標記 `[RESOLVED]`
 
-13. **Report Completion**:
+13. **完成報告**：
 
-    At feature completion:
-    - All scenarios GREEN
-    - All actions complete
-    - Living documentation updated
-    - Suggested next command: `/teammate.review`
+    功能完成時：
+    - 所有情境 GREEN
+    - 所有 actions 完成
+    - 活文件已更新
+    - 建議下一步：`/teammate.review`
 
-## Red-Green Loop Discipline
+## Red-Green 迴圈紀律
 
-### Why RED First?
+### 為什麼先 RED？
 
-Writing step definitions before implementation ensures:
-1. You understand the behavior before coding
-2. You have a failing test to guide implementation
-3. You know exactly when you're done (GREEN)
-4. You avoid over-engineering
+先寫步驟定義再實作，可確保：
+1. 撰寫程式前已理解行為
+2. 有失敗測試引導實作
+3. 明確知道何時完成（GREEN）
+4. 避免過度設計
 
-### Why REFLECT?
+### 為什麼 REFLECT？
 
 REFLECT 確保執行過程中的隱性知識被結構化保留：
 1. Codebase 慣例不再靠 AI「下次記得」，而是寫在 `insights.md`
 2. 跨 action 知識傳遞：後續 action 可參考先前 action 的 insights
-3. 跨 feature 知識傳遞：Smart Context Loading 會載入最近 features 的 insights
+3. 跨任務知識傳遞：Smart Context Loading 會載入最近任務的 insights
 4. 決策軌跡可回溯：事後可追蹤 AI 選擇了什麼、為什麼
 
-### Step Definition Patterns
+### 步驟定義範例
 
 ```python
 # Python/Behave example
@@ -311,49 +311,49 @@ def step_see_dashboard(context):
     assert context.page.url == '/dashboard'
 ```
 
-### Minimum Implementation
+### 最小實作
 
-Write only enough code to make the current step definition pass:
-- Don't add features not yet tested
-- Don't optimize prematurely
-- Don't handle edge cases not in scenarios
+僅撰寫足以使當前步驟定義通過的程式碼：
+- 不加入尚未測試的功能
+- 不提早優化
+- 不處理情境中未涵蓋的邊界情況
 
-### Refactor Safely
+### 安全重構
 
-After GREEN:
-- Extract common code
-- Improve naming
-- Apply patterns
-- Run tests after each change
-- Keep GREEN throughout
+GREEN 之後：
+- 萃取共用程式碼
+- 改善命名
+- 套用 pattern
+- 每次變更後執行測試
+- 全程保持 GREEN
 
-### REFLECT Quickly (Hard Gate)
+### REFLECT 快速自檢（Hard Gate）
 
-After REFACTOR:
+REFACTOR 之後：
 - ≤ 30 秒的快速自檢，不是長篇報告
 - **每個 action 必須寫入 `insights.md`**（有發現寫內容，無發現寫 `No new insights`）
 - 記錄格式：`- [S0XX] 發現內容`
 - 五個固定問題：慣例？陷阱？決策？取捨？修正？
 - **禁止跳過、禁止批次補寫**
 
-## Implementation Execution Rules
+## 實作執行規則
 
-- **Setup first**: Project structure, dependencies
-- **Foundation before stories**: Shared infrastructure
-- **Stories in priority order**: P1 → P2 → P3
-- **Step definitions before code**: Always RED first
-- **Commit after each GREEN**: Small, traceable commits
+- **先 Setup**：專案結構、相依
+- **Foundation 先於 stories**：共用基礎設施
+- **Stories 依優先序**：P1 → P2 → P3
+- **步驟定義先於程式碼**：一律先 RED
+- **每個 GREEN 後提交**：小步、可追溯的 commits
 
-## Error Handling
+## 錯誤處理
 
-If an action fails:
-1. Report the error with full context
-2. Show the failing scenario and step
-3. Suggest potential fixes
-4. Wait for user direction
-5. Do not proceed to dependent actions
+若 action 失敗：
+1. 回報錯誤與完整脈絡
+2. 顯示失敗情境與步驟
+3. 建議可能的修正方式
+4. 等待使用者指示
+5. 不繼續執行相依 actions
 
-For parallel actions:
-- Continue with successful actions
-- Report failed actions
-- User can choose to fix or skip
+平行 actions：
+- 繼續執行成功的 actions
+- 回報失敗的 actions
+- 使用者可選擇修正或略過

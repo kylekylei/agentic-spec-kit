@@ -2,7 +2,7 @@
 
 All notable changes to the Teammate framework are documented here.
 
-Format follows [Keep a Changelog](https://keepachangelog.com/). This file is parsed by `/teammate.toolkit migrate` to generate migration plans.
+Format follows [Keep a Changelog](https://keepachangelog.com/). This file is parsed by `/teammate.helpme migrate` to generate migration plans.
 
 > **版本語意**：0.x.y 階段為快速迭代，不保證向後相容。1.0.0 起遵循 semver（MAJOR = 破壞性變更，MINOR = 新功能，PATCH = 修正）。
 
@@ -15,8 +15,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 ### Added
 - `.teammate/memory/agent-spec.md` — AI Agent 行為規範（角色、安全圍欄、對話策略），適用於有明確 AI Agent 的專案
 - Context Layer System Layer 新增 `agent-spec.md` 載入支援
+- **`/teammate.helpme` 智慧導航指令** — 取代 `/teammate.toolkit`，新增 Smart Navigator 模式：偵測專案狀態自動推薦下一步，首次使用者引導流程
+- **AI Persona（現象學共創型智能體）** — `teammate-rules.mdc` 整合 `phenomenological-co-design-agent.md` 五項憲法級行為原則 + 溝通風格
 
 ### Changed
+- **`/teammate.toolkit` → `/teammate.helpme`**：指令改名，更直覺。所有引用已更新（rules、README、CHANGELOG、review、teammatesync_rule）
 - Smart Context Loading 更新：`teammate.execute` 和 `teammate.plan` 在 Recommended 層級加入 `agent-spec.md`（如存在則載入）
 - **互動式選項格式規範**：AI 提供多選項時，統一使用 `[A] / [B] / [C]` 字母標籤格式，讓使用者可快速回覆字母選擇
 - **REFLECT Hard Gate**：`teammate.execute` 的 REFLECT 步驟從 optional 升級為 mandatory gate — 每個 action 完成後必須寫入 `insights.md`（有發現寫內容，無發現寫 `No new insights`），禁止批次補寫

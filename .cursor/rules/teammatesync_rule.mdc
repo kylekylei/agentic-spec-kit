@@ -20,11 +20,13 @@ Whenever the user requests changes to any of the following files in this project
 
 - `.cursor/rules/teammate-rules.mdc`
 - `.cursor/commands/teammate.*.md`
+- `.cursor/commands/teammate.helpme.md`
 
 The AI MUST also apply the same changes to the corresponding files in the Teammate Hub:
 
 - `[TEAMMATE_HUB_PATH]/.cursor/rules/teammate-rules.mdc`
 - `[TEAMMATE_HUB_PATH]/.cursor/commands/teammate.*.md`
+- `[TEAMMATE_HUB_PATH]/.cursor/commands/helpme.md`
 
 ## Sync: Version Tracking
 
@@ -32,7 +34,7 @@ When framework files are changed in the Hub, the AI SHOULD remind the user to:
 
 1. Update `[TEAMMATE_HUB_PATH]/CHANGELOG.md` — add changes to `[Unreleased]` section
 2. Bump `[TEAMMATE_HUB_PATH]/.teammate/config/teammate.yml` version when releasing
-3. Run `/teammate.toolkit migrate` in other projects to apply the changes
+3. Run `/teammate.helpme migrate` in other projects to apply the changes
 
 ## Sync: Lessons Learned
 
@@ -67,7 +69,7 @@ This ensures all projects contribute to a centralized memory that any future AI 
 | Sync to Teammate Hub | Do NOT sync (project-specific) |
 |----------------------|-------------------------------|
 | `teammate-rules.mdc` | `backtest_rules.mdc` or other project rules |
-| `teammate.*.md` commands | `.teammate/memory/` contents |
+| `teammate.*.md` commands (incl. helpme) | `.teammate/memory/` contents |
 | Lessons to `PLAYBOOK.md` | `tasks/` artifacts |
 | Changes to `CHANGELOG.md` | `.cursorule` (User Profile) |
 | | `docs/` (project-specific docs) |

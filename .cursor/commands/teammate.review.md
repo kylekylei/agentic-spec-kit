@@ -1,14 +1,14 @@
 ---
-description: Perform behavioral coverage analysis and feature readiness validation. Combines review + checklist into one comprehensive quality gate.
+description: 執行行為覆蓋分析與功能就緒驗證，整合 review 與 checklist 為單一品質關卡。
 handoffs:
-  - label: Create Issues
-    agent: teammate.toolkit
-    prompt: assign — Convert actions to GitHub Issues
-    prompt: Convert tasks to GitHub issues
+  - label: 建立 Issues
+    agent: teammate.helpme
+    prompt: assign — 將 actions 轉為 GitHub Issues
+    prompt: 將任務轉為 GitHub issues
     send: true
-  - label: Fix Gaps
+  - label: 修補缺口
     agent: teammate.plan
-    prompt: Update plan to address review findings
+    prompt: 更新計畫以處理 review 發現
     send: true
 ---
 
@@ -18,59 +18,59 @@ handoffs:
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+若使用者輸入非空，**必須**先考量後再繼續。
 
 ## Outline
 
-Goal: Perform a **professional, neutral** analysis of behavioral coverage, artifact consistency, and feature readiness. This is the final verification gate — combining behavioral review and requirements quality validation into one pass.
+目標：對行為覆蓋、產物一致性與功能就緒進行**專業、中立**的分析。此為最終驗證關卡，整合行為審查與需求品質驗證於單次執行。
 
-### Operating Constraints
+### 操作限制
 
-**STRICTLY READ-ONLY**: Do **not** modify any files. Output a structured analysis report.
+**嚴格唯讀**：不得修改任何檔案，僅輸出結構化分析報告。
 
-**Principles Authority**: The project principles (`.teammate/memory/principles.md`) are **non-negotiable**. Principles conflicts are automatically CRITICAL.
+**原則權威**：專案原則（`.teammate/memory/principles.md`）**不可妥協**，原則衝突一律視為 CRITICAL。
 
-**Professional Tone**: Objective, constructive language suitable for team review. No sarcasm or inflammatory language.
+**專業語氣**：客觀、建設性，適合團隊審查，禁止諷刺或煽動性用語。
 
-### Phase 0: Foundation Check
+### 階段 0：基礎檢查
 
-1. **Read `.teammate/memory/context.md`**
-   - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
+1. **讀取 `.teammate/memory/context.md`**
+   - 掃描符合 `[ALL_CAPS_IDENTIFIER]` 的 placeholder token
+   - 若發現 → **ERROR**："Project context not initialized. Run `/teammate.init` first."
 
-2. **Read `.teammate/memory/principles.md`**
-   - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.init` first."
-   - **Parse all principles**: Extract every MUST / MUST NOT / SHOULD rule with its ID (e.g. `BB-001`, `III-D`) into an in-memory checklist. This checklist is the **authoritative reference** for Pass B3, Pass D Compliance, and Pass G.
+2. **讀取 `.teammate/memory/principles.md`**
+   - 掃描符合 `[ALL_CAPS_IDENTIFIER]` 的 placeholder token
+   - 若發現 → **ERROR**："Principles not defined. Run `/teammate.init` first."
+   - **解析所有原則**：將每個 MUST / MUST NOT / SHOULD 規則及其 ID（如 `BB-001`、`III-D`）擷取至記憶體檢查清單，作為 Pass B3、Pass D Compliance、Pass G 的**權威參考**。
 
-### Setup
+### 設定
 
-Run `.teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan` from repo root and parse:
-- `TASK_DIR`, `AVAILABLE_DOCS`
+從 repo root 執行 `.teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan` 並解析：
+- `TASK_DIR`、`AVAILABLE_DOCS`
 
-Derive paths:
+推導路徑：
    - SPEC = `TASK_DIR/spec.md`
-   - PLAN = `TASK_DIR/plan.md` (Part 1: Tasks + Part 2: Actions)
+   - PLAN = `TASK_DIR/plan.md`（Part 1: Tasks + Part 2: Actions）
    - FEATURES = `TASK_DIR/scenarios/*.feature`
    - EXAMPLE_MAPPING = `TASK_DIR/example-mapping.md`
-   - UI_SPEC = `TASK_DIR/contracts/ui/ui-spec.md` (if exists)
-   - INSIGHTS = `TASK_DIR/insights.md` (if exists)
+   - UI_SPEC = `TASK_DIR/contracts/ui/ui-spec.md`（若存在）
+   - INSIGHTS = `TASK_DIR/insights.md`（若存在）
 
-Abort if required files missing.
+若必要檔案缺失則中止。
 
-### Load Artifacts
+### 載入產物
 
-   From spec.md: User stories, functional requirements, success criteria
-   From plan.md Part 1 (Architecture): Technical decisions, project structure, constraints
-   From plan.md Part 2 (Actions): Actions with [Verifies: @tag] markers, phase structure
-   From scenarios/*.feature: All scenarios with tags, step definitions
-   From principles: Principles and boundaries
+   從 spec.md：使用者故事、功能需求、成功準則
+   從 plan.md Part 1（Architecture）：技術決策、專案結構、約束
+   從 plan.md Part 2（Actions）：含 [Verifies: @tag] 標記的 actions、階段結構
+   從 scenarios/*.feature：所有含 tag 的場景、step 定義
+   從 principles：原則與邊界
 
 ---
 
-## Pass A: Behavioral Coverage Analysis
+## Pass A：行為覆蓋分析
 
-#### Scenario Type Distribution
+#### 場景類型分佈
 
 | Type | Count | Percentage | Target |
 |------|-------|------------|--------|
@@ -80,27 +80,27 @@ Abort if required files missing.
 | @boundary | [N] | [%] | 10-15% |
 | @principles | [N] | [%] | 5-10% |
 
-#### Coverage by User Story
+#### 使用者故事覆蓋率
 
 | Story | Scenarios | Happy | Negative | Principles | Status |
 |-------|-----------|-------|----------|------------|--------|
 | US1 | [N] | [N] | [N] | [N] | [Complete/Gaps] |
 
-#### Behavior Quality Checks
+#### 行為品質檢查
 
-- Are scenarios testing BEHAVIOR (what) or IMPLEMENTATION (how)?
-- Are steps declarative or imperative?
-- Are scenarios independent (can run in isolation)?
+- 場景測的是 BEHAVIOR（做什麼）還是 IMPLEMENTATION（怎麼做）？
+- Step 是宣告式還是命令式？
+- 場景是否獨立（可單獨執行）？
 
-## Pass B: Consistency Analysis
+## Pass B：一致性分析
 
-#### B1. Traceability Verification
-- Every requirement → scenarios → actions → [Verifies: @tag]
-- Report gaps: requirements without scenarios, scenarios without actions, orphan actions
+#### B1. 追溯驗證
+- 每個需求 → 場景 → actions → [Verifies: @tag]
+- 回報缺口：無場景的需求、無 action 的場景、孤兒 actions
 
-#### B2. Terminology Consistency
-- Same concepts named differently across files?
-- Entity names match between spec, model, and scenarios?
+#### B2. 術語一致性
+- 相同概念在不同檔案中命名是否一致？
+- spec、model、scenarios 的實體名稱是否一致？
 
 #### B3. Principles Alignment（逐條比對）
 
@@ -118,51 +118,51 @@ Output a table:
 | Principle ID | Statement (summary) | Scenario Coverage | Code Compliance | Status |
 |---|---|---|---|---|
 
-#### B4. Example Mapping Coverage
-- Every rule from example-mapping has scenarios?
-- Questions all resolved?
+#### B4. Example Mapping 覆蓋
+- example-mapping 的每條規則都有對應場景？
+- 所有問題是否已解決？
 
-#### B5. UI Contract Consistency (if CONTRACTS exist)
-- Component names in `contracts/ui/` match spec and tasks?
-- Props, routes, and enhanced components match plan.md architecture?
-- Report terminology drift
+#### B5. UI Contract 一致性（若存在 CONTRACTS）
+- `contracts/ui/` 的元件名稱是否與 spec、tasks 一致？
+- Props、routes、enhanced components 是否與 plan.md 架構一致？
+- 回報術語漂移
 
-## Pass C: Detection Passes
+## Pass C：偵測掃描
 
-#### Duplication Detection
-- Similar scenarios testing same behavior? Redundant step definitions?
+#### 重複偵測
+- 相似場景測同一行為？冗餘的 step 定義？
 
-#### Ambiguity Detection
-- Vague scenario names? Unclear step language?
+#### 模糊偵測
+- 場景名稱含糊？Step 用語不清？
 
-#### Underspecification
-- Scenarios missing Then assertions? Steps with unclear outcomes?
+#### 規格不足
+- 場景缺少 Then 斷言？Step 結果不明確？
 
-#### Implementation Leakage
-- Scenarios that describe HOW instead of WHAT? Technical terms in business scenarios?
+#### 實作洩漏
+- 場景描述 HOW 而非 WHAT？業務場景出現技術術語？
 
-## Pass D: Requirements Quality Validation
+## Pass D：需求品質驗證
 
 > 整合原 `/teammate.checklist` 的需求品質檢核功能。
 
-#### Completeness
-- Are all necessary requirements documented?
-- Are error handling requirements defined for all failure modes?
-- Are accessibility requirements specified?
+#### 完整性
+- 所有必要需求是否已記錄？
+- 各失敗模式是否定義錯誤處理需求？
+- 是否指定無障礙需求？
 
-#### Clarity
-- Are requirements specific and unambiguous?
-- Are vague terms quantified with specific criteria?
-- Are success metrics measurable?
+#### 清晰度
+- 需求是否具體且無歧義？
+- 模糊用語是否以具體準則量化？
+- 成功指標是否可量測？
 
-#### Consistency
-- Do requirements align without conflicts?
-- Are patterns consistent across the feature?
+#### 一致性
+- 需求之間是否無衝突？
+- 功能內模式是否一致？
 
-#### Coverage
-- Are all scenarios/edge cases addressed?
-- Are boundary conditions defined?
-- Are negative paths specified?
+#### 覆蓋
+- 所有場景／邊界情況是否涵蓋？
+- 邊界條件是否定義？
+- 負向路徑是否指定？
 
 #### Compliance Coverage（動態，偵測到才執行）
 
@@ -182,19 +182,19 @@ Output a table:
 
 > 此為初步檢查。完整對抗性審計請執行 `/teammate.audit`。
 
-## Pass E: Traceability Matrix
+## Pass E：追溯矩陣
 
-Build traceability from behaviors to implementation:
+建立從行為到實作的追溯：
 
 | Scenario | Rule | Action(s) | Status |
 |----------|------|-----------|--------|
 | @us1-login-success | Rule 1 | S012-S015 | [Pass/Fail/Pending] |
 
-Identify gaps: Scenarios without actions, actions without scenarios, rules without examples.
+標示缺口：無 action 的場景、無場景的 actions、無範例的規則。
 
-## Pass F: Living Documentation
+## Pass F：活文件
 
-Generate `TASK_DIR/checklists/feature-readiness.md`:
+產生 `TASK_DIR/checklists/feature-readiness.md`：
 
 ```markdown
 # Feature Readiness Report: [Feature Name]
@@ -240,30 +240,30 @@ Generate `TASK_DIR/checklists/feature-readiness.md`:
 
 ---
 
-## Severity Assignment
+## 嚴重度分級
 
-- **CRITICAL**: Principles violations, missing coverage for P1 scenarios, requirements quality < 60%
-- **HIGH**: Duplicate scenarios, ambiguous requirements, P2 coverage gaps
-- **MEDIUM**: Terminology drift, minor coverage gaps, unclear steps
-- **LOW**: Style improvements, optimization opportunities
+- **CRITICAL**：原則違反、P1 場景覆蓋缺失、需求品質 < 60%
+- **HIGH**：重複場景、模糊需求、P2 覆蓋缺口
+- **MEDIUM**：術語漂移、輕微覆蓋缺口、不明確的 step
+- **LOW**：樣式改進、優化機會
 
-## Feature Readiness Gates
+## 功能就緒關卡
 
-| Gate | Criteria | Blocking? |
-|------|----------|-----------|
-| Requirements Quality | All dimensions > 80% | Yes |
-| Happy Path Coverage | 100% of P1 stories | Yes |
-| Negative Coverage | At least 1 per story | Yes |
-| Principles Coverage | At least 1 boundary | Yes |
-| Traceability | All scenarios linked to actions | No |
-| Open Issues | No critical/high issues | Yes |
+| 關卡 | 準則 | 阻擋？ |
+|------|------|--------|
+| 需求品質 | 各維度 > 80% | Yes |
+| Happy Path 覆蓋 | P1 stories 100% | Yes |
+| 負向覆蓋 | 每 story 至少 1 個 | Yes |
+| Principles 覆蓋 | 至少 1 個 boundary | Yes |
+| 追溯 | 所有場景連結至 actions | No |
+| 未解決問題 | 無 CRITICAL/HIGH | Yes |
 
-## Next Actions
+## 下一步行動
 
-Based on findings:
-- If CRITICAL: Must resolve before proceeding → suggest `/teammate.plan update`
-- If HIGH: Should address for quality → suggest specific fixes
-- If only LOW/MEDIUM: Can proceed → suggest `/teammate.toolkit assign`
+依發現結果：
+- CRITICAL：必須先解決才能繼續 → 建議 `/teammate.plan update`
+- HIGH：應處理以提升品質 → 建議具體修復
+- 僅 LOW/MEDIUM：可繼續 → 建議 `/teammate.helpme assign`
 
 ## Pass G: Design System Compliance（偵測到前端才啟用）
 
@@ -294,7 +294,7 @@ Based on findings:
 
 ## Update Progress
 
-Update `.teammate/memory/milestone.md`: Feature verification status, coverage metrics, readiness assessment.
+更新 `.teammate/memory/milestone.md`：任務驗證狀態、覆蓋率指標、就緒評估。
 
 ## Update Active Context（Memory Delta Protocol）
 
@@ -313,19 +313,19 @@ Output:
 - Recommended next steps
 - Suggested next command
 
-## Analysis Guidelines
+## 分析指引
 
-### Behavior vs Implementation
+### 行為 vs 實作
 
-**Good**: "User sees confirmation message", "Order is placed successfully"
-**Bad**: "API returns 200 status", "Database record is created"
+**佳**："User sees confirmation message"、"Order is placed successfully"
+**不佳**："API returns 200 status"、"Database record is created"
 
-### Professional Language
+### 專業語言
 
-**Use**: "This scenario could be enhanced with...", "Consider adding coverage for..."
-**Avoid**: "This is wrong", "You forgot to..."
+**使用**："This scenario could be enhanced with..."、"Consider adding coverage for..."
+**避免**："This is wrong"、"You forgot to..."
 
-### Coverage Targets
+### 覆蓋率目標
 
 | Metric | Target | Critical Threshold |
 |--------|--------|-------------------|
@@ -334,10 +334,10 @@ Output:
 | Principles | 100% | 80% |
 | Overall | 80%+ | 60% |
 
-## Operating Principles
+## 操作原則
 
-- **NEVER modify files** (read-only analysis)
-- **NEVER hallucinate** (report only what's found)
-- **Prioritize principles** (violations are always CRITICAL)
-- **Be constructive** (every finding has a recommendation)
-- **Be specific** (cite exact locations and issues)
+- **絕不修改檔案**（唯讀分析）
+- **絕不臆測**（僅回報實際發現）
+- **原則優先**（違反一律為 CRITICAL）
+- **建設性**（每項發現附建議）
+- **具體**（標註確切位置與問題）

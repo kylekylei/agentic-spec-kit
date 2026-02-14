@@ -1,82 +1,82 @@
 ---
-description: Generate Gherkin scenarios and a unified implementation plan (tasks + actions) in one pass. Produces .feature files + plan.md + contracts/ui/ui-spec.md (if UI).
+description: 一次產出 Gherkin 場景與統一實作計畫（任務 + 行動）。產物：.feature 檔 + plan.md + contracts/ui/ui-spec.md（若有 UI）。
 handoffs: 
-  - label: Execute Actions
+  - label: 執行行動
     agent: teammate.execute
-    prompt: Start the Red-Green Loop implementation
+    prompt: 啟動 Red-Green Loop 實作
     send: true
-  - label: Review Coverage
+  - label: 審查覆蓋率
     agent: teammate.review
-    prompt: Run a behavioral coverage analysis before executing
+    prompt: 執行前先進行行為覆蓋率分析
     send: true
 ---
 
-## User Input
+## 使用者輸入
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+若使用者輸入非空，**必須**先考量其內容再繼續。
 
-## Outline
+## 流程概覽
 
-Goal: Transform the aligned spec and examples into a complete execution plan — **Gherkin scenarios** (WHAT to verify) and a unified **plan.md** containing both technical tasks (HOW to build) and atomic actions (STEPS to execute).
+目標：將已對齊的 spec 與範例轉為完整執行計畫 — **Gherkin scenarios**（驗證 WHAT）與統一 **plan.md**（含技術任務 HOW 與原子行動 STEPS）。
 
-### Mode Detection
+### 模式偵測
 
-Parse `$ARGUMENTS` for keywords:
+解析 `$ARGUMENTS` 關鍵字：
 
-- `update` → **Update Mode** (preserve existing work, snapshot before changes, mark with `[UNCHANGED]`/`[NEW]`/`[REVISED]`/`[REMOVED]`)
-- `--ui` → **Force UI Deep Analysis** (even if < 3 UI components)
-- Otherwise → **Create Mode** (default; UI Deep Analysis auto-triggered if ≥ 3 UI components)
+- `update` → **Update Mode**（保留既有產物、變更前快照、以 `[UNCHANGED]`/`[NEW]`/`[REVISED]`/`[REMOVED]` 標記）
+- `--ui` → **強制 UI 深度分析**（即使 < 3 個 UI 組件）
+- 其他 → **Create Mode**（預設；若 ≥ 3 個 UI 組件則自動觸發 UI Deep Analysis）
 
-### Phase 0: Foundation Check
+### 階段 0：基礎檢查
 
-1. **Read `.teammate/memory/context.md`**
-   - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
+1. **讀取 `.teammate/memory/context.md`**
+   - 掃描符合 `[ALL_CAPS_IDENTIFIER]` 的 placeholder token
+   - 若發現 → **ERROR**：「專案脈絡未初始化，請先執行 `/teammate.init`。」
 
-2. **Read `.teammate/memory/principles.md`**
-   - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.init` first."
+2. **讀取 `.teammate/memory/principles.md`**
+   - 掃描符合 `[ALL_CAPS_IDENTIFIER]` 的 placeholder token
+   - 若發現 → **ERROR**：「原則未定義，請先執行 `/teammate.init`。」
 
-### Update Mode
+### 更新模式
 
-When running with `update`, the command preserves existing work:
+以 `update` 執行時，指令會保留既有產物：
 
-1. **Pre-Update Snapshot**: Copy existing `plan.md`, `scenarios/*.feature` to `.teammate/snapshots/`
-2. **Ask user**: "What changed and why?" (one line)
-3. **Diff-Aware Processing**: Compare baseline against current spec/examples
-4. **Mark changes**: `[UNCHANGED]`, `[NEW]`, `[REVISED]`, `[REMOVED]`
-5. **Sync Contracts** (if `contracts/ui/` exists): Update stale entries in `ui-spec.md`
-6. **Impact Report**: Count unchanged/new/revised/removed items
-7. **Never discard completed work** — removed items are commented out, not deleted
+1. **變更前快照**：複製既有 `plan.md`、`scenarios/*.feature` 至 `.teammate/snapshots/`
+2. **詢問使用者**：「變更內容與原因？」（一行）
+3. **差異感知處理**：比對基準與當前 spec/examples
+4. **標記變更**：`[UNCHANGED]`、`[NEW]`、`[REVISED]`、`[REMOVED]`
+5. **同步合約**（若存在 `contracts/ui/`）：更新 `ui-spec.md` 中過期項目
+6. **影響報告**：統計未變更/新增/修訂/移除數量
+7. **不丟棄已完成工作** — 移除項目改為註解，不刪除
 
 ---
 
-## Stage 1: Scenario Generation
+## 階段 1：場景生成
 
 > 產出：`TASK_DIR/scenarios/*.feature` + `teammate.refs.yaml`
 
-### Setup
+### 設定
 
-1. Run `.teammate/scripts/bash/check-prerequisites.sh --json --paths-only` from repo root. Parse JSON for `TASK_DIR`, `TASK_SPEC`.
+1. 從 repo 根目錄執行 `.teammate/scripts/bash/check-prerequisites.sh --json --paths-only`，解析 JSON 取得 `TASK_DIR`、`TASK_SPEC`。
 
-2. **Load Context**:
+2. **載入脈絡**：
 
    Required:
-   - `TASK_DIR/spec.md` - User stories and requirements
-   - `TASK_DIR/example-mapping.md` - Rules and examples
-   - `.teammate/memory/principles.md` - Non-negotiable boundaries
+   - `TASK_DIR/spec.md` — 使用者故事與需求
+   - `TASK_DIR/example-mapping.md` — 規則與範例
+   - `.teammate/memory/principles.md` — 不可妥協的邊界
 
    Optional:
-   - `.teammate/templates/feature-template.feature` - Gherkin template
-   - `TASK_DIR/contracts/ui/design-principles.md` - UX 設計原則
+   - `.teammate/templates/feature-template.feature` — Gherkin 模板
+   - `TASK_DIR/contracts/ui/design-principles.md` — UX 設計原則
 
-3. **Create Features Directory**: `mkdir -p TASK_DIR/scenarios`
+3. **建立場景目錄**：`mkdir -p TASK_DIR/scenarios`
 
-### UX Conflict Scan (if `design-principles.md` exists)
+### UX 衝突掃描（若存在 `design-principles.md`）
 
 在產生 scenarios 之前，強制執行設計原則衝突分析：
 
@@ -85,45 +85,45 @@ When running with `update`, the command preserves existing work:
 3. **參考設計語意差異**: 外部參考產品的操作語意 vs 本專案操作語意
 4. **Conflict Report**: 有 CONFLICT 或 SEMANTIC_GAP 時暫停讓使用者決策
 
-### Scenario Generation
+### 場景生成
 
-For each User Story (in priority order):
+依優先序處理每個 User Story：
 
-1. **Generate `.feature` file** with proper header, Background, and tagged Scenarios
-2. **Map Example Mapping** rules → scenarios, examples → Given/When/Then
-3. **Add Principles Boundary Scenarios** (`@principles @boundary`)
-4. **Consolidate data-driven scenarios** using Scenario Outline where applicable
-5. **Write** to `TASK_DIR/scenarios/[story-slug].feature`
+1. **產生 `.feature` 檔**：含標頭、Background、已標籤 Scenarios
+2. **對應 Example Mapping**：規則 → scenarios，範例 → Given/When/Then
+3. **加入 Principles 邊界場景**（`@principles @boundary`）
+4. **合併資料驅動場景**：適用處使用 Scenario Outline
+5. **寫入** `TASK_DIR/scenarios/[story-slug].feature`
 
-### Context Anchors
+### 脈絡錨點
 
-Create/update `TASK_DIR/teammate.refs.yaml` with feature metadata, behavior references, and dependencies.
+建立/更新 `TASK_DIR/teammate.refs.yaml`，含任務中繼資料、行為參照與依賴。
 
-### Coverage Validation
+### 覆蓋率驗證
 
-Requirements: Every rule → at least one scenario. Every P1 story → happy path + negative. Every principles boundary → a scenario.
+要求：每條規則 → 至少一個 scenario。每個 P1 story → happy path + negative。每個 principles 邊界 → 一個 scenario。
 
-### Gherkin Quality Check
+### Gherkin 品質檢查
 
-- Each scenario is independent (can run in isolation)
-- Steps are declarative (WHAT, not HOW)
-- No implementation details in steps
-- Tags follow convention (@P1/@P2/@P3, @happy-path, etc.)
+- 每個 scenario 獨立（可單獨執行）
+- 步驟為宣告式（WHAT，非 HOW）
+- 步驟中不含實作細節
+- 標籤遵循慣例（@P1/@P2/@P3、@happy-path 等）
 
 ---
 
-## Stage 2: Implementation Plan — Part 1: Architecture
+## 階段 2：實作計畫 — Part 1：架構
 
 > 產出：`TASK_DIR/plan.md` 的 Part 1（技術架構）
 
-### Load Additional Context
+### 載入額外脈絡
 
 Optional（如存在則載入）:
 - `.teammate/memory/agent-spec.md` → AI Agent 行為規範（如專案有 AI Agent 角色）
 - `docs/llms.txt` → 外部 API/SDK 參考索引（遵循 llms.txt 標準）
 - `TASK_DIR/example-mapping.md`
 
-### Design Asset Detection（動態）
+### 設計資產偵測（動態）
 
 檢查 `.teammate/design/figma-index.md` 是否存在：
 
@@ -145,35 +145,35 @@ Optional（如存在則載入）:
 
 若 context.md 無標記但 codebase 偵測到 → 額外提示更新 context.md。
 
-### Test Infrastructure Check
+### 測試基礎設施檢查
 
-1. **檢查既有測試框架**: 掃描 `package.json` (vitest/jest/playwright), `pytest.ini`, `go.mod` 等
-2. **若不存在**: 在 plan.md 新增 Phase 0 必要 setup（測試框架設定、測試目錄、mock setup）
-3. **若已存在**: 記錄在 Technical Context 中
+1. **檢查既有測試框架**：掃描 `package.json` (vitest/jest/playwright)、`pytest.ini`、`go.mod` 等
+2. **若不存在**：在 plan.md 新增 Phase 0 必要 setup（測試框架設定、測試目錄、mock setup）
+3. **若已存在**：記錄在 Technical Context 中
 
-### Technical Planning
+### 技術規劃
 
-1. **Technical Context**: Language/Version, Dependencies, Storage, Testing framework, Constraints
-2. **Principles Check**: Map each principle to technical decisions. *GATE: Must pass*
-3. **Actors & Abilities** (optional, ≥5 stories): Identify actors from scenarios, define roles, abilities, key tasks
-4. **Project Structure**: Source structure with file markers:
-   - `[NEW]` — New file to create
-   - `[ENHANCE]` — Existing file with functional changes
-   - `[INTEGRATE]` — Existing file that must import/mount a [NEW] component (pure wiring)
+1. **Technical Context**：語言/版本、依賴、儲存、測試框架、約束
+2. **Principles Check**：將每條原則對應到技術決策。*GATE：必須通過*
+3. **Actors & Abilities**（選用，≥5 stories）：從 scenarios 識別 actors，定義角色、能力、關鍵任務
+4. **Project Structure**：原始碼結構與檔案標記：
+   - `[NEW]` — 待建立的新檔
+   - `[ENHANCE]` — 既有檔，有功能變更
+   - `[INTEGRATE]` — 既有檔，需 import/mount [NEW] 組件（純接線）
 
-### Integration Impact Analysis
+### 整合影響分析
 
-For every `[NEW]` component, identify its **consumer** (existing file that must import/mount it):
-- Every `[NEW]` UI component (not a child of another [NEW]) MUST have at least one `[INTEGRATE]` consumer
-- Common integration points: layout files (global), page files (route-specific), parent components
+對每個 `[NEW]` 組件，識別其 **consumer**（需 import/mount 的既有檔）：
+- 每個 `[NEW]` UI 組件（非其他 [NEW] 的子組件）MUST 至少有一個 `[INTEGRATE]` consumer
+- 常見整合點：layout 檔（全域）、page 檔（路由專屬）、父組件
 
-### Research & Decisions
+### 研究與決策
 
-If NEEDS CLARIFICATION items exist: Generate research tasks, consolidate in plan.md Research section.
+若有 NEEDS CLARIFICATION 項目：產生研究任務，彙整於 plan.md Research 區段。
 
 ---
 
-## Stage 2.5: UI Deep Analysis (auto-triggered or --ui)
+## 階段 2.5：UI 深度分析（自動觸發或 --ui）
 
 > 產出：`TASK_DIR/contracts/ui/ui-spec.md`（統一 UI 規格）
 
@@ -184,7 +184,7 @@ If NEEDS CLARIFICATION items exist: Generate research tasks, consolidate in plan
 
 > 若無 `figma-index.md` 且未達觸發條件，此階段跳過，不產生 `contracts/ui/ui-spec.md`。
 
-### Component Inventory
+### 組件清單
 
 掃描 spec.md 和 plan.md Project Structure，列出所有 UI 組件：
 
@@ -192,13 +192,13 @@ If NEEDS CLARIFICATION items exist: Generate research tasks, consolidate in plan
 |------|------|--------|--------|------|
 | [ComponentA] | [Panel/Card/...] | [N] | [parent] | [notes] |
 
-### Props & Interface
+### 屬性與介面
 
-For each component: Props, exported interface, key events, slot structure.
+每個組件：Props、匯出介面、關鍵事件、slot 結構。
 
-### State Matrix
+### 狀態矩陣
 
-For each component, define complete visual states:
+為每個組件定義完整視覺狀態：
 
 | 狀態 | 觸發條件 | 外觀描述 | 互動行為 |
 |------|----------|----------|----------|
@@ -207,40 +207,40 @@ Rules:
 - 每個組件 MUST 至少 3 種狀態（預設 + 主要 + 邊界）
 - Loading/Error/Empty 狀態 MUST 說明內容和使用者動作
 
-### Interaction Flows
+### 互動流程
 
-Define core interaction paths (happy path + error path) as step sequences.
+將核心互動路徑（happy path + error path）定義為步驟序列。
 
-### Interactive State Machine
+### 互動狀態機
 
-For each interactive element:
+對每個互動元素：
 
 | 元素 | 觸發條件 | 狀態 | 行為 |
 |------|----------|------|------|
 
 Rules: 每個互動元素 MUST 有 enabled + disabled；若引用外部設計 MUST 標註語意差異。
 
-### Design System Compliance
+### 設計系統合規
 
-- UI: color tokens, spacing scale, typography
-- i18n: all visible text uses i18n keys, synced to all locales
-- a11y: aria-label, keyboard nav, focus management, contrast ≥ 4.5:1
+- UI：color tokens、spacing scale、typography
+- i18n：所有可見文字使用 i18n key，同步至所有語系
+- a11y：aria-label、鍵盤導航、focus 管理、對比 ≥ 4.5:1
 
-Write all to `TASK_DIR/contracts/ui/ui-spec.md`.
+全部寫入 `TASK_DIR/contracts/ui/ui-spec.md`。
 
 ---
 
-## Stage 3: Implementation Plan — Part 2: Actions
+## 階段 3：實作計畫 — Part 2：行動
 
 > 產出：`TASK_DIR/plan.md` 的 Part 2（執行清單）
 
-### Extract Scenario Tags
+### 提取場景標籤
 
-Parse all `.feature` files to build tag inventory.
+解析所有 `.feature` 檔，建立 tag 清單。
 
-### Generate Actions by User Story
+### 依使用者故事生成行動
 
-#### Action Format
+#### 行動格式
 
 ```
 - [ ] [ActionID] [Type] [P?] [Story?] [Verifies: @scenario-tag(s)] Description with file path
@@ -250,72 +250,72 @@ Parse all `.feature` files to build tag inventory.
 - RED/GREEN Forced Split: `[LOGIC]` 涉及 util/store/service/model MUST 拆為 RED + GREEN 兩個 actions
 - `[UI]` 不強制拆分
 
-#### Integration Actions
+#### 整合行動
 
-For every `[INTEGRATE]` file in Part 1 Project Structure, generate a mount/import action immediately after the component creation action.
+對 Part 1 Project Structure 中每個 `[INTEGRATE]` 檔，在組件建立 action 之後立即產生 mount/import action。
 
-### Phase Structure
+### 階段結構
 
-- **Phase 0: Setup** — Project initialization, test infrastructure
-- **Phase 1: Foundational** — Core infrastructure
-- **Phase 2+: User Stories** — Story-specific actions (step definitions first, then implementation)
-- **Phase N: Polish** — Cross-cutting concerns
+- **Phase 0: Setup** — 專案初始化、測試基礎設施
+- **Phase 1: Foundational** — 核心基礎設施
+- **Phase 2+: User Stories** — 故事專屬行動（先 step definitions，再實作）
+- **Phase N: Polish** — 橫切關注點
 
-### Traceability Matrix
+### 追溯矩陣
 
 | Scenario Tag | Actions | Status |
 |--------------|---------|--------|
 
-Coverage: [X]/[Y] scenarios ([Z]%)
+覆蓋率：[X]/[Y] scenarios ([Z]%)
 
-### Write plan.md
+### 寫入 plan.md
 
-Write the complete plan (Part 1 + Part 2) to `TASK_DIR/plan.md` using `.teammate/templates/plan-template.md`.
+將完整計畫（Part 1 + Part 2）寫入 `TASK_DIR/plan.md`，使用 `.teammate/templates/plan-template.md`。
 
 ---
 
-## Final Steps
+## 最後步驟
 
-### Update Active Context（Memory Delta Protocol）
+### 更新現用脈絡（Memory Delta Protocol）
 
-Update `.teammate/memory/progress.md` using delta mode:
+以 delta 模式更新 `.teammate/memory/progress.md`：
 - **覆寫 `## Current State`**：Phase: Commit (complete), Last Command: plan, Next Action: /teammate.execute
 - **追加 `## Session Log`**：`| [timestamp] | plan | [N] scenarios, plan.md ([N] tasks, [N] actions), [coverage]% | [key decisions] |`
 
-### Report Completion
+### 完成報告
 
-Output:
-- Generated files list (`.feature`, `plan.md`, `contracts/ui/ui-spec.md` if triggered)
-- Scenario summary: [N] scenarios across [N] stories
-- Plan summary: Part 1 Architecture ([N] technical decisions), Part 2 Actions ([N] actions, [coverage]%)
-- Parallel opportunities identified
-- Suggested next command: `/teammate.execute`
+輸出：
+- 產出檔案清單（`.feature`、`plan.md`、`contracts/ui/ui-spec.md` 若觸發）
+- 場景摘要：[N] 個 scenarios，跨 [N] 個 stories
+- 計畫摘要：Part 1 Architecture（[N] 個技術決策）、Part 2 Actions（[N] 個 actions，[coverage]%）
+- 已識別的並行機會
+- 建議下一步：`/teammate.execute`
 
 ---
 
-## Gherkin Writing Guidelines
+## Gherkin 撰寫指引
 
-### Tag Convention
+### 標籤慣例
 
 ```gherkin
-@feature-name @P1           # Feature and priority
-@happy-path                  # Primary success path
-@alternative                 # Valid alternative flows
-@negative                    # Error/failure scenarios
-@boundary                    # Edge cases and limits
-@principles                  # Principles boundary enforcement
-@data-driven                 # Parameterized scenarios
+@feature-name @P1           # Feature 與優先序
+@happy-path                  # 主要成功路徑
+@alternative                 # 有效替代流程
+@negative                    # 錯誤/失敗場景
+@boundary                    # 邊界與極限
+@principles                  # 原則邊界強制
+@data-driven                 # 參數化場景
 ```
 
-### Step Writing Best Practices
+### 步驟撰寫最佳實踐
 
-**Given** — Context/State: "Given the user is logged in"
-**When** — Action: "When the user submits the form"
-**Then** — Outcome: "Then the user sees a confirmation message"
+**Given** — 脈絡/狀態：「Given the user is logged in」
+**When** — 動作：「When the user submits the form」
+**Then** — 結果：「Then the user sees a confirmation message」
 
-## Action Principles
+## 行動原則
 
-- **Atomic & Verifiable**: Small enough for one session, large enough to be meaningful
-- **Traceable Chain**: `Scenario (@tag) → Action (S0XX) → Implementation → Verification`
-- **Red-Green-Reflect Loop Ready**: Step definitions before code, always RED first, REFLECT after GREEN
-- **Dependencies**: Models before services, services before endpoints, foundation before stories
+- **原子且可驗證**：單一 session 可完成、具實質意義
+- **可追溯鏈**：`Scenario (@tag) → Action (S0XX) → Implementation → Verification`
+- **Red-Green-Reflect Loop 就緒**：先 step definitions 再程式碼，永遠先 RED，GREEN 後 REFLECT
+- **依賴順序**：Models → services → endpoints，foundation 先於 stories

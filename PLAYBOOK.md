@@ -42,6 +42,26 @@
 
 ## 1. 歷史修改軌跡（Append-Only）
 
+#### 2026-02-13 · 規則 · oReady
+**觸發**: Cursor 的 handoffs 機制完全沒有發揮作用 — 指令 frontmatter 中的 `handoffs` YAML 未在 UI 渲染成可點擊按鈕，使用者仍需複製貼上下一步指令。
+**決策**: 
+- 查證 Cursor 官方文件：`handoffs` 在 command frontmatter 中**無官方文件支援**。Cursor 的 "handoff" 僅指 CLI 的 Cloud Handoff（`&` 前綴推送至雲端），非 command UI 按鈕
+- 更新 `teammate-rules.mdc`：將「handoffs 由 Cursor UI 渲染」改為「若 Cursor 未來支援 handoffs 渲染則可省略文字下一步；目前仍須輸出文字格式」
+- 保留各 command 的 `handoffs` frontmatter（不影響現有流程，若 Cursor 日後支援可立即生效）
+- 實務替代：使用者可輸入 `/` 開啟指令選擇器，輸入 `teammate` 快速選取下一步指令，比複製貼上略快
+**影響**: `teammate-rules.mdc` Output Mode 區段
+**成效**: 規則與實際行為一致，避免誤導
+**狀態**: 生效中
+
+#### 2026-02-13 · 規則 · oReady
+**觸發**: 單一選項時格式 `下一步 → /teammate.execute` 與多選項 `[A]` 格式不一致，使用者希望統一。
+**決策**: 
+- 單一選項改為 `[A] 下一步 → /teammate.[command]`，與多選項同樣使用字母標籤
+- 使用者可回覆 `A` 快速確認，格式一致
+**影響**: `teammate-rules.mdc` 下一步格式區段
+**成效**: 單一／多選格式統一，回覆 `A` 即可確認
+**狀態**: 生效中
+
 #### 2026-02-13 · 規則 · OpenWebUI_Frontend
 **觸發**: `/teammate.execute` Phase D 執行 5 個 actions 後，AI 完全跳過 REFLECT 步驟，未寫入 `insights.md`，直到使用者手動提醒才補寫。原始規則寫「有新發現才寫入，無則跳過」，AI 利用此彈性直接略過整個步驟。
 **決策**: 
@@ -573,4 +593,18 @@ User Layer（使用者層 — 持久 + 即時）:
 
 ---
 
-**Last Updated**: 2026-02-13（teammate.review principles 逐條比對強化）
+#### 2026-02-14 · 命令 · Teammate
+**觸發**: 使用者第一次接觸 Teammate 框架時，不知道該從哪裡開始。`/teammate.toolkit` 名稱過於技術化，無法傳達「幫助」的語意。且框架缺乏首次使用者的引導流程。
+**決策**: 
+1. `/teammate.toolkit` 改名為 `/teammate.helpme` — 保持 `teammate.*` 命名空間一致性，同時更直覺
+2. `/teammate.helpme` 不帶參數時啟動「智慧導航」模式：自動偵測專案狀態（Foundation 是否存在、目前階段、最近 task 進度），推薦最適合的下一步指令
+3. 首次使用者引導：偵測到全新專案時，用溫暖語氣引導填寫 `context.md` + `principles.md`，再執行 `/teammate.init`
+4. 原有 toolkit 子指令（healthcheck / consult / migrate / assign）保留不變
+5. `teammate-rules.mdc` AI Persona 整合現象學共創型智能體五項憲法原則（情境經驗優先、建議即承諾、對話式演化、結構透明化、溝通理性）+ 溝通風格。原四特質（熱心、熱誠、善於助人、普惠）稀釋融入溝通風格與原則描述中
+**影響**: 新增 `teammate.helpme.md`、刪除 `teammate.toolkit.md`、修改 `teammate-rules.mdc`、`README.md`、`CHANGELOG.md`、`teammatesync_rule.mdc`、`teammate.review.md`
+**成效**: 待驗證 — 首次使用者體驗
+**狀態**: 生效中
+
+---
+
+**Last Updated**: 2026-02-14（/teammate.helpme + 現象學共創型智能體 Persona）

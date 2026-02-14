@@ -1,21 +1,21 @@
 ---
-description: Initialize or audit project foundation — check/fill context.md and principles.md, bootstrap environment. Combines kickoff + principles into one command.
+description: 初始化或審計專案基礎 — 檢查/填寫 context.md 與 principles.md，建置環境。整合 kickoff + principles 於單一指令。
 handoffs: 
-  - label: Start Alignment
+  - label: 開始對齊
     agent: teammate.align
-    prompt: Foundation is ready. Let's align on the first feature...
+    prompt: 基礎已就緒，開始對齊第一個功能…
     send: true
 ---
 
-## User Input
+## 使用者輸入
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+在繼續之前，你**必須**考慮使用者輸入（若未空）。
 
-## Outline
+## 大綱
 
 `/teammate.init` 是 Teammate 的**一鍵初始化**指令。它檢查並填寫兩個 Foundation 檔案，確保專案可以開始工作。
 
@@ -24,7 +24,7 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 > 整合原 `/teammate.kickoff` 和 `/teammate.principles` 的功能。
 
-### Mode Detection
+### 模式偵測
 
 | 狀態 | 行為 |
 |------|------|
@@ -34,95 +34,95 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 ---
 
-## Phase 1: Detect & Report
+## 階段 1：偵測與報告
 
-1. **Read `.teammate/memory/context.md`**
-   - Scan for `[ALL_CAPS_IDENTIFIER]` placeholder tokens
-   - Classify: Template / Partial / Complete
+1. **讀取 `.teammate/memory/context.md`**
+   - 掃描 `[ALL_CAPS_IDENTIFIER]` placeholder tokens
+   - 分類：Template / Partial / Complete
 
-2. **Read `.teammate/memory/principles.md`**
-   - Scan for `[ALL_CAPS_IDENTIFIER]` placeholder tokens
-   - Classify: Template / Partial / Complete
+2. **讀取 `.teammate/memory/principles.md`**
+   - 掃描 `[ALL_CAPS_IDENTIFIER]` placeholder tokens
+   - 分類：Template / Partial / Complete
 
-3. **Report current status**:
+3. **報告目前狀態**：
    ```
    Foundation Status:
    - context.md: [Template/Partial/Complete] ([N] placeholders remaining)
    - principles.md: [Template/Partial/Complete] ([N] placeholders remaining)
    ```
 
-4. **Route to mode**: Init / Complete / Audit
+4. **路由至模式**：Init / Complete / Audit
 
 ---
 
 ## Init Mode（新專案）
 
-### Step 1: Collect Project Context
+### 步驟 1：蒐集專案脈絡
 
-1. **Parse user input** from `$ARGUMENTS` for any provided information
+1. **解析使用者輸入**：從 `$ARGUMENTS` 擷取已提供的資訊
 
-2. **Auto-detect from repository**:
-   - `README.md` → Project name, description
-   - `package.json` / `go.mod` / `Cargo.toml` / `pyproject.toml` → Language, framework, dependencies
-   - `tsconfig.json` / `.eslintrc` → Configuration
-   - `.github/` → Workflows
-   - `docker-compose.yml` → Infrastructure
-   - `docs/llms.txt` → Available external references
-   - Existing source code → Architecture patterns
+2. **從 repository 自動偵測**：
+   - `README.md` → 專案名稱、描述
+   - `package.json` / `go.mod` / `Cargo.toml` / `pyproject.toml` → 語言、框架、依賴
+   - `tsconfig.json` / `.eslintrc` → 設定
+   - `.github/` → 工作流程
+   - `docker-compose.yml` → 基礎設施
+   - `docs/llms.txt` → 可用外部參考
+   - 既有原始碼 → 架構模式
 
-3. **For missing required fields**: make informed guesses; only ask user if no reasonable default exists. **Maximum 5 questions**.
+3. **必填欄位缺漏時**：依脈絡推測；僅在無合理預設值時詢問使用者。**最多 5 個問題**。
 
-4. **Copy template and fill `.teammate/memory/context.md`**:
-   - If file doesn't exist or is template: copy from `.teammate/templates/context-template.md`
-   - Fill the following sections:
-   - Project Identity (name, description, repo URL)
-   - Core Behaviors (observable, testable)
-   - Target Users (personas, roles, goals)
-   - Business Goals (metrics, targets, priorities)
-   - Technical Context (language, framework, testing stack)
-   - Architecture Patterns (structure, naming conventions)
-   - Integration Points (external systems, protocols)
-   - Design References (optional: design system, Figma URL)
+4. **複製 template 並填寫 `.teammate/memory/context.md`**：
+   - 若檔案不存在或為 template：從 `.teammate/templates/context-template.md` 複製
+   - 填寫以下區段：
+   - Project Identity（名稱、描述、repo URL）
+   - Core Behaviors（可觀察、可測試）
+   - Target Users（personas、角色、目標）
+   - Business Goals（指標、目標、優先序）
+   - Technical Context（語言、框架、測試棧）
+   - Architecture Patterns（結構、命名慣例）
+   - Integration Points（外部系統、協定）
+   - Design References（選用：設計系統、Figma URL）
 
-### Step 2: Define Principles
+### 步驟 2：定義原則
 
-1. **Derive principles from project context**:
-   - Technical constraints → MUST/MUST NOT statements
-   - Architecture patterns → Invariants
-   - Security/compliance needs → Behavior boundaries
+1. **從專案脈絡推導原則**：
+   - 技術約束 → MUST/MUST NOT 陳述
+   - 架構模式 → Invariants
+   - 安全/合規需求 → 行為邊界
 
-2. **Structure principles**:
-   - Core Principles with MUST / MUST NOT / Rationale / Verification
-   - Behavior Boundaries table (ID / Forbidden Behavior / Reason / Enforcement)
-   - System Invariants (INV-001, INV-002, ...)
+2. **結構化原則**：
+   - Core Principles（MUST / MUST NOT / Rationale / Verification）
+   - Behavior Boundaries 表格（ID / Forbidden Behavior / Reason / Enforcement）
+   - System Invariants（INV-001, INV-002, ...）
    - Governance rules
 
-3. **Copy template and write `.teammate/memory/principles.md`**:
-   - If file doesn't exist or is template: copy from `.teammate/templates/principles-template.md`
-   - Fill with derived principles
+3. **複製 template 並撰寫 `.teammate/memory/principles.md`**：
+   - 若檔案不存在或為 template：從 `.teammate/templates/principles-template.md` 複製
+   - 填入推導出的原則
 
-### Step 3: Environment Bootstrap
+### 步驟 3：環境建置
 
-Based on Technical Context, set up the project's base environment:
+依 Technical Context 設定專案基礎環境：
 
-1. **Determine dependency file** from primary language (package.json, requirements.txt, etc.)
-2. **Populate base dependencies** from declared tech stack (framework, testing, BDD)
-3. **Create minimal skeleton** (src/, tests/) if directories don't exist
-4. **Create `.gitignore`** if not exists
-5. **Run install and verify** — failure is non-blocking, logged as TODO
-6. **Verify test runner** — confirm BDD/test toolchain works
+1. **依主要語言決定 dependency 檔案**（package.json、requirements.txt 等）
+2. **依宣告的 tech stack 填入基礎依賴**（framework、testing、BDD）
+3. **建立最小骨架**（src/、tests/），若目錄不存在
+4. **建立 `.gitignore`**，若不存在
+5. **執行 install 並驗證** — 失敗不阻塞，記錄為 TODO
+6. **驗證 test runner** — 確認 BDD/test 工具鏈可用
 
-> Skip condition: If dependency file already exists AND contains declared dependencies, skip bootstrap.
+> 跳過條件：若 dependency 檔案已存在且含宣告的依賴，則跳過 bootstrap。
 
 ---
 
 ## Complete Mode（補齊缺漏）
 
-1. **Identify remaining placeholders** in both files
-2. **Auto-detect** values from repo context where possible
-3. **Ask user** for values that can't be inferred (max 3 questions)
-4. **Fill in** remaining placeholders
-5. **Validate** both files are complete
+1. **識別兩檔中剩餘的 placeholders**
+2. **盡可能從 repo 脈絡自動偵測**數值
+3. **無法推斷時詢問使用者**（最多 3 個問題）
+4. **填入**剩餘 placeholders
+5. **驗證**兩檔皆完整
 
 ---
 
@@ -145,7 +145,7 @@ Based on Technical Context, set up the project's base environment:
 
 ### 優化建議
 
-Output a structured report:
+產出結構化報告：
 ```markdown
 ## Foundation Audit Report
 
@@ -165,31 +165,31 @@ Output a structured report:
 
 ---
 
-## Final Steps
+## 最後步驟
 
 ### Update Active Context（Memory Delta Protocol）
 
-Update `.teammate/memory/progress.md` using delta mode:
+以 delta 模式更新 `.teammate/memory/progress.md`：
 - **覆寫 `## Current State`**：Phase: Foundation, Last Command: init, Next Action: /teammate.align
 - **追加 `## Session Log`**：`| [timestamp] | init | [mode]: context [status], principles [status] | [bootstrap result] |`
 - **更新 `## Blockers`**：如有未解決的 placeholder，記錄為 blocker
 
-### Report
+### 報告
 
-Output:
-- Foundation status (both files)
-- Auto-detected values summary
-- Bootstrap result (if applicable)
-- Remaining placeholders (if any)
-- Optimization suggestions (Audit Mode)
-- Suggested next command: `/teammate.align`
+產出：
+- Foundation 狀態（兩檔）
+- 自動偵測數值摘要
+- Bootstrap 結果（若適用）
+- 剩餘 placeholders（若有）
+- 優化建議（Audit Mode）
+- 建議下一步指令：`/teammate.align`
 
-## Behavior Rules
+## 行為規則
 
-- **Auto-detect first, ask second** — minimize user effort
-- **Never fabricate information** — if unsure, mark as `TODO(<FIELD>): needs clarification`
-- **Idempotent** — running init again preserves existing values, only fills gaps or audits
-- **Maximum 5 questions (Init) / 3 questions (Complete)** — respect user's time
-- **Bootstrap is additive** — never overwrite existing dependency files
-- **Bootstrap failure is non-blocking** — warn, log, continue
-- **Snapshot on update** — if principles.md was previously complete and is being modified, snapshot first
+- **先自動偵測，再詢問** — 減少使用者負擔
+- **絕不捏造資訊** — 不確定時標記為 `TODO(<FIELD>): needs clarification`
+- **冪等** — 再次執行 init 保留既有值，僅填補缺漏或執行 audit
+- **最多 5 問（Init）/ 3 問（Complete）** — 尊重使用者時間
+- **Bootstrap 為增量** — 不覆寫既有 dependency 檔案
+- **Bootstrap 失敗不阻塞** — 警告、記錄、繼續
+- **更新前建立快照** — 若 principles.md 先前已完整且將被修改，先建立快照

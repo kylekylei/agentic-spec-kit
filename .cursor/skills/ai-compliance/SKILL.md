@@ -330,7 +330,7 @@ This skill provides compliance knowledge at different stages:
 | `/teammate.plan` | Remind | Flag AI compliance requirements in Architecture section |
 | `/teammate.execute` | Guide | Load as Recommended context for AI-related actions |
 | `/teammate.review` | Check | Verify compliance coverage in Pass D2 |
-| `/teammate.audit` | Judge | Sarcasmotron performs adversarial Pass/Fail against all rules |
+| `/teammate.audit` | Judge | 世界級產品體驗大師逐條 Pass/Fail 審計 |
 
 ## References
 

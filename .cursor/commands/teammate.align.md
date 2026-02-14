@@ -1,59 +1,59 @@
 ---
-description: Define what to build via Impact Mapping and clarify requirements via Example Mapping. Produces spec.md + example-mapping.md in one pass.
+description: 透過 Impact Mapping 定義要建構的內容，並以 Example Mapping 釐清需求。單次產出 spec.md + example-mapping.md。
 handoffs: 
-  - label: Create Work Plan
+  - label: 建立工作計畫
     agent: teammate.plan
-    prompt: Generate Gherkin scenarios, technical plan, and actions
+    prompt: 產生 Gherkin 場景、技術計畫與行動清單
     send: true
-  - label: Continue Editing Spec
+  - label: 繼續編輯規格
     agent: teammate.align
-    prompt: Continue refining the current spec
-  - label: Skip to Execute
+    prompt: 繼續精修當前規格
+  - label: 跳過至執行
     agent: teammate.execute
-    prompt: Start implementing — spec is sufficient, no further planning needed
+    prompt: 開始實作 — 規格已足夠，無需進一步規劃
     send: true
 ---
 
-## User Input
+## 使用者輸入
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+若使用者輸入非空，**必須**在繼續前納入考量。
 
-## Outline
+## 大綱
 
-The text the user typed after `/teammate.align` in the triggering message **is** the feature description. Assume you always have it available in this conversation even if `$ARGUMENTS` appears literally below. Do not ask the user to repeat it unless they provided an empty command.
+觸發訊息中 `/teammate.align` 之後使用者輸入的文字**即為**功能描述。假設對話中始終可取得，即使下方顯示為 `$ARGUMENTS` 字面。除非使用者輸入為空，否則勿要求重複輸入。
 
-Given that feature description, execute the **Impact Mapping + Example Mapping** workflow in one pass.
+基於該功能描述，單次執行 **Impact Mapping + Example Mapping** 工作流程。
 
-### Mode Detection
+### 模式偵測
 
-Parse `$ARGUMENTS` for the keyword **`update`**:
+解析 `$ARGUMENTS` 是否包含關鍵字 **`update`**：
 
-- If `$ARGUMENTS` contains "update" → **Update Mode** (re-read existing spec, apply changes, preserve unchanged sections)
-- Otherwise → **Create Mode** (default)
+- 若包含 "update" → **Update Mode**（重讀既有 spec、套用變更、保留未變區段）
+- 否則 → **Create Mode**（預設）
 
-### Phase 0: Foundation Check
+### 階段 0：基礎檢查
 
-1. **Read `.teammate/memory/context.md`**
-   - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
+1. **讀取 `.teammate/memory/context.md`**
+   - 掃描符合 `[ALL_CAPS_IDENTIFIER]` 模式的佔位符
+   - 若發現 → **ERROR**: "Project context not initialized. Run `/teammate.init` first."
 
-2. **Read `.teammate/memory/principles.md`**
-   - Scan for placeholder tokens matching `[ALL_CAPS_IDENTIFIER]` pattern
-   - If found → **ERROR**: "Principles not defined. Run `/teammate.init` first."
+2. **讀取 `.teammate/memory/principles.md`**
+   - 掃描符合 `[ALL_CAPS_IDENTIFIER]` 模式的佔位符
+   - 若發現 → **ERROR**: "Principles not defined. Run `/teammate.init` first."
 
-3. **If both pass** → Load both files as working context:
-   - context.md provides WHO (actors), WHY (business goals), and technical constraints
-   - principles.md provides behavioral boundaries and invariants
+3. **若兩者皆通過** → 載入兩檔作為工作脈絡：
+   - context.md 提供 WHO（角色）、WHY（業務目標）與技術約束
+   - principles.md 提供行為邊界與不變條件
 
 4. **Figma URL Detection（動態設計資產建立）**
-   - Scan `context.md` for Figma URL patterns: `figma.com/design/`, `figma.com/file/`, `figma.com/proto/`
-   - **If Figma URL found**:
-     1. Create `.teammate/design/` directory if not exists
-     2. Create/update `.teammate/design/figma-index.md` using template:
+   - 掃描 `context.md` 中的 Figma URL 模式：`figma.com/design/`、`figma.com/file/`、`figma.com/proto/`
+   - **若發現 Figma URL**：
+     1. 若不存在則建立 `.teammate/design/` 目錄
+     2. 使用模板建立／更新 `.teammate/design/figma-index.md`：
         ```markdown
         # Figma Design Index
         
@@ -73,142 +73,142 @@ Parse `$ARGUMENTS` for the keyword **`update`**:
         |---------|----------|------|
         ```
      3. Log: "Figma URL detected → `.teammate/design/figma-index.md` created"
-   - **If no Figma URL** → Skip (no design artifact created)
+   - **若無 Figma URL** → 略過（不建立設計資產）
 
-### Phase 1: Setup
+### 階段 1：設定
 
-1. **Generate a concise short name** (2-4 words) for the branch:
-   - Analyze the feature description and extract the most meaningful keywords
-   - Use action-noun format when possible (e.g., "add-user-auth", "fix-payment-bug")
-   - Preserve technical terms and acronyms
+1. **產生簡短分支名稱**（2–4 字）：
+   - 分析功能描述並萃取最有意義的關鍵字
+   - 盡可能使用動作-名詞格式（如 "add-user-auth"、"fix-payment-bug"）
+   - 保留技術術語與縮寫
 
-2. **Check for existing branches before creating new one**:
+2. **建立新分支前先檢查既有分支**：
 
-   a. Fetch all remote branches:
+   a. 取得所有遠端分支：
       ```bash
       git fetch --all --prune
       ```
 
-   b. Find the highest feature number across all sources for the short-name:
-      - Remote branches: `git ls-remote --heads origin | grep -E 'refs/heads/[0-9]+-<short-name>$'`
-      - Local branches: `git branch | grep -E '^[* ]*[0-9]+-<short-name>$'`
-      - Task directories: Check for directories matching `tasks/[0-9]+-<short-name>`
+   b. 找出該 short-name 在各來源中的最高功能編號：
+      - 遠端分支：`git ls-remote --heads origin | grep -E 'refs/heads/[0-9]+-<short-name>$'`
+      - 本地分支：`git branch | grep -E '^[* ]*[0-9]+-<short-name>$'`
+      - 任務目錄：檢查 `tasks/[0-9]+-<short-name>` 模式
 
-   c. Use N+1 for the new branch number.
+   c. 新分支編號使用 N+1。
 
-   d. Run `.teammate/scripts/bash/create-new-task.sh --json "$ARGUMENTS"` with the calculated number and short-name.
-      - For single quotes in args, use escape syntax: e.g 'I'\''m Groot'
+   d. 以計算出的編號與 short-name 執行 `.teammate/scripts/bash/create-new-task.sh --json "$ARGUMENTS"`。
+      - 參數含單引號時使用跳脫語法：如 'I'\''m Groot'
 
-### Phase 2: Impact Mapping
+### 階段 2：Impact Mapping
 
-Execute the Impact Mapping framework to derive valuable behaviors:
+執行 Impact Mapping 框架以推導有價值的行為：
 
 #### WHO (Actors)
 
-1. **Identify all actors** who will interact with this feature:
-   - Primary users (who directly benefits)
-   - Secondary users (who uses the output)
-   - System actors (external systems, AI agents)
-   - Administrative actors (who manages/configures)
+1. **識別所有與此功能互動的角色**：
+   - 主要使用者（直接受益者）
+   - 次要使用者（使用產出者）
+   - 系統角色（外部系統、AI 代理）
+   - 管理角色（管理／設定者）
 
-2. For each actor, define: Role name, Primary goals, Current pain points
+2. 為每位角色定義：角色名稱、主要目標、當前痛點
 
 #### WHY (Business Goals)
 
-3. **Define the business impact** this feature should create:
-   - What business outcome does this enable?
-   - How will we measure success?
-   - What happens if we don't build this?
+3. **定義此功能應創造的業務影響**：
+   - 能促成什麼業務成果？
+   - 如何衡量成功？
+   - 若不建構會如何？
 
-4. Connect each actor to business goals.
+4. 將每位角色連結至業務目標。
 
 #### HOW (Capabilities)
 
-5. **Identify capabilities** needed to achieve the goals.
+5. **識別達成目標所需的能耐**。
 
 #### WHAT (Features/Behaviors)
 
-6. **Derive concrete behaviors** from capabilities:
-   - Each behavior must be observable, testable, and deliver value independently
+6. **從能耐推導具體行為**：
+   - 每項行為須可觀察、可測試，且能獨立交付價值
 
-### Phase 3: Specification
+### 階段 3：規格撰寫
 
-1. Load `.teammate/templates/spec-template.md` to understand required sections.
+1. 載入 `.teammate/templates/spec-template.md` 以了解必要區段。
 
-2. **Fill the specification**:
-   - Parse user description from Input (if empty: ERROR)
-   - Map Impact Mapping results to User Stories
-   - For unclear aspects: make informed guesses based on context
-     - Only mark with [NEEDS CLARIFICATION: specific question] if the choice significantly impacts scope
-     - **LIMIT: Maximum 3 [NEEDS CLARIFICATION] markers total**
-   - Fill User Scenarios & Testing section (prioritize by business value)
-   - Generate Functional Requirements (each must be testable)
-   - Define Success Criteria (measurable, technology-agnostic)
-   - Identify Key Entities (if data involved)
+2. **填寫規格**：
+   - 從 Input 解析使用者描述（若為空：ERROR）
+   - 將 Impact Mapping 結果對應至 User Stories
+   - 不明確處：依脈絡做合理推測
+     - 僅在選擇顯著影響範疇時標記 [NEEDS CLARIFICATION: 具體問題]
+     - **限制：最多 3 個 [NEEDS CLARIFICATION] 標記**
+   - 填寫 User Scenarios & Testing 區段（依業務價值排序）
+   - 產生 Functional Requirements（每項須可測試）
+   - 定義 Success Criteria（可衡量、技術無關）
+   - 識別 Key Entities（若有資料）
 
-3. Write the specification to `TASK_DIR/spec.md`.
+3. 將規格寫入 `TASK_DIR/spec.md`。
 
-### Phase 4: Specification Validation
+### 階段 4：規格驗證
 
-1. **Create Spec Quality Checklist**: Generate `TASK_DIR/checklists/requirements.md`
+1. **建立規格品質檢查表**：產生 `TASK_DIR/checklists/requirements.md`
 
-2. **Validate** against criteria:
-   - No implementation details (languages, frameworks, APIs)
-   - Focused on user value and business needs
-   - Written for non-technical stakeholders
-   - Requirements are testable and unambiguous
-   - Success criteria are measurable and technology-agnostic
+2. **依下列準則驗證**：
+   - 無實作細節（語言、框架、API）
+   - 聚焦使用者價值與業務需求
+   - 以非技術利害關係人為對象撰寫
+   - 需求可測試且無歧義
+   - 成功標準可衡量且技術無關
 
-3. **Handle Validation Results**:
-   - If all items pass: Proceed to Phase 5
-   - If items fail: Update the spec (max 3 iterations)
-   - If [NEEDS CLARIFICATION] markers remain: Present options to user
+3. **處理驗證結果**：
+   - 全部通過：進入階段 5
+   - 有項目未通過：更新 spec（最多 3 次迭代）
+   - 若仍有 [NEEDS CLARIFICATION] 標記：向使用者呈現選項
 
-### Phase 5: Example Mapping
+### 階段 5：Example Mapping
 
-Transform abstract user stories into concrete, testable examples. This creates the foundation for Gherkin scenarios.
+將抽象 User Stories 轉為具體、可測試的範例，為 Gherkin 場景奠定基礎。
 
 > 此階段整合了原 `/teammate.clarify` 的功能。不足時補最多 3 問，不中斷流程。
 
-1. **For each User Story** (in priority order P1, P2, P3...):
+1. **針對每個 User Story**（依優先序 P1、P2、P3...）：
 
-   #### Step 1: Story Card
-   - Extract the user story in As a / I want / So that format
-   - Confirm the business value
+   #### 步驟 1：Story Card
+   - 以 As a / I want / So that 格式萃取 user story
+   - 確認業務價值
 
-   #### Step 2: Rules Discovery
-   - Identify **business rules** that govern it:
-     - What conditions must be true? What constraints exist?
-     - What variations are allowed? What is NOT allowed? (principles boundaries)
-   - For each rule: write a clear, testable statement; check against principles for conflicts
+   #### 步驟 2：Rules Discovery
+   - 識別**業務規則**：
+     - 須滿足哪些條件？有哪些約束？
+     - 允許哪些變體？不允許什麼？（principles 邊界）
+   - 每條規則：撰寫清晰、可測試的陳述；對照 principles 檢查衝突
 
-   #### Step 3: Examples Generation
-   - For each rule, generate **concrete examples**:
-     - At least one **happy path** example
-     - At least one **alternative** example (if applicable)
-     - At least one **negative/error** example
-     - Consider **boundary conditions**
-   - Each example follows Given/When/Then format
+   #### 步驟 3：Examples Generation
+   - 為每條規則產生**具體範例**：
+     - 至少一個 **happy path** 範例
+     - 至少一個 **alternative** 範例（若適用）
+     - 至少一個 **negative/error** 範例
+     - 考量 **boundary conditions**
+   - 每個範例遵循 Given/When/Then 格式
 
-   #### Step 4: Questions Collection
-   - Capture any **questions** that arise (ambiguous requirements, missing info, edge cases, principles conflicts)
-   - For each question: state clearly, assess impact (High/Medium/Low), mark as Open or Resolved
-   - **Inline Resolution**: 若有 High impact 問題，直接在此步驟中提出（最多 3 個），附帶建議選項讓使用者選擇。不中斷流程。
+   #### 步驟 4：Questions Collection
+   - 記錄產生的**問題**（模糊需求、缺漏資訊、邊界情況、principles 衝突）
+   - 每個問題：清楚陳述、評估影響（High/Medium/Low）、標記 Open 或 Resolved
+   - **Inline Resolution**：若有 High impact 問題，直接在此步驟中提出（最多 3 個），附帶建議選項讓使用者選擇。不中斷流程。
 
-2. **Principles Boundary Check**: For each rule and example, verify against principles. Add explicit boundary examples.
+2. **Principles Boundary Check**：對每條規則與範例對照 principles 驗證，並加入明確邊界範例。
 
-3. **Generate Example Mapping Document**: Write to `TASK_DIR/example-mapping.md` using `.teammate/templates/example-mapping-template.md`
+3. **產生 Example Mapping 文件**：使用 `.teammate/templates/example-mapping-template.md` 寫入 `TASK_DIR/example-mapping.md`
 
-4. **Readiness Assessment**:
+4. **就緒評估**：
 
-   | Metric | Current | Target | Status |
-   |--------|---------|--------|--------|
+   | 指標 | 當前 | 目標 | 狀態 |
+   |------|------|------|------|
    | Rules per story | [N] | 3+ | [Pass/Fail] |
    | Examples per rule | [Avg] | 2+ | [Pass/Fail] |
    | Open questions | [N] | 0 high-impact | [Pass/Fail] |
    | Principles boundaries | [N] | 1+ per story | [Pass/Fail] |
 
-### Phase 6: Downstream Impact Check（Update Mode only）
+### 階段 6：Downstream Impact Check（僅 Update Mode）
 
 若為 Update Mode 且 `TASK_DIR/plan.md` 已存在：
 
@@ -237,51 +237,51 @@ Transform abstract user stories into concrete, testable examples. This creates t
 
 > Create Mode 時跳過此步驟（plan.md 尚不存在）。
 
-### Phase 7: Update Active Context（Memory Delta Protocol）
+### 階段 7：更新進度脈絡（Memory Delta Protocol）
 
-Update `.teammate/memory/progress.md` using delta mode:
-- **覆寫 `## Current State`**：Active Feature: [name], Feature Branch: [branch], Phase: Align (complete), Last Command: align, Next Action: /teammate.plan
-- **追加 `## Session Log`**：`| [timestamp] | align | Feature: [name], spec.md + example-mapping.md | [rules/examples count, open questions] |`
+以 delta 模式更新 `.teammate/memory/progress.md`：
+- **覆寫 `## Current State`**：Active Task: [name], Branch: [branch], Phase: Align (complete), Last Command: align, Next Action: /teammate.plan
+- **追加 `## Session Log`**：`| [timestamp] | align | Task: [name], spec.md + example-mapping.md | [rules/examples count, open questions] |`
 - **更新 `## Blockers`**：如有未解決的 high-impact questions，記錄為 blocker
 
-### Phase 8: Report Completion
+### 階段 8：完成報告
 
-Output:
-- Branch name
-- Spec file path + Example Mapping file path
-- Impact Mapping summary (Actors → Goals → Capabilities → Behaviors)
-- Example Mapping summary (Stories → Rules → Examples → Questions)
-- Readiness status for `/teammate.plan`
-- Suggested next command: `/teammate.plan`
+輸出：
+- 分支名稱
+- Spec 檔案路徑 + Example Mapping 檔案路徑
+- Impact Mapping 摘要（Actors → Goals → Capabilities → Behaviors）
+- Example Mapping 摘要（Stories → Rules → Examples → Questions）
+- `/teammate.plan` 就緒狀態
+- 建議下一步指令：`/teammate.plan`
 
-## Quick Guidelines
+## 快速指引
 
-- Focus on **WHO** wants **WHAT** and **WHY**.
-- Avoid HOW to implement (no tech stack, APIs, code structure).
-- Written for business stakeholders, not developers.
-- Each behavior must be observable and testable.
-- Connect every feature to a business goal.
+- 聚焦 **WHO** 要 **WHAT** 以及 **WHY**。
+- 避免 HOW 實作（不提技術棧、API、程式結構）。
+- 以業務利害關係人為對象，非開發者。
+- 每項行為須可觀察且可測試。
+- 將每項功能連結至業務目標。
 
-### Success Criteria Guidelines
+### 成功標準指引
 
-Success criteria must be:
-1. **Measurable**: Include specific metrics (time, percentage, count, rate)
-2. **Technology-agnostic**: No mention of frameworks, languages, databases, or tools
-3. **User-focused**: Describe outcomes from user/business perspective
-4. **Verifiable**: Can be tested/validated without knowing implementation details
+成功標準須：
+1. **可衡量**：含具體指標（時間、百分比、數量、比率）
+2. **技術無關**：不提框架、語言、資料庫或工具
+3. **使用者導向**：從使用者／業務視角描述成果
+4. **可驗證**：無需知道實作細節即可測試／驗證
 
-### Example Mapping Best Practices
+### 範例映射最佳實踐
 
-**Good Rules**: "Users must be authenticated to access protected resources", "Orders cannot be modified after shipping"
+**良好規則**："Users must be authenticated to access protected resources"、"Orders cannot be modified after shipping"
 
-**Bad Rules**: "The system should be secure" (too vague), "It must be fast" (no threshold)
+**不良規則**："The system should be secure"（太模糊）、"It must be fast"（無門檻）
 
-**Principles Boundaries**: For each story, explicitly add examples showing what the system MUST NOT do.
+**Principles Boundaries**：每個 story 須明確加入系統 MUST NOT 的範例。
 
-## Behavior Rules
+## 行為規則
 
-- If spec file already exists in Update Mode, preserve unchanged sections
-- Never exceed 3 inline questions per session
-- Respect user early termination signals ("stop", "done", "proceed")
-- Always produce both spec.md and example-mapping.md (mark as draft if questions remain)
-- Prioritize principles boundary examples for P1 stories
+- Update Mode 下若 spec 已存在，保留未變區段
+- 每 session 內嵌問題不超過 3 個
+- 尊重使用者提早結束訊號（"stop"、"done"、"proceed"）
+- 始終產出 spec.md 與 example-mapping.md（若有問題標記為 draft）
+- P1 stories 優先加入 principles 邊界範例

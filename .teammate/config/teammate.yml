@@ -33,7 +33,7 @@ lifecycle:
   quality_gate:
     audit:
       required: false
-      description: "Sarcasmotron adversarial compliance audit (Security + Design Debt + dynamic A11y + AI Risk)"
+      description: "Product quality audit (Security + Design Debt + dynamic A11y + AI Risk)"
       output: "Roast Report (stdout)"
       dynamic_dimensions:
         a11y: "auto-detect frontend"
