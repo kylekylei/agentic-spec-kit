@@ -39,3 +39,4 @@
 - 同步更新 `README.md`
 - 同步更新 `PLAYBOOK.md`（記錄問題、原因、改善與影響）
 - 影響其他專案引用的變更（檔名、路徑、指令名、artifact 名），同步更新 `CHANGELOG.md`（`[Unreleased]` 區段）
+- **指令或規則變更必登 CHANGELOG**：只要修改 `.cursor/commands/teammate.*.md` 或 `.cursor/rules/teammate*.mdc`，必須同時在 `CHANGELOG.md` 的 `[Unreleased]` 區段登錄變更（Added / Changed / Documentation），不得遺漏

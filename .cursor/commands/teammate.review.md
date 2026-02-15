@@ -265,6 +265,19 @@ Output a table:
 - HIGH：應處理以提升品質 → 建議具體修復
 - 僅 LOW/MEDIUM：可繼續 → 建議 `/teammate.helpme assign`
 
+### 任務結束且無需修正時（務必執行）
+
+當 **Readiness: Ready** 且 **無 CRITICAL/HIGH 待修**（或使用者已決定不修）時，**必須**在報告結尾詢問使用者：
+
+```
+是否要 commit 並 merge 回 main？
+
+- 若要：請在 **Agent 模式**下請我代為執行 commit（目前分支）→ `git checkout main` → `git merge <當前 task 分支>`。
+- 若否：可稍後自行依流程 commit 後再 merge。
+```
+
+不代為執行 Git 指令（review 為唯讀）；僅提示流程：**Review 完成 → commit → checkout main → merge**。
+
 ## Pass G: Design System Compliance（偵測到前端才啟用）
 
 若 Phase 1 偵測到前端 UI 代碼，執行以下檢查：
@@ -312,6 +325,8 @@ Output:
 - Readiness status
 - Recommended next steps
 - Suggested next command
+
+**當 Readiness 為 Ready 且無需修正時**：必須在輸出結尾加上「是否要 commit 並 merge 回 main？」的詢問（見「任務結束且無需修正時」）。
 
 ## 分析指引
 

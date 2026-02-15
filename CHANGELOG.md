@@ -13,12 +13,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
+- (無)
+
+### Changed
+- (無)
+
+### Documentation
+- (無)
+
+---
+
+## [0.2.0] - 2026-02-15
+
+### Summary
+helpme 取代 toolkit、現象學共創型智能體 Persona、agent-spec 載入、review/helpme 任務結束版控提醒、REFLECT 強制關卡。既有專案可執行 `/teammate.helpme migrate` 取得更新。
+
+### Added
 - `.teammate/memory/agent-spec.md` — AI Agent 行為規範（角色、安全圍欄、對話策略），適用於有明確 AI Agent 的專案
 - Context Layer System Layer 新增 `agent-spec.md` 載入支援
 - **`/teammate.helpme` 智慧導航指令** — 取代 `/teammate.toolkit`，新增 Smart Navigator 模式：偵測專案狀態自動推薦下一步，首次使用者引導流程
 - **AI Persona（現象學共創型智能體）** — `teammate-rules.mdc` 整合 `phenomenological-co-design-agent.md` 五項憲法級行為原則 + 溝通風格
 
 ### Changed
+- **`teammate.review` 任務結束版控提醒**：當 Readiness 為 Ready 且無 CRITICAL/HIGH 時，報告結尾**必須**詢問「是否要 commit 並 merge 回 main？」；新增小節「任務結束且無需修正時（務必執行）」與 Report Completion 條款；review 唯讀不代為執行 Git，僅提示流程
+- **`teammate.helpme` merge 版控**：進度偵測「Review 完成」時提醒版控流程（commit → checkout main → merge）；新增「任務結束後的版控流程」小節，與 review 結尾詢問一致
 - **`/teammate.toolkit` → `/teammate.helpme`**：指令改名，更直覺。所有引用已更新（rules、README、CHANGELOG、review、teammatesync_rule）
 - Smart Context Loading 更新：`teammate.execute` 和 `teammate.plan` 在 Recommended 層級加入 `agent-spec.md`（如存在則載入）
 - **互動式選項格式規範**：AI 提供多選項時，統一使用 `[A] / [B] / [C]` 字母標籤格式，讓使用者可快速回覆字母選擇

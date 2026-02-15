@@ -134,7 +134,17 @@ $ARGUMENTS
 | Plan 完成 | `plan.md` 存在但 Part 2 的 actions 均未標記完成 | 「計畫已就緒，可以開始實作了！」→ `/teammate.execute` |
 | Execute 進行中 | `plan.md` 有部分 actions 已完成 | 「目前進度：N/M 個 action 已完成。繼續實作。」→ `/teammate.execute next` |
 | Execute 完成 | `plan.md` 所有 actions 標記完成 | 「所有實作已完成！進行品質審查。」→ `/teammate.review` |
-| Review 完成 | `checklists/` 存在且有報告 | 「審查完成。可以進行合規審計或開始下一個任務。」→ 選項 |
+| Review 完成 | `checklists/` 存在且有報告 | 「審查完成。」→ 若 Readiness 為 Ready 且無需修正，提醒版控流程：**commit（目前分支）→ checkout main → merge**；可進行合規審計或開始下一個任務 → 選項 |
+
+#### 任務結束後的版控流程（Review 完成且 Ready 時）
+
+當偵測到 **Review 完成** 且 `checklists/feature-readiness.md` 顯示 **Readiness: Ready**、無 CRITICAL/HIGH 待修時，提醒使用者版控收尾流程：
+
+1. **commit**（目前 task 分支）
+2. **checkout main**
+3. **merge** 目前分支回 main
+
+`/teammate.review` 為唯讀，不代為執行 Git；若使用者要 AI 代為執行，需在 **Agent 模式**下另行請求。helpme 僅提示流程，與 review 結尾的「是否要 commit 並 merge 回 main？」詢問一致。
 
 #### 輸出格式
 
