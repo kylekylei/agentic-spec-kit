@@ -4,11 +4,37 @@
 
 ---
 
+## System Scope (Auto-detected on [DATE])
+
+> 此區段由 `/teammate.plan` 自動產生，記錄專案涉及的系統層級與對應的合規要求。
+> 當 `/teammate.execute` 偵測到新層級時會透過 DIALOGUE 階段自動更新。
+
+| Layer | Status | Evidence | Added |
+|-------|--------|----------|-------|
+| Frontend | [✅/❌] | [file paths or -] | [Initial / SXXX] |
+| Backend | [✅/❌] | [file paths or -] | [Initial / SXXX] |
+| LLM | [✅/❌] | [file paths or -] | [Initial / SXXX] |
+| Database | [✅/❌] | [file paths or -] | [Initial / SXXX] |
+| Mobile | [✅/❌] | [file paths or -] | [Initial / SXXX] |
+
+**Compliance Requirements** (based on detected layers):
+- [✅/❌] **A11y** (WCAG 2.2 AA) — [trigger condition, e.g., "Frontend detected"]
+- [✅/❌] **Security** (OWASP) — [trigger condition, e.g., "Backend + Database detected"]
+- [✅/❌] **AI Risk** (EU AI Act) — [trigger condition, e.g., "LLM detected"]
+- [✅/❌] **Mobile A11y** — [trigger condition, e.g., "Mobile detected"]
+
+**Detection Details**:
+- [Layer]: [N] files ([comma-separated file list]) — [Added in SXXX or Initial]
+
+---
+
 # Part 1: Architecture（技術架構）
 
 ## Summary
 
 [Extract from feature spec: primary requirement + technical approach]
+
+---
 
 ## Technical Context
 

@@ -1,6 +1,6 @@
-# Feature Specification: [FEATURE NAME]
+# Task Specification: [TASK NAME]
 
-**Feature Branch**: `[###-feature-name]`  
+**Task Branch**: `[###-task-name]`  
 **Created**: [DATE]  
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
@@ -113,3 +113,31 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+---
+
+## Change Log
+
+> 記錄此功能規格的演化歷史。每次 `/teammate.execute` 的 DIALOGUE 階段會在偵測到規格變更時自動更新此區段。
+
+### [DATE] - Initial
+
+- **新增**: 初始規格定義（FR-001 ~ FR-00X）
+- **原因**: `/teammate.align` 完成 Impact Mapping 與 Example Mapping
+- **影響範疇**: 所有 User Stories
+- **後續行動**: 執行 `/teammate.plan` 產生場景與實作計畫
+
+---
+
+<!-- 
+DIALOGUE 階段自動追加格式範例：
+
+### YYYY-MM-DD - Execute SXXX
+
+- **新增/修改/移除**: [變更內容，如 "FR-006: OAuth 登入支援"]
+- **原因**: [為什麼做這個變更，如 "實作中發現使用者需要更便捷的登入方式"]
+- **影響範疇**: [影響的 User Stories / FR，如 "US1 新增 alternative path"]
+- **後續行動**: 
+  - [ ] [需要做的事，如 "在下次 /teammate.plan 時為 FR-006 建立 scenarios"]
+  - [ ] [其他待辦事項]
+-->

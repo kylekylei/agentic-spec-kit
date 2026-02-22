@@ -1,6 +1,6 @@
-# Example Mapping: [FEATURE_NAME]
+# Example Mapping: [TASK_NAME]
 
-**Feature Branch**: `[###-feature-name]`
+**Task Branch**: `[###-task-name]`
 **Created**: [DATE]
 **Status**: Draft | Ready for Formulation | Complete
 **Spec Reference**: [Link to spec.md]

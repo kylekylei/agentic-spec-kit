@@ -23,6 +23,38 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 
 ---
 
+## [0.3.0] - 2026-02-20
+
+### Summary
+對話式演化與自動驗證 — Execute ⟷ Spec 雙向同步、每個 action 自動驗證、精準追蹤多層級系統（Frontend / Backend / LLM）。框架完全符合五項憲法級核心價值。
+
+### Added
+- **System Scope Detection** — `/teammate.plan` 自動偵測專案涉及的系統層級（Frontend / Backend / LLM / Database / Mobile），產出到 `plan.md` 開頭的 System Scope 表格
+- **DIALOGUE 階段** — `/teammate.execute` 新增對話式同步機制，在 REFLECT 後自動偵測規格外行為與系統層級變更，對話確認後同步到 spec.md
+- **VERIFY 階段** — `/teammate.execute` 新增自動驗證執行，每個 action 完成後自動執行對應的 Gherkin scenarios
+- **Change Log** — `spec-template.md` 新增 Change Log 區段，記錄規格演化歷史
+- `verification.auto_run` 配置 — `teammate.yml` 新增自動驗證設定（test_command, framework_detection, fail_fast）
+- **System Scope 模板** — `plan-template.md` 新增 System Scope 表格模板
+
+### Changed
+- **Red-Green-Refactor-Reflect → Red-Green-Verify-Refactor-Reflect-Dialogue** — `/teammate.execute` 迴圈從 4 階段擴充為 6 階段
+- **動態維度偵測邏輯** — `/teammate.review` 和 `/teammate.audit` 從「掃描 codebase」改為「讀取 plan.md System Scope 表格」，保證檢查範圍與實作一致
+- **REFLECT 驅動 DIALOGUE** — DIALOGUE 不是每次都觸發，由 REFLECT 分類決定（重構/無發現 → 跳過，新功能且超出 Verifies 範圍 → 觸發）
+- **首次測試指令確認** — VERIFY 階段在 task 首次執行時會顯示偵測到的測試指令，確認後記住，後續不再詢問
+- **環境錯誤分流** — VERIFY 階段區分「測試失敗」（RED）和「環境錯誤」（exit code 異常），不混為一談
+- **術語統一** — 修正 v0.1.0 遺留的術語不一致：模板中 `Feature Specification` → `Task Specification`，`Feature Branch` → `Task Branch`（與 `tasks/` 目錄名一致）
+
+### Documentation
+- **ROADMAP.md** — 新增 P0: Meta Context 分層（元循環支援），記錄「用 Teammate 開發 Teammate」的 context 區隔方案
+
+### Migration Notes
+- 既有專案無需遷移（向後相容）
+- `verification.auto_run` 預設啟用，如不需要可在 `teammate.yml` 設為 `enabled: false`
+- DIALOGUE 階段會在 execute 時自動觸發，使用者可選擇跳過或稍後處理
+- System Scope 會在 plan 時自動產生，無需手動設定
+
+---
+
 ## [0.2.0] - 2026-02-15
 
 ### Summary

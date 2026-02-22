@@ -32,6 +32,57 @@
 
 ## 計劃中
 
+### P0: Meta Context 分層（元循環支援）
+
+**動機**: Teammate 專案本身也應該使用 Teammate 框架開發，但需要區隔「框架檔案」與「開發專案資料」
+
+**問題**: 
+- `.teammate/memory/context.md` 是給使用者專案填的（目前全是 PLACEHOLDER）
+- 開發 Teammate 框架本身時，也需要 context 和 principles
+- 兩者會衝突
+
+**方案 A（雙 context 模式）**:
+
+建立 `.teammate/meta/` 目錄，專門存放「開發 Teammate 框架」的 context：
+
+```
+.teammate/
+├── meta/                        # ✨ Teammate 框架開發的專案脈絡
+│   ├── meta-context.md          # Project Name: "Teammate Framework"
+│   ├── meta-principles.md       # 框架設計原則
+│   └── README.md                # 說明：這是開發框架本身的 context
+│
+├── memory/                      # 使用者專案的記憶（空 placeholders）
+│   ├── context.md               # [PLACEHOLDER] — 使用者填寫
+│   ├── principles.md            # [PLACEHOLDER] — 使用者填寫
+│   └── progress.md
+```
+
+**工作流程**:
+```bash
+# 開發 Teammate 框架新功能
+/teammate.init meta              # 讀取 .teammate/meta/
+/teammate.align "新增 DIALOGUE" --meta
+/teammate.execute --meta
+
+# 使用者專案開發（如 A 公司電商）
+/teammate.init                   # 讀取 .teammate/memory/
+/teammate.align "使用者登入"
+/teammate.execute
+```
+
+**實作需求**:
+1. 建立 `.teammate/meta/` 目錄結構
+2. 修改 `/teammate.init` 支援 `meta` 模式
+3. 修改所有指令支援 `--meta` flag（context 讀取分流）
+4. 在 `teammatesync_rule.mdc` 加入框架檔案變更提示
+
+**版本**: v0.4.0（在 DIALOGUE + System Scope 完成後實作）
+
+**狀態**: 設計完成，待排程
+
+---
+
 ### P1: install.sh 安裝腳本
 
 **動機**: 讓 Teammate 可以一鍵安裝到任何專案，取代手動複製和 sync rule

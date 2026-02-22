@@ -1,5 +1,5 @@
 # Teammate Configuration
-version: "0.2.0"
+version: "0.3.0"
 
 # =============================================================================
 # LIFECYCLE PHASES
@@ -84,6 +84,24 @@ gherkin:
 # =============================================================================
 
 verification:
+  # Auto-run tests during execute phase
+  auto_run:
+    enabled: true                       # Enable auto-verification (default: true)
+    on_action_complete: true            # Run tests when action completes
+    fail_fast: true                     # Stop on first test failure
+  
+  # Test execution command
+  # Set to null for auto-detection, or specify manually (e.g., "pytest tests/features/")
+  test_command: null
+  
+  # Test framework auto-detection
+  # AI will scan for these files to determine the test framework
+  framework_detection:
+    pytest: ["pytest.ini", "pyproject.toml"]
+    behave: [".behaverc", "behave.ini"]
+    cucumber: ["cucumber.yml"]
+    jest: ["package.json"]
+  
   # Coverage thresholds
   coverage:
     minimum_scenario_coverage: 80  # Percentage of scenarios that must pass

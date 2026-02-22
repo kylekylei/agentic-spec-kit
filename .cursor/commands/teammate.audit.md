@@ -74,7 +74,7 @@ $ARGUMENTS
 
 ## 階段 1：動態維度偵測
 
-讀取 `.teammate/memory/context.md` + `.teammate/memory/milestone.md`，並掃描 codebase 決定啟用哪些維度與載入哪些 skills。
+讀取 `.teammate/memory/context.md` + `.teammate/memory/milestone.md` + **`plan.md` System Scope 表格**，決定啟用哪些維度與載入哪些 skills。
 
 ### 永遠啟用
 
@@ -86,29 +86,40 @@ $ARGUMENTS
 | **目標對齊** | 實作是否朝 `context.md` 定義的目標前進 | —（讀 memory 檔案） |
 | **原則徹底性** | `principles.md` 逐條 MUST/MUST NOT 比對 | `code-review` |
 
-### 動態啟用（偵測到前端時）
+### 動態啟用（從 plan.md System Scope 讀取）
 
-| 維度 | 偵測條件 | 核心 Skill |
-|------|---------|-----------|
-| **體驗品質** | `*.tsx/*.vue/*.svelte/*.html` 或前端依賴 | `ui-ux-pro-max` |
-| **無障礙合規** | 同上 | `a11y-compliance` |
-| **設計債務** | 同上 | `visual-design-foundations` |
+**不再從 codebase 掃描**，而是讀取 `plan.md` System Scope 表格：
 
-偵測信號：
-- 檔案：`*.tsx`、`*.jsx`、`*.vue`、`*.svelte`、`*.html`
-- 目錄：`src/components/`、`src/pages/`、`src/routes/`
-- 依賴：`react`、`vue`、`svelte`、`tailwindcss`
+```python
+# 偽代碼
+scope = parse_markdown_table("plan.md", "System Scope")
 
-### 動態啟用（偵測到 AI 時）
+# 根據標記啟用對應維度與載入 skills
+if scope["Frontend"] == "✅":
+    啟用維度：["體驗品質", "無障礙合規", "設計債務"]
+    載入 skills：["ui-ux-pro-max", "a11y-compliance", "visual-design-foundations"]
 
-| 維度 | 偵測條件 | Skill |
-|------|---------|-------|
-| **AI 風險合規** | AI/LLM 相關 import 或 API | `ai-compliance` |
+if scope["LLM"] == "✅":
+    啟用維度：["AI 風險合規"]
+    載入 skills：["ai-compliance"]
 
-偵測信號：
-- Import：`openai`、`anthropic`、`@ai-sdk`、`langchain`
-- API routes：`/chat`、`/completion`、`/generate`
-- 依賴：`ai`、`openai`、`@anthropic-ai/sdk`
+if scope["Mobile"] == "✅":
+    啟用維度：["Mobile 無障礙"]
+    載入 skills：["a11y-compliance"]  # Mobile 專屬規則
+```
+
+| System Scope | 啟用維度 | 核心 Skill |
+|--------------|---------|-----------|
+| Frontend ✅ | 體驗品質、無障礙合規、設計債務 | `ui-ux-pro-max`, `a11y-compliance`, `visual-design-foundations` |
+| Backend ✅ | Security（已在永遠啟用） | `code-review` |
+| LLM ✅ | AI 風險合規 | `ai-compliance` |
+| Database ✅ | Security（已在永遠啟用） | `code-review` |
+| Mobile ✅ | Mobile 無障礙 | `a11y-compliance` |
+
+**為什麼從 plan.md 讀取而非重新掃描？**
+- ✅ 保證審計範圍與實際實作一致（execute 時 System Scope 可能被 DIALOGUE 更新）
+- ✅ 避免重複掃描（效能）
+- ✅ 可追溯（System Scope 記錄何時新增哪些層級，含證據檔案）
 
 ### 深度 Skills（`--deep` 或核心 Skill 發現 CRITICAL 時追加）
 

@@ -151,6 +151,82 @@ Optional（如存在則載入）:
 2. **若不存在**：在 plan.md 新增 Phase 0 必要 setup（測試框架設定、測試目錄、mock setup）
 3. **若已存在**：記錄在 Technical Context 中
 
+### System Scope Detection（系統範疇偵測）
+
+> 產出：plan.md 開頭的 System Scope 表格（在 Part 1: Architecture 之前）
+
+掃描 Project Structure 中的檔案模式，自動偵測系統層級並標記合規要求：
+
+#### 偵測規則
+
+**Frontend 偵測**：
+- 檔案模式：`*.tsx`, `*.jsx`, `*.vue`, `*.svelte`, `*.html`
+- 目錄模式：`src/components/`, `src/pages/`, `src/routes/`, `frontend/`, `client/`
+- 依賴掃描（若有 package.json）：`react`, `vue`, `svelte`, `@angular/core`, `tailwindcss`
+
+**Backend 偵測**：
+- 檔案模式：`*controller.py`, `*controller.ts`, `*service.py`, `*api.py`, `*router.ts`, `*handler.go`
+- 目錄模式：`src/api/`, `src/controllers/`, `backend/`, `server/`, `api/`
+- 依賴：`express`, `fastapi`, `django`, `flask`, `spring-boot`, `gin`, `actix-web`
+
+**LLM 偵測**：
+- Import 模式：`openai`, `anthropic`, `@ai-sdk`, `langchain`, `llama-index`, `@langchain`
+- API routes 模式：包含 `/chat`, `/completion`, `/generate`, `/assistant` 的 route 定義
+- 檔案模式：`*chatbot*.py`, `*assistant*.ts`, `*llm*.py`, `*agent*.py`, `*ai*.ts`
+
+**Database 偵測**：
+- 檔案模式：`*model.py`, `*entity.py`, `*schema.py`, `*repository.py`, `*model.ts`
+- 目錄模式：`src/models/`, `src/entities/`, `src/database/`, `prisma/`, `migrations/`
+- 依賴：`sqlalchemy`, `prisma`, `mongoose`, `typeorm`, `gorm`, `diesel`
+
+**Mobile 偵測**：
+- 檔案模式：`*.swift`, `*.kt`, `*.dart`
+- 目錄模式：`ios/`, `android/`, `mobile/`, `app/`
+- 依賴：`react-native`, `flutter`, `expo`, `@react-native`
+
+#### 產出到 plan.md
+
+在 plan.md 的**最開頭**（Summary 之前）插入 System Scope 區段：
+
+```markdown
+## System Scope (Auto-detected on YYYY-MM-DD)
+
+> 此區段由 `/teammate.plan` 自動產生，記錄專案涉及的系統層級與對應的合規要求。
+> 當 `/teammate.execute` 偵測到新層級時會透過 DIALOGUE 階段自動更新。
+
+| Layer | Status | Evidence | Added |
+|-------|--------|----------|-------|
+| Frontend | ✅ | src/components/LoginForm.tsx, src/pages/Login.tsx | Initial |
+| Backend | ✅ | src/api/auth.py, src/services/user_service.py | Initial |
+| LLM | ❌ | - | - |
+| Database | ✅ | src/models/user.py | Initial |
+| Mobile | ❌ | - | - |
+
+**Compliance Requirements** (based on detected layers):
+- ✅ **A11y** (WCAG 2.2 AA) — Frontend detected
+- ✅ **Security** (OWASP) — Backend + Database detected
+- ❌ **AI Risk** (EU AI Act) — No LLM detected
+- ❌ **Mobile A11y** — No mobile detected
+
+**Detection Details**:
+- Frontend: 2 files (src/components/LoginForm.tsx, src/pages/Login.tsx)
+- Backend: 2 files (src/api/auth.py, src/services/user_service.py)
+- Database: 1 file (src/models/user.py)
+
+---
+```
+
+#### 合規標記規則
+
+根據偵測到的層級組合，自動標記合規要求：
+
+| 偵測組合 | 啟用合規 |
+|---------|---------|
+| Frontend ✅ | A11y (WCAG 2.2 AA) |
+| Backend ✅ 或 Database ✅ | Security (OWASP) |
+| LLM ✅ | AI Risk (EU AI Act) |
+| Mobile ✅ | Mobile A11y |
+
 ### 技術規劃
 
 1. **Technical Context**：語言/版本、依賴、儲存、測試框架、約束

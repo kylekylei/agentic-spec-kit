@@ -1,5 +1,5 @@
 ---
-description: 執行 Red-Green 迴圈實作 — 先寫步驟定義（RED），再實作至 GREEN，依 Actions 順序進行。
+description: 執行 Red-Green-Verify-Reflect-Dialogue 迴圈實作 — 先寫步驟定義（RED），再實作至 GREEN，自動驗證（VERIFY），重構（REFACTOR），自檢（REFLECT），對話式同步（DIALOGUE），依 Actions 順序進行。
 handoffs:
   - label: 行為覆蓋審查
     agent: teammate.review
@@ -43,14 +43,16 @@ $ARGUMENTS
 ### Red-Green 迴圈
 
 ```
-RED → GREEN → REFACTOR → REFLECT → REPEAT
+RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
 ```
 
 1. **RED**：撰寫會失敗的步驟定義（情境尚未實作）
 2. **GREEN**：撰寫最小程式碼使步驟定義通過
-3. **REFACTOR**：清理程式碼，保持測試 GREEN
-4. **REFLECT**：快速自檢（≤ 30 秒），有新發現才寫入 `insights.md`
-5. **REPEAT**：移至下一個 action
+3. **VERIFY**：自動執行對應的 Gherkin scenarios，確認真的 GREEN
+4. **REFACTOR**：清理程式碼，保持測試 GREEN
+5. **REFLECT**：快速自檢（≤ 30 秒），有新發現才寫入 `insights.md`
+6. **DIALOGUE**：對話式同步，偵測規格外行為或新系統層級，對話後更新 spec/plan
+7. **REPEAT**：移至下一個 action
 
 ### 執行步驟
 
@@ -172,11 +174,93 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
       - 檢查此 action 對應的 test 檔案是否已存在
       - 若不存在且 plan.md 中有對應的 RED:test action 未完成 → 警告：「對應的測試 action [S0XX] 尚未完成，建議先執行測試 action」
       - 用戶可選擇繼續或先執行測試
+   
    2. **識別此 action 支援的步驟定義**（來自 `[Verifies: @tag]`）
+   
    3. **撰寫最小實作**使該步驟通過
-   4. **執行情境** — 目標 **GREEN**
-   5. **若 GREEN**：標記 action 完成，繼續下一個
-   6. **若 RED**：除錯、修正、重跑直至 GREEN
+   
+   4. **自動驗證執行**（VERIFY 階段）：
+      
+      a. **讀取測試配置**：
+         - 從 `teammate.yml` 讀取 `verification.test_command`
+         - 若為 `null`，自動偵測專案測試框架：
+           - 掃描 `pytest.ini` 或 `pyproject.toml` → `pytest tests/features/`
+           - 掃描 `cucumber.yml` → `cucumber`
+           - 掃描 `.behaverc` 或 `behave.ini` → `behave`
+           - 掃描 `package.json` 中的 `jest` 或 `vitest` → `npm test` 或 `npx vitest`
+         - 若全部偵測不到 → 提示使用者在 `teammate.yml` 手動設定 `verification.test_command`
+      
+      b. **首次確認**（僅在本 task 的第一次 VERIFY 時執行）：
+         
+         檢查 `progress.md` 是否已記錄 `test_command_confirmed`：
+         - 若**未記錄** → 顯示確認提示：
+           ```
+           偵測到測試指令：pytest tests/features/ -k "{tag}"
+           
+           [A] 確認 — 使用此指令執行驗證（後續不再詢問）
+           [B] 修改 — 輸入自訂指令
+           [C] 跳過 — 本次不執行自動驗證
+           ```
+         - 選擇 [A] → 記錄到 `progress.md` Session Log：`test_command_confirmed: pytest tests/features/`
+         - 選擇 [B] → 記錄使用者輸入的指令
+         - 選擇 [C] → 跳過 VERIFY，直接進入 REFACTOR
+         - 若**已記錄** → 直接使用已確認的指令，不再詢問
+      
+      c. **執行對應 scenarios**：
+         ```bash
+         # 範例：S010 verifies @us1-happy-path
+         pytest tests/features/ -k "us1-happy-path" --gherkin-terminal-reporter
+         ```
+         
+         從當前 action 的 `[Verifies: @tag]` 提取 tag，組成測試指令。
+      
+      d. **判斷結果**：
+         
+         - **若 GREEN（exit code 0，全通過）**：
+           - ✅ 標記 action 驗證通過
+           - 記錄執行結果到 `progress.md` Session Log
+           - 繼續 REFACTOR 階段
+         
+         - **若 RED（exit code 1，測試失敗）**：
+           - ❌ 解析測試輸出，提取失敗的 scenario 與 step
+           - 提供除錯選項：
+             ```
+             Scenario @us1-happy-path 失敗：
+             
+             失敗步驟：
+               Then the user sees the dashboard
+             
+             實際結果：
+               Redirected to /login (expected /dashboard)
+             
+             [A] 除錯實作 — 修正程式碼後重新執行
+             [B] 修正 scenario — scenario 定義有誤，需更新 .feature 檔
+             [C] 查看詳細日誌 — 顯示完整測試輸出
+             ```
+           - 進入除錯循環（不進入下一 action）
+         
+         - **若環境錯誤（exit code 非 0/1，如 127 = command not found）**：
+           - ⚠️ 不判定為 RED，而是提示環境問題：
+             ```
+             測試環境可能未就緒（exit code: 127）
+             
+             錯誤訊息：command not found: pytest
+             
+             [A] 修正環境 — 安裝測試依賴後重試
+             [B] 手動指定指令 — 在 teammate.yml 設定 test_command
+             [C] 跳過驗證 — 本次手動確認 GREEN（不推薦）
+             ```
+           - 不阻塞，讓使用者決定
+      
+      e. **記錄驗證結果**：
+         
+         更新 `progress.md` Session Log：
+         ```markdown
+         | 2026-02-21 10:45 | execute S010 | GREEN @us1-happy-path (2.3s) | Action completed |
+         | 2026-02-21 10:50 | execute S011 | RED @us1-happy-path (step 3 failed) | Debugging |
+         ```
+         
+         格式：`[timestamp] | execute [ActionID] | [GREEN/RED] @tag ([duration]) | [status]`
 
    #### 重構階段：
    
@@ -203,6 +287,287 @@ RED → GREEN → REFACTOR → REFLECT → REPEAT
    - 首次寫入時，從 `.teammate/templates/insights-template.md` 複製模板
    - **完成證據**：每個 action 回報時必須包含 `REFLECT: done`（或 `REFLECT: [N] insights`）
    - **禁止批次補寫**：不可在多個 action 完成後才一次補寫所有 REFLECT，必須逐 action 即時寫入
+
+   #### DIALOGUE Phase（對話式同步）:
+
+   每個 action VERIFY 通過且 REFLECT 完成後，執行語意差異偵測。
+
+   **核心設計**：REFLECT 驅動 DIALOGUE（前哨站 + 決策點）
+
+   ##### 步驟 1：觸發判斷（Gate Logic）
+
+   DIALOGUE 不是每次都執行，由 REFLECT 的產出決定：
+
+   a. **讀取 REFLECT 分類**：
+      
+      解析剛寫入 `insights.md` 的內容，判斷 insight 類型：
+      
+      ```python
+      # 偽代碼
+      reflect_output = 讀取 insights.md 中 [當前 ActionID] 的 entry
+      
+      if reflect_output == "No new insights":
+          dialogue_signal = "SKIP"
+      
+      elif reflect_output 包含關鍵字 ["重構", "refactor", "命名", "rename", "效能優化", "performance"]:
+          dialogue_signal = "SKIP"    # 行為未變
+      
+      elif reflect_output 包含關鍵字 ["新增", "new", "pattern", "決策", "decision", "功能", "feature"]:
+          dialogue_signal = "CHECK"   # 需要進一步比對
+      
+      else:
+          dialogue_signal = "CHECK"   # 預設檢查
+      ```
+   
+   b. **Verifies Tag 範圍比對**（僅在 dialogue_signal == "CHECK" 時）：
+      
+      比對「action 實際實作的行為」vs「action 的 [Verifies: @tag] 預期行為」：
+      
+      - 從 `plan.md` Part 2 讀取當前 action 的 `[Verifies: @tag]`
+      - 從 `scenarios/*.feature` 讀取 @tag 對應的 scenario 內容
+      - 掃描當前 action 新增/修改的檔案，提取實際實作的行為
+      
+      **行為提取規則**（具體偵測方法）：
+      
+      | 行為類型 | 偵測方法 | 範例 |
+      |---------|---------|------|
+      | API endpoint | 掃描 `@app.route()`, `@router.post()`, `app.get()` 等 decorator/函式 | `@app.post("/auth/oauth")` |
+      | UI 組件 props | 掃描 `interface Props`, `export const MyComponent = ({ ... })` | `interface LoginProps { provider: string }` |
+      | Public 函式 | 掃描 `export function`, `public class/method`, `def xxx(` 非 `_` 開頭 | `export function validateOAuth()` |
+      | 驗證規則 | 掃描新增的 `if` 條件、`validate()` 呼叫、`schema.validate()` | `if provider not in ["google", "github"]` |
+      | 錯誤處理 | 掃描新增的 `except`, `catch`, `Result<T, E>` 分支 | `except OAuthError:` |
+      | 資料欄位 | 掃描 model/schema 新增的欄位 | `oauth_provider: str` in User model |
+      
+      **核心判斷**：實作是否超出了 Verifies tag 涵蓋的行為範圍？
+      
+      ```python
+      # 偽代碼
+      expected_behaviors = 從 scenario 的 Given/When/Then 推斷的行為
+      # 範例：@us1-happy-path → "使用者使用帳號密碼登入"
+      
+      actual_behaviors = 從程式碼提取的 public 介面（使用上述規則）
+      # 範例：/auth/oauth endpoint, validateOAuth() 函式, oauth_provider 欄位
+      
+      # 語意比對（AI 判斷）
+      drift = actual_behaviors 中不在 expected_behaviors 涵蓋範圍內的行為
+      
+      if drift 不為空:
+          trigger_behavior_dialogue = True
+      else:
+          trigger_behavior_dialogue = False  # 實作在計畫範圍內
+      ```
+      
+      **範例**：
+      - Scenario 說「使用者登入」→ 實作了 `login()` + `/auth/login` → **不觸發**（在範圍內）
+      - Scenario 說「使用者登入」→ 實作了 `loginWithOAuth()` + `/auth/oauth` → **觸發**（超出範圍）
+   
+   c. **系統層級偵測**（永遠執行，不受 REFLECT 分類影響）：
+      
+      掃描當前 action 新增的 imports/dependencies/files：
+      
+      ```python
+      # 偽代碼
+      action_files = 當前 action 新增/修改的檔案清單
+      action_imports = 從檔案中提取的 import 語句
+      plan_scope = 從 plan.md 讀取的 System Scope 表格
+      
+      new_layers = []
+      
+      # 偵測新層級
+      if "openai" in action_imports or "anthropic" in action_imports:
+          if plan_scope["LLM"] == "❌":
+              new_layers.append("LLM")
+      
+      if any(f.endswith((".tsx", ".vue", ".svelte")) for f in action_files):
+          if plan_scope["Frontend"] == "❌":
+              new_layers.append("Frontend")
+      
+      if any("controller" in f or "api" in f for f in action_files):
+          if plan_scope["Backend"] == "❌":
+              new_layers.append("Backend")
+      
+      # （其他層級類似...）
+      
+      if new_layers:
+          trigger_layer_dialogue = True
+      ```
+   
+   d. **最終觸發決策**：
+      
+      | REFLECT 分類 | Verifies 範圍比對 | 新層級偵測 | DIALOGUE 觸發 |
+      |-------------|------------------|-----------|-------------|
+      | No insights | - | 無 | **跳過** |
+      | 重構 | - | 無 | **跳過** |
+      | 新功能 | 在範圍內 | 無 | **跳過** |
+      | 新功能 | **超出範圍** | 無 | **觸發（行為）** |
+      | 任何 | - | **有** | **觸發（層級）** |
+
+   ##### 步驟 2：系統層級變更對話（若偵測到新層級）
+
+   若 `trigger_layer_dialogue == True`：
+
+   ```
+   💬 **偵測到新系統層級**（S025）
+   
+   我注意到你在以下檔案中引入了新的系統層級：
+   - src/chatbot/assistant.py: import openai
+   
+   這代表專案現在涉及 **LLM** 層級，但 plan.md 的 System Scope 中未標記。
+   
+   啟用 LLM 層級將觸發：
+   - ✅ AI Risk 合規檢查（EU AI Act Art. 50）
+   - ✅ /teammate.review 時自動執行 Pass D: AI Risk Coverage
+   - ✅ /teammate.audit 時自動載入 ai-compliance skill
+   - ⚠️ 需要為 AI 互動新增 @ai-disclosure scenarios（建議）
+   
+   [A] 更新 System Scope — 標記 [LLM]，觸發 AI 合規流程（推薦）
+   [B] 移除 LLM 依賴 — 這不在原規格範圍內
+   [C] 稍後處理 — 記錄為技術債，不更新 System Scope
+   ```
+
+   **選擇 [A] 更新 System Scope**：
+   
+   a. 更新 `plan.md` System Scope 表格：
+      ```markdown
+      | LLM | ✅ | src/chatbot/assistant.py | S025 (2026-02-21) |
+      ```
+   
+   b. 更新 Compliance Requirements：
+      ```markdown
+      - ✅ **AI Risk** (EU AI Act) — LLM detected in S025
+      ```
+   
+   c. 更新 Detection Details：
+      ```markdown
+      - LLM: 1 file (src/chatbot/assistant.py) — Added in S025
+      ```
+   
+   d. 記錄到 `spec.md` Change Log：
+      ```markdown
+      ### 2026-02-21 - Execute S025
+      - **新增**: LLM 系統層級（OpenAI integration）
+      - **原因**: 實作 AI 助理功能，使用 GPT-4 提供智能回應
+      - **影響範疇**: 
+        - 觸發 AI Risk 合規要求（EU AI Act Art. 50 透明度義務）
+        - 需要新增 @ai-disclosure scenarios
+        - 需要實作 AI 揭露標籤與同意機制
+      - **後續行動**:
+        - [ ] 在 review 前補充 AI 互動的 scenarios
+        - [ ] 確保符合 EU AI Act 透明度要求
+      ```
+   
+   e. 記錄到 `progress.md` Session Log：
+      ```markdown
+      | 2026-02-21 11:05 | execute S025 | GREEN @ai-assistant, added [LLM] layer | AI compliance enabled |
+      ```
+
+   **選擇 [B] 移除 LLM 依賴**：
+   - 提示使用者移除對應的 import 和程式碼
+   - 標記 action 為 `[REVERTED]`
+   - 不更新 System Scope
+
+   **選擇 [C] 稍後處理**：
+   - 記錄到 `insights.md`:
+     ```markdown
+     ## Technical Debt
+     - [S025] LLM 依賴已引入但未更新 System Scope — 需在 review 前決定是否正式納入
+     ```
+
+   ##### 步驟 3：行為變更對話（若超出 Verifies 範圍）
+
+   若 `trigger_behavior_dialogue == True`：
+
+   ```
+   💬 **偵測到規格外行為**（S015）
+   
+   此 action 的預期範圍是 [Verifies: @us1-happy-path]，
+   涵蓋行為：使用者使用帳號密碼登入
+   
+   但我注意到實作中包含了超出此範圍的行為：
+   - src/auth/oauth.py: OAuth 登入支援（Google、GitHub、Line）
+   - src/api/auth.py: 新增 /auth/oauth/callback endpoint
+   
+   spec.md 的 Functional Requirements 中沒有 OAuth 相關定義。
+   
+   [A] 刻意擴展 — 更新 spec.md，新增 FR-006: OAuth 登入支援
+   [B] 範疇蔓延 — 移除此實作，保持原 spec 不變
+   [C] 稍後處理 — 標記為技術債，記錄在 insights.md
+   [D] 忽略差異 — 這是實作細節，不需要更新 spec
+   ```
+
+   **選擇 [A] 刻意擴展**：
+   
+   a. 更新 `spec.md` Functional Requirements：
+      ```markdown
+      ### Functional Requirements
+      
+      - **FR-001**: 系統必須驗證使用者身份
+      - **FR-002**: 系統必須在 3 次失敗後鎖定帳號
+      - **FR-006**: 系統必須支援 OAuth 第三方登入 [Added in S015, 2026-02-21]
+        - 支援提供者：Google、GitHub、Line
+        - OAuth token 有效期：7 天
+        - 失敗時 fallback 到傳統登入
+      ```
+   
+   b. 更新 `spec.md` Change Log：
+      ```markdown
+      ### 2026-02-21 - Execute S015
+      - **新增**: FR-006 OAuth 第三方登入支援
+      - **原因**: 實作中發現使用者需要更便捷的登入方式，減少密碼記憶負擔
+      - **影響範疇**: 
+        - US1 使用者登入新增 alternative path
+        - 建議新增 User Story: US3 OAuth 登入流程
+      - **後續行動**: 
+        - [ ] 在下次 /teammate.plan update 時為 FR-006 建立專屬 scenarios
+        - [ ] 考慮為 OAuth 新增 @alternative 與 @negative scenarios
+      ```
+   
+   c. 建立 snapshot（可選）：
+      ```bash
+      cp spec.md .teammate/snapshots/spec-before-S015-$(date +%Y%m%d-%H%M%S).md
+      echo "Added FR-006 OAuth support" > .teammate/snapshots/sync-S015-reason.txt
+      ```
+   
+   d. 更新 `plan.md` Part 2：
+      ```markdown
+      - [x] S015 [LOGIC+UI] [US1] [Verifies: @us1-oauth-login] OAuth 登入實作
+            ⚠️ 此 action 新增了 FR-006，已同步至 spec.md v1.1
+      ```
+   
+   e. 記錄到 `progress.md` Session Log：
+      ```markdown
+      | 2026-02-21 10:55 | execute S015 | GREEN @us1-oauth-login, synced spec.md | Added FR-006 OAuth |
+      ```
+
+   **選擇 [B] 範疇蔓延**：
+   - 提示使用者移除對應實作
+   - 標記 action 為 `[REVERTED]`
+   - 不更新 spec.md
+
+   **選擇 [C] 稍後處理**：
+   - 記錄到 `insights.md`:
+     ```markdown
+     ## Technical Debt
+     - [S015] OAuth 登入已實作但未在 spec 中定義 — 需在下次 /teammate.align 時正式納入
+     ```
+
+   **選擇 [D] 忽略差異**：
+   - 不更新任何文件
+   - 繼續執行下一個 action
+
+   ##### DIALOGUE 觸發條件總結
+
+   為避免過度干預，僅在以下情況觸發 DIALOGUE：
+
+   | 條件 | 行為對話 | 層級對話 |
+   |------|---------|---------|
+   | REFLECT = "No new insights" 且無新層級 | 跳過 | 跳過 |
+   | REFLECT = 重構/命名 且無新層級 | 跳過 | 跳過 |
+   | REFLECT = 新功能，在 Verifies 範圍內，無新層級 | 跳過 | 跳過 |
+   | REFLECT = 新功能，**超出 Verifies 範圍** | **觸發** | - |
+   | 偵測到新系統層級（任何 REFLECT 分類） | - | **觸發** |
+
+   **最小干預原則**：僅「超出計畫」或「結構性變更（新層級）」才對話，「按計畫實作」不打擾。
 
 7. **各階段執行**：
 

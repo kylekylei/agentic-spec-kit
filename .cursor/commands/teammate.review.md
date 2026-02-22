@@ -164,21 +164,49 @@ Output a table:
 - 邊界條件是否定義？
 - 負向路徑是否指定？
 
-#### Compliance Coverage（動態，偵測到才執行）
+#### Compliance Coverage（動態，從 plan.md System Scope 讀取）
 
-掃描 `context.md` tech stack + codebase 偵測前端/AI 特性：
+**讀取 System Scope**：
 
-**A11y**（偵測到前端 UI 時）:
+從 `plan.md` 讀取 System Scope 表格，根據標記啟用對應的合規檢查：
+
+```python
+# 偽代碼
+scope = parse_markdown_table("plan.md", "System Scope")
+
+enabled_checks = []
+
+if scope["Frontend"] == "✅":
+    enabled_checks.append("A11y")
+
+if scope["LLM"] == "✅":
+    enabled_checks.append("AI Risk")
+
+if scope["Mobile"] == "✅":
+    enabled_checks.append("Mobile A11y")
+```
+
+**A11y**（Frontend ✅ 時啟用）:
 - 所有互動 UI 元件是否有適當的 aria 屬性？
 - 鍵盤導航是否覆蓋所有功能？
 - 色彩對比是否達 WCAG 2.2 AA 標準？
 - 表單是否有錯誤提示與 `aria-invalid`？
 
-**AI Risk**（偵測到 LLM/AI 時）:
+**AI Risk**（LLM ✅ 時啟用）:
 - AI 互動是否有首次揭露機制？
 - AI 生成內容是否有標示（可見 + 機器可讀）？
 - 同意流程是否具同等視覺顯著性？
 - 高風險決策是否有人類覆寫機制？
+
+**Mobile A11y**（Mobile ✅ 時啟用）:
+- 觸控目標是否 ≥ 44x44px？
+- 文字是否可縮放？
+- 螢幕閱讀器導航是否流暢？
+
+**為什麼從 plan.md 讀取而非重新掃描？**
+- ✅ 保證檢查範圍與實際實作一致（plan 時已偵測 + execute 時可能新增）
+- ✅ 避免重複掃描（效能）
+- ✅ 可追溯（System Scope 記錄何時新增哪些層級）
 
 > 此為初步檢查。完整對抗性審計請執行 `/teammate.audit`。
 
@@ -278,9 +306,22 @@ Output a table:
 
 不代為執行 Git 指令（review 為唯讀）；僅提示流程：**Review 完成 → commit → checkout main → merge**。
 
-## Pass G: Design System Compliance（偵測到前端才啟用）
+## Pass G: Design System Compliance（從 System Scope 讀取）
 
-若 Phase 1 偵測到前端 UI 代碼，執行以下檢查：
+**讀取 System Scope**：
+
+從 `plan.md` 讀取 System Scope 表格：
+
+```python
+scope = parse_markdown_table("plan.md", "System Scope")
+
+if scope["Frontend"] == "✅":
+    執行 Design System 檢查
+else:
+    跳過此 Pass
+```
+
+若 Frontend ✅，執行以下檢查：
 
 #### Token 合規
 - 搜尋硬編碼顏色值（`#[0-9a-fA-F]{3,8}` 且非在 token 定義檔中）

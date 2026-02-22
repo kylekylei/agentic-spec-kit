@@ -37,6 +37,31 @@
 
 ## 歷史修改軌跡（Append-Only）
 
+#### 2026-02-20 · 架構 · Teammate
+**觸發**: 開發者在規劃任務後，執行 execute 時常中途新增功能（CRUD），但 spec.md 和 plan.md 不會被更新，導致文件與實作脫節。同時，當專案同時涉及 Frontend / Backend / LLM 多層級系統時，缺少精準追蹤與自動觸發對應合規檢查的機制。
+**決策**: 
+1. **對話式同步（DIALOGUE 階段）**：在 `/teammate.execute` 的 REFLECT 後新增 DIALOGUE 階段，偵測「實作超出 Verifies tag 範圍」或「新增系統層級」時，透過對話確認後自動更新 spec.md 和 plan.md
+2. **自動驗證（VERIFY 階段）**：在 GREEN 階段後自動執行對應的 Gherkin scenarios，確保每個 action 真的通過測試
+3. **System Scope Detection**：在 `/teammate.plan` 自動偵測專案涉及的系統層級（Frontend / Backend / LLM / Database / Mobile），產出到 plan.md 開頭的 System Scope 表格
+4. **REFLECT 驅動 DIALOGUE**：DIALOGUE 不是每次都觸發，由 REFLECT 分類決定（重構/無發現 → 跳過，新功能且超出範圍 → 觸發），最小干預
+5. **spec.md Change Log**：記錄規格演化歷史，每次 DIALOGUE 同步後自動追加
+6. **review/audit 讀取 System Scope**：從 plan.md System Scope 表格啟用對應檢查，而非重新掃描 codebase
+**影響**: 
+- `.teammate/config/teammate.yml` — 新增 verification.auto_run
+- `.cursor/commands/teammate.plan.md` — 新增 System Scope Detection
+- `.cursor/commands/teammate.execute.md` — 新增 VERIFY 與 DIALOGUE 階段
+- `.cursor/commands/teammate.review.md` — 從 System Scope 讀取
+- `.cursor/commands/teammate.audit.md` — 從 System Scope 讀取
+- `.teammate/templates/spec-template.md` — 新增 Change Log
+- `.teammate/templates/plan-template.md` — 新增 System Scope 模板
+**成效**: 
+- ✅ 實作與規格雙向演化（Execute ⟷ Spec）
+- ✅ 每個 action 完成後立即驗證（即時反饋）
+- ✅ 精準追蹤多層級系統（Frontend / Backend / LLM）
+- ✅ 最小干預（僅超出計畫或結構性變更才對話）
+- ✅ 避免為文件而文件（不新增 spec.yaml / verify.yaml）
+**狀態**: 生效中（v0.3.0 Unreleased）
+
 #### 2026-02-15 · 命令 · Teammate
 **觸發**: Review 完成且任務就緒（Readiness: Ready、無 CRITICAL/HIGH）時，缺少明確的版控收尾指引，使用者易忘記 commit 與 merge 回 main 的流程。
 **決策**: 
