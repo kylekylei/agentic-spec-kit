@@ -37,6 +37,93 @@
 
 ## 歷史修改軌跡（Append-Only）
 
+#### 2026-02-25 · 規則 · Teammate Hub（重大決策介面升級）
+**觸發**: 規格架構歧異、UX 衝突、System Scope 變更等重大決策點使用純文字 `[Y]/[N]` 標籤，容易被忽略且缺乏可追溯性
+**決策**:
+1. **teammate-rules.mdc** — 新增「重大決策使用 AskQuestion」規範，適用場景：設計原則衝突、UI 設計歧異、系統層級變更確認
+2. **teammate.execute.md** — System Scope 更新確認與 UI 設計歧異改用 `AskQuestion` tool
+3. **teammate.plan.md** — UX 衝突掃描改用 `AskQuestion` tool，提供結構化決策選項
+**影響**: `teammate-rules.mdc`（選項格式規範）、`teammate.execute.md`（DIALOGUE 與 UI 分流）、`teammate.plan.md`（UX 衝突掃描）
+**成效**: 重大決策語意明確、可追溯性提升、防止誤操作、符合憲法原則二（建議即承諾）與原則四（結構透明化）
+**狀態**: 生效中
+
+#### 2026-02-25 · 規則 · Teammate Hub（teammate-rules 語意與 token 精煉）
+**觸發**: 先前精煉修改未儲存；AI Persona「現象學共創型智能體」術語過重；溝通風格 5 條敘事冗餘；Memory Delta 在 rules 與 teammate-reference 重複，每次載入浪費 token
+**決策**:
+1. **參考型資訊拆分** — 工作流程詳表、關鍵路徑、脈絡層級、洞察畢業、記憶差量細節、中途更新自 rules 搬至 teammate-reference，rules 改以 `@teammate-reference` 引用
+2. **AI Persona** — 「現象學共創型智能體」→「共創型協作者」，保留共創定位、移除哲學術語
+3. **溝通風格** — 5 條敘事 → 3 條操作規則（釐清脈絡、簡潔取捨、阻塞時直接給指令）
+4. **Memory Delta Protocol** — rules 僅保留 3 條硬規則（覆寫 Current State / append Session Log / Blockers 標記），欄位表與範例統一見 teammate-reference
+**影響**: `teammate-rules.mdc`、`teammate-reference/SKILL.md`
+**成效**: rules 聚焦憲法級約束，參考型資訊按需載入；Persona 更直白、溝通規則可執行化；token 最佳化
+**狀態**: 生效中
+
+#### 2026-02-25 · 架構 · Teammate Hub
+**觸發**: 檢視 8 個 command 檔案發現職責重疊、Foundation 檢查重複、System Scope 偵測分散
+**決策**: (1) Foundation 檢查集中化為 bash script；(2) System Scope 由 plan 產生，其他指令只讀取；(3) Memory Delta Protocol 抽成共用規範
+**影響**: 
+  - `.teammate/scripts/bash/check-foundation.sh`（新增）
+  - `teammate-rules.mdc`（新增 Memory Delta Protocol 實作規範區段）
+  - `teammate.{align,plan,init,execute,review,audit,helpme}.md`（簡化重複區段）
+**成效**: 減少 ~420 行重複邏輯，單一真相來源建立，維護點從 24 處降為 3 處
+**狀態**: 生效中
+
+#### 2026-02-25 · 規則精化 · Teammate
+**觸發**: `teammate-rules.mdc`、`teammatesync_rule.mdc`、`git-conventions.mdc` 每次載入消耗大量 token，且多處重複定義（操作意涵、檔案清單、Conventional Commits 細節）。
+**決策**:
+1. **teammate-rules**：刪除重複敘述、操作意涵併入細則、REFLECT 改表格、參考內容拆至 skill
+2. **teammate-reference**：封裝為 `.cursor/skills/teammate-reference/SKILL.md`，按需載入；核心規則以 `@teammate-reference` 引用
+3. **teammatesync_rule**：globs 已定義檔案清單，刪除重複列舉與動機說明
+4. **git-conventions**：MUST follow 官方規範即可，刪除重複 types/scope/description 定義與 MCP Git、Path Encoding 章節
+**影響**: `teammate-rules.mdc`、`teammatesync_rule.mdc`、`git-conventions.mdc`、新建 `teammate-reference/SKILL.md`、刪除 `teammate-reference.mdc`
+**成效**: 總 token 消耗約減半；核心 rules 聚焦行為約束，參考型資訊按需載入
+**狀態**: 生效中
+
+#### 2026-02-25 · 架構 · Teammate（Figma/Pencil 精簡）
+**觸發**: Rules 與 Commands 權責混淆；figma-to-code（537 行）常駐 context；figma.design.system 與 skill 重複；pencil.figma.extract 低使用（Pencil tokens 源自 Tailwind）；.cursorule 缺乏架構原則。
+**決策**:
+1. **權責分明** — Rules 持續約束 / Commands 按需流程 / Skills 自動化；Rule 盡可能精簡
+2. **figma-to-code** → `figma.to.code.md`（command）；新增 `figma-rules.mdc`（~80 行核心約束）
+3. **pencil-rules** — 移除 Figma 區段（183 行），保留純 `.pen` 操作
+4. **刪除** — `figma.design.system.md`、`pencil.figma.extract.md`
+5. **.cursorule** — 新增「精簡、精煉、言簡意賅」架構原則與實踐檢驗三問
+**影響**: `figma-rules.mdc`、`figma.to.code.md`、`pencil-rules.mdc`、`.cursorule`；刪 `figma-to-code.mdc`、`figma.design.system.md`、`pencil.figma.extract.md`
+**成效**: Figma Rules context -84%；一功能一實作；新增檔案前強制反思
+**狀態**: 生效中
+
+#### 2026-02-25 · 架構 · ChatWidget（open-webui-embeddable-widget）
+**觸發**: `agent-spec.md` 被放置在 `.teammate/memory/` 並標記為「AI Agent 行為規範」，語意模糊——AI 無法判斷指的是「Cursor AI 自身角色」還是「產品內的 LLM Agent 規格」。導致 AI 建議將產品 LLM Agent 規格放在 `memory/agent-spec.md`，與「Cursor AI 角色由 `.cursor/rules/teammate-rules.mdc` 定義」的正確架構相衝突。同時，`design/` 目錄標記為「設計師控管範圍」，但 LLM Agent 規格（System Prompt、安全圍欄、行為規則）實際上需要 PM / 設計師 / 開發者跨角色共同維護，放在 `design/` 下語意不當。
+**決策**:
+1. 從 `memory/` 移除 `agent-spec.md` 槽位——`memory/` 僅存放專案記憶（context、principles、progress、milestone），不放 LLM 技術規格
+2. 新增 `.teammate/llm/` 作為獨立層級，與 `design/`、`memory/` 平行，明確標記為「跨角色維護」
+3. Context Layer 中的 `agent-spec.md` 參照改為 `llm/agent-spec.md`，消除語意歧義
+4. `design/README.md` 更新，移除提示詞管理說明，並標註 LLM 規格已移至 `llm/`
+5. 選擇 `llm/` 而非 `agent/`：`agent` 在此專案有三種含義（Cursor AI / 產品 LLM Agent / AI Agent 框架），`llm/` 語意邊界更穩定
+**影響**:
+- `teammate-rules.mdc`（open-webui + embeddable-widget + Teammate Hub）— Key Paths + Context Layer
+- `.teammate/design/README.md`（embeddable-widget）— 移除 prompts 說明
+- 新建 `.teammate/llm/agent-spec.md`（embeddable-widget）— 從 `design/prompts/prompt-inventory.md` 遷移
+- 新建 `.teammate/llm/README.md`（embeddable-widget）— LLM 層說明
+**成效**: `memory/`、`design/`、`llm/` 三層職責清晰，AI 不再混淆「框架 AI 角色」與「產品 LLM Agent 規格」
+**狀態**: 生效中
+
+#### 2026-02-25 · 規則精化 · OpenWebUI_Frontend（第二次修訂）
+**觸發**: 套用第一版規則後，AI 對「i18n getContext 型別問題」建立 `tasks/004-i18n-type-fix/` 獨立任務。經確認，該問題為 open-webui **上游已知問題**（30+ 元件全域 pattern，本專案未修改），非本專案引入，不應與本專案技術債混同。
+**決策**: 精化 **REFLECT 副作用發現強制追蹤** 規則，加入**問題來源分類**作為第一步：
+  - 本專案引入 → 必修，不可遺留
+  - 本專案既有 → 提出 [A]/[B]/[C] 讓使用者選擇
+  - 上游已知問題 → 輕則 Blockers 標註，重則提出方案討論
+**影響**: `teammate-rules.mdc`（Open WebUI 專案 + Teammate Hub 同步）、`progress.md` Blockers 新增 [上游已知問題] 標記
+**成效**: 防止上游問題膨脹本專案任務數，同時保留必要的可見性
+**狀態**: 生效中
+
+#### 2026-02-25 · 規則 · OpenWebUI_Frontend（第一次修訂）
+**觸發**: AI 在 `/teammate.execute` 執行中發現既有 linter errors（與當前 action 無關），僅說「既有問題，與本次無關」後略過，未提出任何追蹤方案。此行為違反憲法原則二（建議即承諾）與原則三（對話式演化）——既有問題消失在對話中，不進入任何追蹤系統，形成技術債黑洞。
+**決策**: 在 `teammate-rules.mdc` 的「規則」區段新增 **REFLECT 副作用發現強制追蹤** 規則：執行過程中發現的任何既有問題（linter errors、型別錯誤、設計缺失、技術債），MUST 在 REFLECT 階段提出追蹤方案，不得略過。
+**影響**: `teammate-rules.mdc`（Open WebUI 專案 + Teammate Hub 同步）
+**成效**: 所有執行中發現的副作用問題都有明確的追蹤出口，技術債不再消失於對話記錄
+**狀態**: 已由第二次修訂精化取代
+
 #### 2026-02-20 · 架構 · Teammate
 **觸發**: 開發者在規劃任務後，執行 execute 時常中途新增功能（CRUD），但 spec.md 和 plan.md 不會被更新，導致文件與實作脫節。同時，當專案同時涉及 Frontend / Backend / LLM 多層級系統時，缺少精準追蹤與自動觸發對應合規檢查的機制。
 **決策**: 
