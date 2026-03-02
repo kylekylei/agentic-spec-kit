@@ -23,6 +23,44 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 
 ---
 
+## [0.3.1] - 2026-03-02
+
+### Added
+- **AskQuestion 決策介面** — 重大決策（System Scope 變更、UX 衝突、UI 設計歧異）改用 `AskQuestion` tool 產生正式選項介面，取代純文字 `[Y]/[N]` 標籤
+- **check-foundation.sh** — Foundation 檢查集中化為 bash script，提供統一的 context.md / principles.md 驗證
+- **teammate-reference skill** — 工作流程、檔案結構、記憶機制等參考資訊封裝為 `.cursor/skills/teammate-reference/SKILL.md`，按需載入以節省 token
+- **架構原則** — `.cursorule` 新增「精簡、精煉、言簡意賅」：權責分明（Rules / Commands / Skills）、無冗餘原則、實踐檢驗三問
+- **figma-rules.mdc** — 精簡版 Figma 核心約束（~80 行），取代 537 行 rule
+- **figma.to.code.md** — 完整 Figma → Code Agent 移至 `.cursor/commands/`（按需載入）
+
+### Changed
+- **teammate-rules 參考型資訊拆分** — 工作流程詳表、關鍵路徑、脈絡層級、洞察畢業、記憶差量細節、中途更新自 rules 搬至 `teammate-reference`，rules 改以 `@teammate-reference` 引用
+- **AI Persona 精簡** — 「現象學共創型智能體」→「共創型協作者」，移除哲學術語；溝通風格 5 條敘事 → 3 條操作規則
+- **Memory Delta Protocol 瘦身** — `teammate-rules.mdc` 僅保留 3 條硬規則，欄位對照表與範例僅存 `teammate-reference`，消除 rules/reference 重複
+- **架構優化**：Foundation 檢查集中化為 `check-foundation.sh`，消除 3 個指令（align/plan/init）的重複邏輯
+- **架構優化**：System Scope 改為單一來源（`plan.md` 產生，execute/review/audit 只讀取），消除重複偵測
+- **架構優化**：Memory Delta Protocol 抽成 `teammate-rules.mdc` 共用規範，7 個指令改為引用
+- **體驗優化**：`execute` DIALOGUE 階段 System Scope 更新改為 Y/N 確認模式（原為 A/B/C 選項）
+- **邊界釐清**：明確定義 `helpme` healthcheck（骨架存在性）vs `review`（語意完整性）職責分界
+- **teammate-rules.mdc 精煉** — 刪除重複敘述、操作意涵合併入細則、REFLECT 副作用改表格、約 338→155 行（-54%）
+- **teammatesync_rule.mdc 精煉** — 消除檔案清單重複、合併 Rules，約 88→42 行（-52%）
+- **git-conventions.mdc 精煉** — 僅引用 Conventional Commits 官方規範，刪除重複定義與 MCP Git 章節，約 384→54 行（-86%）
+- **Figma 架構重組** — `figma-to-code.mdc`（rule）→ `figma.to.code.md`（command）；新增 `figma-rules.mdc`（精簡 rule）
+- **pencil-rules.mdc** — 移除 Figma 品質檢查與實作流程（183 行），保留純 `.pen` 操作
+
+### Removed
+- **figma-to-code.mdc** — 內容移至 `figma.to.code.md` command
+- **figma.design.system.md** — 與 `create-design-system-rules` skill 重複
+- **pencil.figma.extract.md** — Pencil tokens 主要源自 Tailwind，不需 Figma ↔ Pencil diff
+
+### Documentation
+- 新增 Memory Delta Protocol 實作規範（`teammate-rules.mdc`）
+- 新增 Healthcheck vs Review 分界說明（`teammate.helpme.md`）
+- teammate-reference 從 rules 移至 skills，核心規則改以 `@teammate-reference` 引用
+- PLAYBOOK.md 新增 2026-02-25 架構精簡軌跡
+
+---
+
 ## [0.3.0] - 2026-02-20
 
 ### Summary
