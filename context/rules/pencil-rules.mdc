@@ -1,0 +1,236 @@
+---
+globs: *.pen
+alwaysApply: false
+---
+# Pencil.dev 設計檔案操作規則
+
+本規則定義在 Cursor 專案中使用 Pencil.dev (`.pen` 檔案) 的正確操作方式。
+
+## 核心原則
+
+> **CRITICAL**: `.pen` 檔案格式為加密/特殊編碼，**禁止**使用文字編輯器或標準檔案工具（`Read`、`Write`、`StrReplace`、`Grep`）直接修改。
+
+所有 `.pen` 檔案的讀寫操作 **MUST** 透過 Pencil MCP tools 執行。
+
+## 檔案位置
+
+```
+.teammate/design/pencil/
+├── design-tokens.pen         # 設計系統 token 定義
+├── pencil-shadcn.pen         # shadcn UI 組件庫
+└── components/
+    └── *.pen                 # 各功能組件設計檔
+```
+
+## 必用工具清單
+
+### 讀取操作
+
+| 工具 | 用途 | 範例 |
+|------|------|------|
+| `get_editor_state` | 取得當前編輯器狀態 | 確認當前開啟的 .pen 檔 |
+| `batch_get` | 讀取節點內容 | 取得指定 node ID 的屬性 |
+| `get_variables` | 讀取 design tokens | 確認可用的變數名稱 |
+| `search_all_unique_properties` | 掃描屬性值 | 找出所有使用的顏色/間距 |
+| `get_screenshot` | 取得視覺預覽 | 驗證設計變更結果 |
+
+### 寫入操作
+
+| 工具 | 用途 | 範例 |
+|------|------|------|
+| `batch_design` | 批次節點操作 | 新增/更新/刪除節點 |
+| `set_variables` | 更新 design tokens | 新增或修改變數定義 |
+| `replace_all_matching_properties` | 批次屬性替換 | 將 hex 色值綁定到 variable |
+
+## 變數綁定格式
+
+### 正確綁定方式
+
+```javascript
+// ✅ 正確：使用 replace_all_matching_properties
+{
+  "fillColor": [
+    {"from": "#ffffffff", "to": "$color.bg.surface"},
+    {"from": "#030712ff", "to": "$color.text.primary"}
+  ],
+  "strokeColor": [
+    {"from": "#edededff", "to": "$color.border.default"}
+  ]
+}
+
+// ✅ 正確：使用 batch_design 更新
+U("nodeId", {
+  fill: "$color.bg.surface",
+  cornerRadius: "$radius.xl",
+  gap: "$spacing.2"
+})
+```
+
+### 錯誤做法
+
+```javascript
+// ❌ 錯誤：直接用文字編輯器改 JSON
+"fill": "#ffffff"  →  "fill": "$color.bg.surface"  // 無效！
+
+// ❌ 錯誤：使用 StrReplace 工具
+StrReplace(path, "#ffffff", "$color.bg.surface")  // 無效！
+```
+
+## 設計 Token 命名規範
+
+### 顏色 Tokens
+
+| 類別 | 命名格式 | 範例 |
+|------|---------|------|
+| 背景 | `$color.bg.*` | `$color.bg.surface` |
+| 文字 | `$color.text.*` | `$color.text.primary` |
+| 邊框 | `$color.border.*` | `$color.border.default` |
+| 狀態 | `$color.status.*` | `$color.status.error` |
+| shadcn | `$--*` | `$--primary`, `$--border` |
+
+### 間距 Tokens
+
+| 類別 | 命名格式 | 範例 |
+|------|---------|------|
+| Spacing | `$spacing.*` | `$spacing.2` (8px) |
+| Radius | `$radius.*` | `$radius.xl` (12px) |
+
+## 透明色處理
+
+### 原則
+
+- Pencil.dev 的 `fill` 屬性支援 RGBA hex 格式（如 `#ffffffff`）
+- 專案 codebase 使用 Tailwind `opacity-*` 類別處理透明
+- **不建立帶 alpha 的 design token**，而是：
+  1. 綁定到最接近的實色 token
+  2. 由實作端（Svelte 組件）加上 `opacity-*` 類別
+
+### 對應規則
+
+| Pencil.dev RGBA | 綁定 Token | Tailwind 實作 |
+|----------------|-----------|--------------|
+| `#0000001a` (黑 10% alpha) | `$color.border.subtle` 或 `$--border` | `border-gray-100 dark:border-gray-800` |
+| `#00000000` (完全透明) | 不綁定，或 `$color.bg.surface` + disabled | `bg-transparent` 或 `fill.enabled: false` |
+| `#2963c733` (藍 20% alpha) | `$color.status.info` | `bg-blue-500/20` |
+
+## 工作流程範例
+
+### 情境 1：將設計稿色值綁定到 design tokens
+
+```bash
+# 1. 確認可用變數
+get_variables(filePath)
+
+# 2. 掃描當前使用的色值
+search_all_unique_properties(parents: ["rootNodeId"], properties: ["fillColor", "strokeColor"])
+
+# 3. 批次綁定
+replace_all_matching_properties(
+  parents: ["rootNodeId"],
+  properties: {
+    fillColor: [
+      {from: "#ffffffff", to: "$color.bg.surface"},
+      {from: "#030712ff", to: "$color.text.primary"}
+    ]
+  }
+)
+
+# 4. 驗證結果
+get_screenshot(nodeId: "rootNodeId")
+```
+
+### 情境 2：新增組件設計
+
+```bash
+# 1. 確認當前編輯狀態
+get_editor_state()
+
+# 2. 讀取父節點結構
+batch_get(nodeIds: ["parentId"], readDepth: 2)
+
+# 3. 新增節點
+batch_design(operations: """
+foo=I("parentId", {
+  type: "frame",
+  fill: "$color.bg.surface",
+  cornerRadius: "$radius.xl",
+  gap: "$spacing.2"
+})
+""")
+```
+
+## 檢查清單
+
+在修改 `.pen` 檔案前，確認：
+
+- [ ] 使用 `get_variables()` 確認 token 存在
+- [ ] 使用 Pencil MCP tools，**不使用** `Read`/`Write`/`StrReplace`
+- [ ] 色值包含 alpha channel（`#rrggbbaa` 格式）
+- [ ] 綁定後用 `get_screenshot()` 驗證視覺結果
+- [ ] 透明色綁定到實色 token（由 codebase 加 opacity）
+
+## Code → Pencil 反寫規則
+
+> **原則**：Pencil 為唯一事實來源（SSOT）。前端實作修正後，必須同步更新對應的 `.pen` 檔案。
+
+### 觸發條件
+
+在以下情況下，開發者 **MUST** 執行 Code→Pencil 反寫：
+
+| 情況 | 說明 | 反寫目標 |
+|------|------|---------|
+| 新增 UI 狀態 | 如 `hover`、`disabled`、`loading` | 對應組件的 `.pen` 檔案 |
+| 修改間距/圓角 | 如 padding 從 8px → 12px | `design-tokens.pen` + 組件 `.pen` |
+| 新增色彩 token | 如新增 `$color.status.warning` | `design-tokens.pen` |
+| 修正視覺偏差 | 實作與設計不一致，實作端修正 | 組件 `.pen` 更新以反映修正 |
+
+### 反寫流程
+
+```
+1. 識別缺漏
+   - 在 /teammate.execute REFLECT 步驟中標記「設計缺漏」
+   - 描述：發現 Pencil 缺少 [xxx] 狀態/token
+
+2. 設計師確認（視情況）
+   - 小修正（間距調整、色值對齊）：可直接反寫
+   - 新增狀態/功能：需設計師確認後才反寫
+
+3. Pencil MCP 更新
+   - 使用 set_variables 更新 design-tokens
+   - 使用 batch_design 新增/更新節點
+   - 使用 replace_all_matching_properties 批次替換
+
+4. 驗證
+   - get_screenshot 確認視覺結果
+   - 更新 tasks/*/contracts/ui/design-ref.md 的 git commit hash
+```
+
+### 反寫禁令
+
+- **禁止**：直接編輯 `.pen` 檔案 JSON（格式加密，無效）
+- **禁止**：將 Code 的 raw hex 直接寫入 Pencil（必須先建立 token）
+- **禁止**：在未確認設計意圖前反寫新功能（避免將 bug 當設計）
+
+---
+
+## 與其他系統的協作
+
+### Figma → Code 流程
+本規則專注於 `.pen` 檔案的操作。若需執行 Figma → Code 轉換流程，請參考：
+- **Figma 核心規則**: `.cursor/rules/figma-rules.mdc` — Figma 操作的核心原則與約束
+- **完整 Agent 流程**: `.cursor/commands/figma.to.code.md` — 完整 Figma → Code 智能體定義
+- **自動化 Skills**: 
+  - `.cursor/skills/code-connect-components/` — 建立 Figma 與 Code 的映射連結
+  - `.cursor/skills/create-design-system-rules/` — 自動生成專案特定的設計規則
+
+## 參考資源
+
+- Pencil MCP Server: `C:\Users\kyle_lei\.cursor\projects\d-Open-WebUI-open-webui\mcps\user-pencil`
+- Design Tokens 定義: `.teammate/design/pencil/design-tokens.pen`
+- 組件對應表: `tasks/*/contracts/ui/component-specs.md`
+- Token 生成工具: `.cursor/commands/pencil.tokens.generate.md`
+- Token 綁定工具: `.cursor/commands/pencil.tokens.bind.md`
+
+---
+
+**Version**: 4.0.0 | **Updated**: 2026-02-25 | **Created**: 2026-02-24

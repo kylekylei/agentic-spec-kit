@@ -1,0 +1,54 @@
+---
+description: Git conventions and workflow guidelines using Conventional Commits
+globs: 
+alwaysApply: false
+---
+# Git Conventions and Workflow Guidelines
+
+## Language Requirements
+
+All git-related text MUST be written in English:
+- Commit messages
+- Branch names
+- Pull request titles and descriptions
+- Code review comments
+- Issue titles and descriptions
+
+## Commit Message Format
+
+MUST follow [Conventional Commits](https://www.conventionalcommits.org): `<type>[optional scope]: <description>`
+
+Common types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `chore`, `ci`
+
+## Branch Naming Convention
+
+Pattern: `<type>/<short-description>` or `<type>/<ticket-number>-<short-description>`
+
+Examples: `feat/add-google-auth`, `fix/PROJ-456-handle-null-responses`
+
+## Workflow Guidelines
+
+1. **Protected Branches**: `main`/`master` 只能透過 PR 變更，禁止直接 commit
+2. **Feature Development**: 從 main 建立 feature branch → commit → rebase main → push → PR
+3. **Pull Request**: 至少 2 reviewers、測試通過、無衝突、squash merge
+4. **Release**: 從 main 建立 release branch → 測試 → PR merge → tag version
+
+## Examples
+
+✅ Good:
+```
+feat(auth): implement JWT authentication
+fix(api): handle edge case in user validation
+docs(api): update API documentation
+```
+
+❌ Bad:
+```
+Fixed stuff
+Updated code
+WIP
+```
+
+## Pre-commit Hooks
+
+Consider using: commit message validation, linting, tests, branch naming validation
