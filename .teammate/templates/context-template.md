@@ -82,10 +82,12 @@
 ## Design References (Optional)
 
 - **Design System**: [Name or N/A]
+- **Design Tool**: [e.g., Pencil (.pen), Figma, or N/A]
 - **Figma**: [URL or N/A]
 - **Storybook**: [URL or N/A]
 
 > Note: Feature-level Figma page links should be provided during `/teammate.plan` phase, not here.
+> Design tool modifications (Pencil / Figma) are treated as implementation and must follow the Align → Plan → Execute workflow.
 
 ---
 

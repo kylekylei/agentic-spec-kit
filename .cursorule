@@ -41,6 +41,30 @@
 - 影響其他專案引用的變更（檔名、路徑、指令名、artifact 名），同步更新 `CHANGELOG.md`（`[Unreleased]` 區段）
 - **指令或規則變更必登 CHANGELOG**：只要修改 `.cursor/commands/teammate.*.md` 或 `.cursor/rules/teammate*.mdc`，必須同時在 `CHANGELOG.md` 的 `[Unreleased]` 區段登錄變更（Added / Changed / Documentation），不得遺漏
 
+### 框架檔案同步（消費專案）
+
+使用者修改框架檔案（commands / rules / skills / templates / scripts）時，MUST 同步變更到 Hub 對應檔案並確認完成。**不同步**：`.teammate/memory/`、`tasks/`、其他 `.cursor/rules/*.mdc`（專案特定）。
+
+框架檔案變更後，提醒使用者：
+1. 更新 `CHANGELOG.md` 的 `[Unreleased]` 區段
+2. 發版時更新 `.teammate/config/teammate.yml` 版本號
+3. 在其他消費專案執行 `/teammate.helpme migrate` 套用變更
+
+### 教訓回饋（Lessons Learned）
+
+發現工作流程改進、規則新增或流程洞察時，MUST 追加到 `PLAYBOOK.md` 歷史修改軌跡（append-only）：
+
+```
+#### YYYY-MM-DD · 類型 · 專案
+**觸發**: [問題描述]
+**決策**: [改了什麼]
+**影響**: [受影響的檔案/指令]
+**成效**: [觀察到的改善，或「待驗證」]
+**狀態**: 生效中
+```
+
+類型：規則 / 命令 / 架構 / 模板 / 腳本 / 文件 / 技能 / 測試
+
 ## 架構原則
 
 ### 權責分明

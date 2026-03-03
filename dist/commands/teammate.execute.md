@@ -96,11 +96,12 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
 
    | 類型 | RED 階段 | GREEN 階段 |
    |------|---------|-----------|
+   | `[DESIGN]` | spec.md Acceptance Scenarios（視覺驗證清單） | 設計稿修改（Pencil / Figma）+ 截圖驗證 |
    | `[LOGIC]` | 寫 unit test（期望 RED） | 寫最小實作讓 test GREEN |
    | `[UI]` | **智能分流**（見下方） | 實作 UI 組件 |
    | `[LOGIC+UI]` | 寫 unit test + 智能分流 | 實作邏輯 + UI |
 
-   > 若 action 無類型標記，依描述推斷：model/store/service/util → `[LOGIC]`；.svelte/.tsx/.vue → `[UI]`；兩者皆有 → `[LOGIC+UI]`。
+   > 若 action 無類型標記，依描述推斷：.pen/.figma/設計關鍵字 → `[DESIGN]`；model/store/service/util → `[LOGIC]`；.svelte/.tsx/.vue → `[UI]`；兩者皆有 → `[LOGIC+UI]`。
 
    #### UI 智能分流
 
@@ -212,6 +213,7 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
 ## 實作執行規則
 
 - **先 Setup**：專案結構、相依
+- **設計先於程式**：`[DESIGN]` actions 完成後才執行同 story 的 `[UI]`/`[LOGIC]` actions
 - **Foundation 先於 stories**：共用基礎設施
 - **Stories 依優先序**：P1 → P2 → P3
 - **步驟定義先於程式碼**：一律先 RED

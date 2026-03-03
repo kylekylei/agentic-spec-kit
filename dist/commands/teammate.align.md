@@ -29,7 +29,37 @@ $ARGUMENTS
 ### 模式偵測
 
 - `$ARGUMENTS` 包含 `update` → **Update Mode**（重讀既有 spec、保留未變區段）
+- `$ARGUMENTS` 包含 Pencil node IDs（`/` 分隔路徑）、`.pen` 檔案路徑，或「設計稿」、「優化」、「UI 調整」等關鍵字 → **Design Mode**（見下方）
 - 否則 → **Create Mode**
+
+### Design Mode（設計任務分流）
+
+當偵測為設計任務時，流程調整如下：
+
+**適用情境**：Pencil `.pen` 設計稿修改、Figma 設計稿優化、純視覺/UX 調整。
+
+**執行順序**：
+1. 階段 0–1（基礎檢查 + 設定）照常執行
+2. 階段 2（Impact Mapping）簡化為 **Design Intent Mapping**：
+   - WHO：受影響的使用者角色
+   - WHY：設計改善的目標（UX 問題、視覺一致性、可用性提升）
+   - WHAT：具體的設計變更項目（可觀察、可驗證）
+3. 階段 3（規格撰寫）產出 `contracts/ui/ui-spec.md`（替代或補充 `spec.md`），內容包含：
+   - 設計意圖與問題描述
+   - 變更項目清單（node/component 對應）
+   - 視覺驗證標準（可截圖比對）
+4. 階段 4–5（驗證 + Example Mapping）可選 — 純視覺調整可省略；涉及互動行為變更時仍須執行
+5. 設計稿修改允許先於 `spec.md`（`.pen` / Figma 變更視同設計文件更新）
+6. 階段 6–8 照常執行
+
+**產物對照**：
+
+| 標準流程產物 | Design Mode 產物 |
+|-------------|-----------------|
+| `spec.md` | `contracts/ui/ui-spec.md`（必須）+ `spec.md`（僅行為變更時） |
+| `example-mapping.md` | 可選（僅互動行為變更時） |
+
+**回歸標準流程條件**：設計修改涉及新增使用者行為、Principles 邊界變更、或跨模組影響。
 
 ### 階段 0：基礎檢查
 

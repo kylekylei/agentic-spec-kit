@@ -180,17 +180,21 @@ Optional：`agent-spec.md`、`docs/llms.txt`、`example-mapping.md`
 - [ ] [ActionID] [Type] [P?] [Story?] [Verifies: @scenario-tag(s)] Description with file path
 ```
 
-- `[Type]` **REQUIRED**：`[LOGIC]`/`[UI]`/`[LOGIC+UI]`
+- `[Type]` **REQUIRED**：`[DESIGN]`/`[LOGIC]`/`[UI]`/`[LOGIC+UI]`
+- `[DESIGN]` — 設計稿修改（Pencil / Figma），不涉及程式碼。MUST 排在同 story 的 `[UI]`/`[LOGIC]` actions 之前
 - `[LOGIC]` 涉及 util/store/service/model MUST 拆為 RED + GREEN 兩個 actions
 - `[UI]` 不強制拆分
 - 每個 `[INTEGRATE]` 檔在組件建立 action 後立即產生 mount/import action
 
 ### 階段結構
 
-- **Phase 0: Setup** — 專案初始化、測試基礎設施
-- **Phase 1: Foundational** — 核心基礎設施
-- **Phase 2+: User Stories** — 先 step definitions 再實作
-- **Phase N: Polish** — 橫切關注點
+- **Phase: Setup** — 專案初始化、測試基礎設施
+- **Phase: Design** — 設計稿修改（Pencil / Figma），需先於程式實作（若任務含設計；無設計則跳過）
+- **Phase: Foundational** — 核心基礎設施
+- **Phase: User Stories** — 先 step definitions 再實作
+- **Phase: Polish** — 橫切關注點
+
+> Phase 依上述順序排列，無設計任務時跳過 Design Phase，編號由 AI 依實際 Phase 數自動分配。
 
 ### 追溯矩陣
 
@@ -217,5 +221,6 @@ Scenario Tag → Actions → Status。覆蓋率：[X]/[Y] scenarios ([Z]%)
 - **原子且可驗證**：單一 session 可完成
 - **可追溯鏈**：`Scenario (@tag) → Action (S0XX) → Implementation → Verification`
 - **Red-Green-Reflect Loop 就緒**：先 step definitions 再程式碼
+- **設計先於程式**：`[DESIGN]` actions 完成後才執行同 story 的 `[UI]`/`[LOGIC]` actions
 - **依賴順序**：Models → services → endpoints，foundation 先於 stories
 - **步驟宣告式**：Given（脈絡）、When（動作）、Then（結果）

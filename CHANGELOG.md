@@ -13,10 +13,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
-- (無)
+- **設計任務處理路徑（Design Mode）** — `teammate-rules.mdc` 新增設計任務條文，定義 `.pen` / Figma 設計稿變更為「設計文件更新」（與 `spec.md` 同級），允許設計稿修改先於 `spec.md`，完成後 MUST 補產 `contracts/ui/ui-spec.md`
+- **`teammate.align` Design Mode 分流** — 模式偵測新增 Design Mode：偵測 Pencil node IDs / `.pen` 路徑 / 設計關鍵字時，Impact Mapping 簡化為 Design Intent Mapping，產出 `contracts/ui/ui-spec.md`，Example Mapping 變為可選
+- **`[DESIGN]` action 類型** — `teammate.plan.md` 新增 `[DESIGN]` 類型（設計稿修改），MUST 排在同 story 的 `[UI]`/`[LOGIC]` actions 之前；階段結構新增 Phase 1: Design（無設計則跳過）；行動原則新增「設計先於程式」
+- **`[DESIGN]` 執行支援** — `teammate.execute.md` Action 類型偵測表新增 `[DESIGN]`（RED: Acceptance Scenarios / GREEN: 設計稿修改 + 截圖驗證），實作執行規則新增「設計先於程式」排序
+- **`context-template.md` 設計欄位** — Design References 新增 `Design Tool` 欄位，加入設計稿修改須遵循 Align → Plan → Execute 流程的聲明
+- **`teammate-sync.sh`** — 跨平台同步腳本，將 `dist/` 分發至消費專案。支援 Cursor (`.cursor/`)、Claude Code (`.claude/`)、Antigravity (`.agent/`)，含自動平台偵測、`--dry-run` 模式、版本追蹤 (`.teammate-sync-version`)、`--check`（比對遠端 Hub 版本）、`--self-update`（拉取最新 Hub 後同步）
+- **Claude Code 同步** — commands → `.claude/commands/`（移除 `handoffs`，保留 `$ARGUMENTS`）、rules `.mdc` → `.claude/rules/*.md`（保留 `description`/`globs`）、skills 直接複製（格式完全相容）
+- **Antigravity rules 轉換** — `.mdc` → `.md`，自動依 frontmatter (`alwaysApply`/`globs`/`description`) 產生 activation metadata (`always_on`/`glob`/`model_decision`/`manual`)
+- **Antigravity workflows 轉換** — Cursor commands → Antigravity workflows，加入 `title`/`description` frontmatter，移除 Cursor 專屬欄位 (`handoffs`/`$ARGUMENTS`)
 
 ### Changed
-- (無)
+- **`teammate-designrule.mdc` 整合至 `.cursorule`** — Sync Rule 三項規範（框架檔案同步、版本追蹤、教訓回饋）併入 `.cursorule` 同步規範區段，刪除獨立 `teammate-designrule.mdc`（符合無冗餘原則：Rule 不重複存放相同約束）
+- **`context/` → `dist/`** — 分發資料夾重新命名，語意更精準：`dist/` 明確表示「可分發至使用專案的 AI 上下文套件」。Antigravity 等其他平台將另以 workflow 同步，不在 `dist/` 內建立子目錄
 
 ### Documentation
 - (無)

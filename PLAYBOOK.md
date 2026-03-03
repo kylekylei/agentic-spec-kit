@@ -37,6 +37,56 @@
 
 ## 歷史修改軌跡（Append-Only）
 
+#### 2026-03-03 · 規則 · Teammate Hub（teammate-designrule.mdc 整合）
+**觸發**: `teammate-designrule.mdc`（alwaysApply: true）與 `.cursorule` 的「同步規範」區段存在內容重疊——框架檔案同步、版本追蹤、PLAYBOOK 教訓回饋三項規範分散在兩個常駐 context 檔案中，違反「無冗餘原則」（一個功能一個實作）且增加 token 負擔。
+**決策**:
+1. 將 `teammate-designrule.mdc` 三項規範（Sync: Framework Files / Version Tracking / Lessons Learned）完整吸收至 `.cursorule` 同步規範區段，新增「框架檔案同步（消費專案）」與「教訓回饋（Lessons Learned）」兩個子節
+2. 刪除 `teammate-designrule.mdc`
+**影響**: `.cursorule`（新增兩個子節）、刪除 `teammate-designrule.mdc`、`CHANGELOG.md`、`PLAYBOOK.md`
+**成效**: 同步規範集中於單一常駐 context 檔案，消除重複，維護點從 2 處降為 1 處
+**狀態**: 生效中
+
+#### 2026-03-03 · 命令 · Teammate Hub（設計任務全流程整合）
+**觸發**: `teammate-rules.mdc` 已補充「行為優先於實作」與「文件先行」的設計任務定義，但 `teammate.plan.md` 與 `teammate.execute.md` 缺乏 `[DESIGN]` action 類型的偵測與排序機制，導致 AI 無法保證設計稿修改先於程式碼實作。`context-template.md` 也未引導使用者登錄設計工具資訊。
+**決策**:
+1. **teammate.plan.md** — 行動格式新增 `[DESIGN]` 類型（設計稿修改，不涉及程式碼），MUST 排在同 story 的 `[UI]`/`[LOGIC]` 之前；階段結構改為 Phase 0: Setup → Phase 1: Design → Phase 2: Foundational → Phase 3+: User Stories → Phase N: Polish（Phase 1 無設計則跳過）；行動原則新增「設計先於程式」
+2. **teammate.execute.md** — Action 類型偵測表新增 `[DESIGN]`（RED: spec.md Acceptance Scenarios 視覺驗證清單 / GREEN: 設計稿修改 + 截圖驗證），類型推斷加入 `.pen`/`.figma`/設計關鍵字 → `[DESIGN]`；實作執行規則新增「設計先於程式」排序規則
+3. **context-template.md** — Design References 新增 `Design Tool` 欄位；加入設計稿修改須遵循 Align → Plan → Execute 流程的聲明
+**影響**: `teammate.plan.md`、`teammate.execute.md`、`context-template.md`、`CHANGELOG.md`、`PLAYBOOK.md`
+**成效**: 設計任務從 plan 到 execute 有完整的 `[DESIGN]` 處理路徑，排序規則確保設計先於程式，消費專案可登錄設計工具資訊
+**狀態**: 生效中
+
+#### 2026-03-03 · 規則 · Teammate Hub（設計任務處理路徑）
+**觸發**: AI 收到 Pencil 設計稿修改請求時，`teammate.align.md` 整個流程假設輸入是功能需求（Feature Request），無設計類任務的處理路徑。`teammate-rules.mdc`「文件先行」原則未定義 `.pen` 設計稿是否算「文件」，導致兩種合理詮釋：(A) 設計稿即文件，直接改合規；(B) 設計稿是實作產物，須先寫 spec。違反憲法原則四（結構透明化）——規則的覆蓋範圍不足造成隱性歧義。
+**決策**:
+1. **teammate-rules.mdc** — 新增「設計任務處理路徑」區段：定義 `.pen` / Figma 設計稿變更為「設計文件更新」（與 `spec.md` 同級文件產物），允許設計稿修改先於 `spec.md`，完成後 MUST 補產 `contracts/ui/ui-spec.md`；涉及行為變更時仍須更新 `spec.md`；涉及新使用者行為 / Principles 邊界 / 跨模組影響時回歸標準流程
+2. **teammate.align.md** — 模式偵測新增 Design Mode：偵測 `$ARGUMENTS` 含 Pencil node IDs / `.pen` 路徑 / 設計關鍵字時分流；Impact Mapping 簡化為 Design Intent Mapping（WHO / WHY / WHAT）；規格產出改為 `contracts/ui/ui-spec.md`；Example Mapping 變為可選（僅互動行為變更時）
+**影響**: `teammate-rules.mdc`（新增區段）、`teammate.align.md`（模式偵測 + Design Mode 區段）
+**成效**: 設計類任務有明確處理路徑，「文件先行」原則覆蓋設計稿，消除詮釋歧義
+**狀態**: 生效中
+
+#### 2026-03-03 · 腳本 · Teammate Hub（跨平台同步腳本）
+**觸發**: 消費專案需要手動複製 `dist/` 內容到各 IDE 設定資料夾，且 Cursor / Claude Code / Antigravity 格式各異（副檔名、frontmatter、指令結構），手動維護容易出錯。消費端無法得知是否落後於雲端 Hub 版本。
+**決策**:
+1. 新增 `teammate-sync.sh`（`.teammate/scripts/bash/`），支援 `--platform cursor|claude|antigravity` 與 `--dry-run`
+2. 自動偵測平台：`.cursor/` → cursor、`.claude/` 或 `CLAUDE.md` → claude、`.agent/` → antigravity
+3. Cursor：直接複製（commands / rules `.mdc` / skills）
+4. Claude Code：commands → `.claude/commands/`（移除 `handoffs`，保留 `$ARGUMENTS`）、rules `.mdc` → `.claude/rules/*.md`（保留 `description`/`globs`）、skills 直接複製（遵循共同 Agent Skills 標準）
+5. Antigravity：commands → `.agent/workflows/`（加 `title`/`description`）、rules `.mdc` → `.agent/rules/*.md`（推導 activation mode）、skills 直接複製
+6. 版本追蹤：`.teammate-sync-version` 記錄 `local_hash`、`local_date`、`remote_url`、`remote_hash`、`dirty`、`synced` 時間戳
+7. `--check`：消費端讀取版本檔，向 GitHub `ls-remote` 查詢遠端 HEAD，比對是否需要更新
+8. `--self-update`：先 `git pull --ff-only` 拉取 Hub 最新版本，再執行同步
+**影響**: 新增 `teammate-sync.sh`、`CHANGELOG.md`、`PLAYBOOK.md`
+**成效**: 三平台一鍵同步，格式轉換自動化，版本可追蹤
+**狀態**: 生效中
+
+#### 2026-03-03 · 架構 · Teammate Hub（分發資料夾重新命名）
+**觸發**: `context/` 資料夾名稱語意模糊——容易與 memory 層級的 `context.md` 混淆，且未表達「可分發套件」的本質。未來需支援 Antigravity 等多平台分發。
+**決策**: `context/` → `dist/`。扁平結構（`dist/commands/`、`dist/rules/`、`dist/skills/`），不加中間層。Antigravity 等其他平台另以 workflow 從 `dist/` 同步，不在 `dist/` 內建立子目錄。
+**影響**: `context/` → `dist/`（`git mv`）、`CHANGELOG.md`、`PLAYBOOK.md`
+**成效**: 語意清晰，與業界 `dist/` 慣例一致，為多平台分發預留擴展空間
+**狀態**: 生效中
+
 #### 2026-02-25 · 規則 · Teammate Hub（重大決策介面升級）
 **觸發**: 規格架構歧異、UX 衝突、System Scope 變更等重大決策點使用純文字 `[Y]/[N]` 標籤，容易被忽略且缺乏可追溯性
 **決策**:
@@ -520,4 +570,4 @@
 
 ---
 
-**Last Updated**: 2026-02-15（review 任務結束 commit/merge 提醒 + helpme merge 版控）
+**Last Updated**: 2026-03-03（teammate-designrule.mdc 整合至 .cursorule）

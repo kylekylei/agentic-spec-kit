@@ -27,7 +27,7 @@ Init → Align → Plan → Execute → Review
 |------|------|
 | `/teammate.align` | 定義要做什麼（Impact Mapping + Example Mapping）→ `spec.md` + `example-mapping.md` |
 | `/teammate.plan` | 產生驗證場景與統一實作計畫 → `.feature` + `plan.md` + `contracts/ui/ui-spec.md`（UI 深度分析自動觸發） |
-| `/teammate.execute` | Red-Green-Verify-Reflect-Dialogue 迴圈實作 |
+| `/teammate.execute` | Red-Green-Verify-Reflect-Dialogue 迴圈實作（含程式碼與設計稿修改） |
 | `/teammate.review` | 行為覆蓋率 + 需求品質 + 功能交付就緒度 |
 
 ### 品質關卡（Review 之後）
@@ -61,7 +61,8 @@ Init → Align → Plan → Execute → Review
 │   ├── agent-spec.md         # 產品 LLM Agent 規格（角色定義、安全圍欄、System Prompt 邏輯）
 │   └── README.md             # LLM 層說明與邊界定義
 ├── design/                   # 視覺設計資產（設計師控管）
-│   └── figma-index.md        # Figma 專案與功能頁面連結
+│   ├── figma-index.md        # Figma 專案與功能頁面連結
+│   └── pencil/               # Pencil 設計稿（.pen 文件）
 ├── snapshots/                # 決策與計畫變更快照
 ├── templates/                # 文件模板
 ├── scripts/bash/             # 自動化腳本
