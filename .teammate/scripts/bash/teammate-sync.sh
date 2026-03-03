@@ -62,7 +62,42 @@ Options:
 
 Environment:
   TEAMMATE_HOME    Path to Teammate repo (default: auto-detected from script location)
+                   Fallback: read from **Teammate Hub**: `...` in teammatesync_rule.mdc
 EOF
+}
+
+# ── Resolve TEAMMATE_HOME when called from a consumer project ──
+# When the script lives inside a consumer project's .teammate/scripts/bash/,
+# the auto-detected TEAMMATE_HOME points to the consumer project root (no dist/).
+# This function looks for the real Hub path in teammatesync_rule.mdc.
+resolve_teammate_home() {
+    # If dist/ already exists at TEAMMATE_HOME, we're good
+    [[ -d "$TEAMMATE_HOME/dist" ]] && return 0
+
+    # Try to read Hub path from teammatesync_rule.mdc in target or cwd
+    local candidates=(
+        "$TARGET_DIR/.cursor/rules/teammatesync_rule.mdc"
+        "$(pwd)/.cursor/rules/teammatesync_rule.mdc"
+    )
+
+    for rule_file in "${candidates[@]}"; do
+        [[ -f "$rule_file" ]] || continue
+        local hub_path
+        hub_path=$(sed -n 's/.*\*\*Teammate Hub\*\*: `\([^`]*\)`.*/\1/p' "$rule_file" 2>/dev/null | head -1)
+        if [[ -n "$hub_path" && "$hub_path" != *"TEAMMATE_HUB_PATH"* && -d "$hub_path/dist" ]]; then
+            TEAMMATE_HOME="$hub_path"
+            DIST_DIR="$TEAMMATE_HOME/dist"
+            warn "TEAMMATE_HOME resolved from teammatesync_rule.mdc → $TEAMMATE_HOME"
+            return 0
+        fi
+    done
+
+    err "dist/ not found at $TEAMMATE_HOME"
+    err ""
+    err "If running from a consumer project, set the Hub path in one of:"
+    err "  1. .cursor/rules/teammatesync_rule.mdc  →  **Teammate Hub**: \`/path/to/Teammate\`"
+    err "  2. TEAMMATE_HOME env var                →  TEAMMATE_HOME=/path/to/Teammate ./teammate-sync.sh ."
+    exit 1
 }
 
 # ── Platform detection ──
@@ -658,6 +693,9 @@ sync_antigravity() {
 main() {
     parse_args "$@"
 
+    # Ensure TEAMMATE_HOME points to actual Hub (with dist/), not consumer project root
+    resolve_teammate_home
+
     # --check: read version file and compare against remote (no sync)
     if $CHECK_MODE; then
         check_version
@@ -667,11 +705,6 @@ main() {
     # --self-update: pull Hub before syncing
     if $SELF_UPDATE; then
         self_update_hub
-    fi
-
-    if [[ ! -d "$DIST_DIR" ]]; then
-        err "dist/ not found at $DIST_DIR"
-        exit 1
     fi
 
     if [[ "$PLATFORM" == "auto" ]]; then

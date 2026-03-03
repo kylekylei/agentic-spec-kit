@@ -140,6 +140,7 @@ alwaysApply: true
   - 適用場景：設計原則衝突、UI 設計歧異、系統層級變更確認
   - 格式：結構化問題 + 明確選項 + 影響說明
   - 使用者選擇後，MUST 在 `insights.md` 或 `spec.md` Change Log 記錄決策理由
+- **後續動作詢問**：任何 `teammate.*` 指令、腳本修改或實作完成後，若需詢問後續動作（commit、sync、push、deploy 等），MUST 使用 `AskQuestion` tool，不得使用純文字問句
 
 **禁止**：`下一步 → ...` 純文字格式（缺少可回覆的標籤）、不附標籤的選項、超出上限的選項數、非工作選項
 
