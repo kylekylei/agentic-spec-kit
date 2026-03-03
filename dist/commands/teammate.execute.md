@@ -152,12 +152,14 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
    3. 需記錄的技術決策？
    4. 涉及替代方案取捨？（→ Decision Log）
    5. 先前 insight 需修正？
+   6. 此 insight 是否在 3+ 個任務中重複出現？（→ 建議畢業至 `context.md` 或 `principles.md`，見 `@teammate-reference` 洞察畢業機制）
 
    **規則**：
    - 每個 action **必須**寫入 `TASK_DIR/insights.md`（有發現寫內容，無發現寫 `No new insights`）
    - 格式：`- [S0XX] 發現內容`；首次寫入時從模板複製
    - 完成證據：回報時包含 `REFLECT: done`
    - **禁止批次補寫**
+   - **迭代追蹤**：已完成 action 因使用者回饋或錯誤修正而再次修改時，MUST 在 `insights.md` 對應段落追加迭代紀錄（修正原因、根本原因、教訓）；涉及新設計決策或新問題則新增 D-0XX 段落
 
    #### DIALOGUE Phase（對話式同步）
 

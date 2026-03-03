@@ -24,6 +24,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 - **Antigravity workflows 轉換** — Cursor commands → Antigravity workflows，加入 `title`/`description` frontmatter，移除 Cursor 專屬欄位 (`handoffs`/`$ARGUMENTS`)
 
 ### Changed
+- **反饋閉環補強** — `teammate.plan.md` 載入額外脈絡新增條件必載：最近 2 個已完成任務的 `insights.md`（規劃階段可參考歷史教訓）；`teammate.execute.md` REFLECT 自檢清單新增第 6 點：Insight Graduation 判斷（3+ 次重複 → 建議畢業），顯式引用 `@teammate-reference`；`teammate.align.md` 基礎檢查後新增條件載入：最近 1 個已完成任務的 `insights.md`（UX/設計類教訓影響需求品質）
+- **REFLECT 迭代追蹤規則** — `teammate-rules.mdc` REFLECT 責任鏈新增第三條：已完成 action 因使用者回饋、設計審查或錯誤修正而再次修改時，MUST 在 `insights.md` 追加迭代紀錄；適用範圍不限 `/teammate.execute`。`teammate.execute.md` REFLECT Phase 同步追加迭代追蹤條目
 - **`teammate-designrule.mdc` 整合至 `.cursorule`** — Sync Rule 三項規範（框架檔案同步、版本追蹤、教訓回饋）併入 `.cursorule` 同步規範區段，刪除獨立 `teammate-designrule.mdc`（符合無冗餘原則：Rule 不重複存放相同約束）
 - **`context/` → `dist/`** — 分發資料夾重新命名，語意更精準：`dist/` 明確表示「可分發至使用專案的 AI 上下文套件」。Antigravity 等其他平台將另以 workflow 同步，不在 `dist/` 內建立子目錄
 

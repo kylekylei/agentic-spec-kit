@@ -37,6 +37,25 @@
 
 ## 歷史修改軌跡（Append-Only）
 
+#### 2026-03-03 · 架構 · Teammate Hub（反饋閉環補強）
+**觸發**: 對 REFLECT Phase 與 insight 追蹤機制進行反饋閉環完整性審計，發現 3 個缺口：(1) `teammate.plan.md` 規劃階段不載入歷史 insights，AI 做架構決策時看不到過去踩過的坑；(2) `teammate.execute.md` REFLECT 自檢清單只問「先前 insight 需修正？」，未明確觸發 Insight Graduation 判斷（3+ 次重複 → 建議畢業），畢業機制定義在 `teammate-reference` 但 execute 流程無顯式引用；(3) `teammate.align.md` 不載入 insights，UX/設計類教訓在需求定義時有用但被忽略。
+**決策**:
+1. **teammate.plan.md** — 「載入額外脈絡」新增條件必載：最近 2 個已完成任務的 `insights.md`
+2. **teammate.execute.md** — REFLECT 自檢清單新增第 6 點：「此 insight 是否在 3+ 個任務中重複出現？→ 建議畢業」，顯式引用 `@teammate-reference` 洞察畢業機制
+3. **teammate.align.md** — 階段 0 基礎檢查後新增條件載入：最近 1 個已完成任務的 `insights.md`
+**影響**: `teammate.plan.md`（載入脈絡）、`teammate.execute.md`（REFLECT 自檢）、`teammate.align.md`（基礎檢查）、`CHANGELOG.md`、`PLAYBOOK.md`
+**成效**: 反饋閉環 5 個環節（學習→沉澱→載入→畢業→影響決策）全部有明確的流程觸發點，消除 plan/align 的 insight 載入盲區與畢業判斷的隱式依賴
+**狀態**: 生效中
+
+#### 2026-03-03 · 規則 · Teammate Hub（REFLECT 迭代追蹤）
+**觸發**: `teammate-rules.mdc` 的 REFLECT 規則只綁定「action 完成那一刻」，未覆蓋「action 完成後因使用者回饋、設計審查或錯誤修正而來回修改」的場景。非 `/teammate.execute` 指令下的設計迭代也無 insights 追蹤義務。導致修正過程中產生的教訓（如根本原因分析、新設計決策）流失，未進入知識閉環。
+**決策**:
+1. **teammate-rules.mdc** — REFLECT 副作用發現追蹤之後新增「REFLECT 迭代追蹤」規則：已完成 action 再次修改時 MUST 在 `insights.md` 追加迭代紀錄；涉及新設計決策或新問題則新增 D-0XX 段落；適用範圍不限 `/teammate.execute`
+2. **teammate.execute.md** — REFLECT Phase 規則追加「迭代追蹤」條目，與 rules 對齊
+**影響**: `teammate-rules.mdc`（新增 1 條規則）、`teammate.execute.md`（REFLECT 規則追加 1 條）、`CHANGELOG.md`、`PLAYBOOK.md`
+**成效**: REFLECT 責任鏈完整覆蓋三個時機：action 完成時、發現既有問題時、來回修正時。知識閉環無死角
+**狀態**: 生效中
+
 #### 2026-03-03 · 規則 · Teammate Hub（teammate-designrule.mdc 整合）
 **觸發**: `teammate-designrule.mdc`（alwaysApply: true）與 `.cursorule` 的「同步規範」區段存在內容重疊——框架檔案同步、版本追蹤、PLAYBOOK 教訓回饋三項規範分散在兩個常駐 context 檔案中，違反「無冗餘原則」（一個功能一個實作）且增加 token 負擔。
 **決策**:

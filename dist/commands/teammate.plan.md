@@ -99,6 +99,8 @@ $ARGUMENTS
 
 ### 載入額外脈絡
 
+條件必載（存在即載入）：最近 2 個已完成任務的 `insights.md`（架構決策與踩坑經驗影響規劃品質）
+
 Optional：`agent-spec.md`、`docs/llms.txt`、`example-mapping.md`
 
 ### 設計資產偵測

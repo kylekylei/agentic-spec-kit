@@ -67,6 +67,8 @@ $ARGUMENTS
 - `context` 或 `principles` 非 `complete` → **ERROR**: "Run `/teammate.init` first."
 - 兩者皆 `complete` → 載入 `context.md`（WHO/WHY/技術約束）與 `principles.md`（行為邊界）
 
+**條件載入**：最近 1 個已完成任務的 `insights.md`（若存在）— UX/設計類教訓影響需求定義品質
+
 **Figma URL Detection**：掃描 `context.md` 中的 Figma URL（`figma.com/design/`、`/file/`、`/proto/`）。若發現 → 建立 `.teammate/design/figma-index.md`（Project Figma 表 + 空的 Feature Pages 表）。若無 → 略過。
 
 ### 階段 1：設定

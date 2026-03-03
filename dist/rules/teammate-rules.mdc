@@ -169,6 +169,7 @@ alwaysApply: true
   若為**上游已知問題**（輕重分級）：
   - **輕**（不影響 runtime，如型別推斷噪音）：僅在 `progress.md` Blockers 標註 `[上游已知問題]`，不建立任務
   - **重**（影響功能正確性或安全性）：提出修補方案討論，由使用者決定是否 fork 修補或等待上游
+- **REFLECT 迭代追蹤。** 當已完成的 action 因使用者回饋、設計審查或錯誤修正而**再次修改**時，MUST 在 `insights.md` 對應 action 段落追加迭代紀錄（含修正原因、根本原因分析、教訓）。若修改涉及**新的設計決策或引入新問題**，應新增獨立段落（D-0XX 編號延續）。此規則不限於 `/teammate.execute` 指令——任何導致任務產物變更的互動皆適用。
 - **Figma 連結以功能為單位。** 專案層級的 Figma URL 放 `context.md`，功能頁面連結放 `contracts/ui/`（在 `/teammate.plan` 時建立）。
 - **每個指令完成後依記憶差量協議更新 progress.md** — 覆寫 Current State、追加 Session Log、更新 Blockers。
 - **重大變更前建立快照。** 當原則、計畫或範疇變更時，覆寫前先建立快照。
