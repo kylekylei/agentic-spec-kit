@@ -72,6 +72,21 @@
 - **Commands**（`.cursor/commands/*.md`）→ 特定任務執行流程（按需載入）
 - **Skills**（`.cursor/skills/*/`）→ 可重用能力模組（自動化優先）
 
+### dist/ 路徑原則
+
+`dist/` 是 Hub 原始碼；`teammate-sync.sh` 同步後映射到各 IDE：
+
+| dist/ | Cursor | Claude | Antigravity |
+|-------|--------|--------|-------------|
+| `commands/` | `.cursor/commands/` | `.claude/commands/` | `.agent/workflows/` |
+| `rules/` | `.cursor/rules/` | `.claude/rules/` | `.agent/rules/` |
+| `skills/` | `.cursor/skills/` | `.claude/skills/` | `.agent/skills/` |
+
+**禁止** 在 `dist/` 內任何檔案中以 `dist/` 為前綴進行跨資源參照。Consumer 專案無 `dist/` 目錄，路徑將失效。替代方式：
+- **概念描述**：「invoke the `foo` skill」、「use the `bar` command」
+- **相對目錄**：`ui-design/create-component`（省略 `dist/commands/` 前綴）
+- **IDE 相對路徑**：僅限腳本執行等需明確路徑時，依 IDE 分別列出
+
 ### 無冗餘原則
 - 一個功能一個實作
 - 能用 Skill 自動化的，不寫 Command

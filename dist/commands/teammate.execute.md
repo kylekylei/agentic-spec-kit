@@ -152,7 +152,7 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
    3. 需記錄的技術決策？
    4. 涉及替代方案取捨？（→ Decision Log）
    5. 先前 insight 需修正？
-   6. 此 insight 是否在 3+ 個任務中重複出現？（→ 建議畢業至 `context.md` 或 `principles.md`，見 `@teammate-reference` 洞察畢業機制）
+   6. 此 insight 是否在 3+ 個任務中重複出現？（→ 建議畢業至 `context.md` 或 `principles.md`，見 `@teammate` 洞察畢業機制）
 
    **規則**：
    - 每個 action **必須**寫入 `TASK_DIR/insights.md`（有發現寫內容，無發現寫 `No new insights`）

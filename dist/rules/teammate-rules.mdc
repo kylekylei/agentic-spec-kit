@@ -75,7 +75,7 @@ alwaysApply: true
 
 指令必須依序執行：`Init → Align → Plan → Execute → Review`
 
-詳細指令說明、產物對應、檔案路徑見 `@teammate-reference`。
+詳細指令說明、產物對應、檔案路徑見 `@teammate`。
 
 ## 基礎檢查
 
@@ -89,7 +89,7 @@ alwaysApply: true
 
 ## 記憶差量協議
 
-`progress.md` 採用**分區更新模式**。詳細結構與更新規則見 `@teammate-reference`。
+`progress.md` 採用**分區更新模式**。詳細結構與更新規則見 `@teammate`。
 
 ## Memory Delta Protocol 實作規範
 
@@ -99,11 +99,11 @@ alwaysApply: true
 2. **只追加 `## Session Log`**（append-only，禁止修改或刪除既有行）
 3. **只追加/標記 `## Blockers`**（解決時以 `[RESOLVED]` 標記，不刪除歷史）
 
-欄位對照、格式範例與各指令專屬欄位，統一見 `@teammate-reference`。
+欄位對照、格式範例與各指令專屬欄位，統一見 `@teammate`。
 
 ## 中途更新
 
-計畫需要變更時執行 `/teammate.plan update`。詳細更新規則見 `@teammate-reference`。
+計畫需要變更時執行 `/teammate.plan update`。詳細更新規則見 `@teammate`。
 
 ## 輸出模式
 
