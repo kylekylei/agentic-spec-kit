@@ -321,6 +321,7 @@ sync_cursor() {
     sync_dir "$DIST_DIR/commands" "$dest/commands" "commands"
     sync_dir "$DIST_DIR/rules"    "$dest/rules"    "rules"
     sync_dir "$DIST_DIR/skills"   "$dest/skills"   "skills"
+    sync_dir "$DIST_DIR/agents"   "$dest/agents"   "agents"
 
     write_version "$dest"
 }
@@ -672,6 +673,7 @@ sync_claude() {
     sync_claude_commands
     sync_claude_rules
     sync_dir "$DIST_DIR/skills" "$dest/skills" "skills"
+    sync_dir "$DIST_DIR/agents" "$dest/agents" "agents"
 
     write_version "$dest"
 }
@@ -685,6 +687,7 @@ sync_antigravity() {
     sync_antigravity_workflows
     sync_antigravity_rules
     sync_dir "$DIST_DIR/skills" "$dest/skills" "skills"
+    sync_dir "$DIST_DIR/agents" "$dest/agents" "agents"
 
     write_version "$dest"
 }

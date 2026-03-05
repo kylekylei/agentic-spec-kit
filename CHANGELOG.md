@@ -13,6 +13,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
+- (無)
+
+### Changed
+- (無)
+
+### Documentation
+- (無)
+
+---
+
+## [0.4.0] - 2026-03-05
+
+### Added
 - **設計任務處理路徑（Design Mode）** — `teammate-rules.mdc` 新增設計任務條文，定義 `.pen` / Figma 設計稿變更為「設計文件更新」（與 `spec.md` 同級），允許設計稿修改先於 `spec.md`，完成後 MUST 補產 `contracts/ui/ui-spec.md`
 - **`teammate.align` Design Mode 分流** — 模式偵測新增 Design Mode：偵測 Pencil node IDs / `.pen` 路徑 / 設計關鍵字時，Impact Mapping 簡化為 Design Intent Mapping，產出 `contracts/ui/ui-spec.md`，Example Mapping 變為可選
 - **`[DESIGN]` action 類型** — `teammate.plan.md` 新增 `[DESIGN]` 類型（設計稿修改），MUST 排在同 story 的 `[UI]`/`[LOGIC]` actions 之前；階段結構新增 Phase 1: Design（無設計則跳過）；行動原則新增「設計先於程式」
@@ -22,6 +35,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 - **Claude Code 同步** — commands → `.claude/commands/`（移除 `handoffs`，保留 `$ARGUMENTS`）、rules `.mdc` → `.claude/rules/*.md`（保留 `description`/`globs`）、skills 直接複製（格式完全相容）
 - **Antigravity rules 轉換** — `.mdc` → `.md`，自動依 frontmatter (`alwaysApply`/`globs`/`description`) 產生 activation metadata (`always_on`/`glob`/`model_decision`/`manual`)
 - **Antigravity workflows 轉換** — Cursor commands → Antigravity workflows，加入 `title`/`description` frontmatter，移除 Cursor 專屬欄位 (`handoffs`/`$ARGUMENTS`)
+- **`dist/agents` 同步支援** — `teammate-sync.sh` 三個平台（Cursor / Claude Code / Antigravity）均新增 `dist/agents` → `{platform}/agents` 同步
+- **agents 重組** — `agent-orch.md` → `agent-orchestrator.md`、`architect.md` → `code-architect.md`、`fe-designer.md` → `designer.md`、`k8s-ops.md` → `kubernetes-operator.md`；新增 `pencil-dev.md`（聚焦 Pencil MCP 呼叫）
+- **pencil commands 重組** — `frontend-design/pencil.tokens.bind.md` / `pencil.tokens.generate.md` 移至 `pencil/tokens.bind.md` / `tokens.generate.md`
 
 ### Changed
 - **反饋閉環補強** — `teammate.plan.md` 載入額外脈絡新增條件必載：最近 2 個已完成任務的 `insights.md`（規劃階段可參考歷史教訓）；`teammate.execute.md` REFLECT 自檢清單新增第 6 點：Insight Graduation 判斷（3+ 次重複 → 建議畢業），顯式引用 `@teammate-reference`；`teammate.align.md` 基礎檢查後新增條件載入：最近 1 個已完成任務的 `insights.md`（UX/設計類教訓影響需求品質）
