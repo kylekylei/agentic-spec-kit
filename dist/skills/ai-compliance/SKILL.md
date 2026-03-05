@@ -1,341 +1,373 @@
 ---
 name: ai-compliance
-description: AI Risk Compliance Expert for EU AI Act, US state AI laws, and South Korea AI Basic Act. Use when (1) building chatbot or conversational AI interfaces, (2) displaying AI-generated content, (3) implementing recommendation systems, (4) designing AI consent/opt-out flows, (5) adding human oversight controls to AI decisions, or (6) auditing AI-driven UI for regulatory compliance. Dynamically loaded — only active when project involves LLM/AI features.
+description: AI UX compliance rules for global AI regulations. Use when building chatbot UI, displaying AI-generated content, designing consent/opt-out flows, adding human oversight controls, or implementing AI content labeling. Dynamically loaded — only active when project involves LLM/AI features.
 ---
 
-# AI Risk Compliance Expert
-
-Act as a Senior Product Compliance Specialist. Philosophy: "Transparency is not a burden — it's a trust infrastructure."
+# AI UX Compliance Reference
 
 ## Dynamic Detection
 
-This skill is loaded **conditionally** based on project characteristics.
+Loaded **conditionally** based on project characteristics.
 
-### Detection Signals
-
-**Primary (context.md tech stack):**
-- Keywords: AI, LLM, OpenAI, Anthropic, ChatBot, RAG, GPT, Claude, Gemini, conversational AI
+**Primary (context.md):**
+- Keywords: AI, LLM, OpenAI, Anthropic, ChatBot, RAG, GPT, Claude, Gemini
 
 **Secondary (codebase auto-detect):**
 - Imports: `openai`, `anthropic`, `@ai-sdk`, `langchain`, `llamaindex`
-- API routes: `/chat`, `/completion`, `/generate`, `/stream`
-- UI patterns: chat components, streaming response displays, AI disclosure labels
-- Config: system prompts, model configuration, AI feature flags
-- Dependencies in package.json: `ai`, `openai`, `@anthropic-ai/sdk`, `@langchain/*`
+- Routes: `/chat`, `/completion`, `/generate`, `/stream`
+- UI: chat components, streaming displays, AI disclosure labels
+- Deps: `ai`, `openai`, `@anthropic-ai/sdk`, `@langchain/*`
 
 **Result:**
 - context.md has AI markers → load silently
-- context.md missing but codebase detected → load + suggest: "偵測到 AI/LLM 相關代碼，已自動載入 ai-compliance skill。建議更新 context.md 標記。"
-- Neither detected → do not load
+- Codebase detected only → load + suggest updating context.md
+- Neither → do not load
+
+## Jurisdiction References
+
+Load only the jurisdictions relevant to your target market. Each file contains jurisdiction-specific legal details, timelines, and implementation guidance.
+
+| Region | File | When to load |
+|--------|------|-------------|
+| Taiwan | [references/tw.md](references/tw.md) | Products deployed in Taiwan |
+| EU | [references/eu.md](references/eu.md) | Products deployed in EU/EEA |
+| US | [references/us.md](references/us.md) | Products deployed in US (CA/CO/TX) |
+
+## Compliance Audit Script
+
+Scan codebase for compliance pattern violations:
+
+```bash
+python3 .cursor/src/ai-compliance/scripts/audit.py [--path src/] [--jurisdiction tw,eu] [--format markdown]
+```
 
 ## Quick Decision Guide
 
-| Task | Action |
-|------|--------|
-| Building chatbot UI | Add AI disclosure label at first interaction |
-| Displaying AI output | Add visible "AI Generated" label + machine-readable metadata |
-| Long conversation (>3hr) | Add periodic AI reminder (CA SB 243) |
-| AI-powered recommendation | Add "Why am I seeing this?" + non-personalized alternative |
-| Consent for AI features | Equal visual prominence for Accept/Reject; granular per-feature |
-| High-risk AI decision | Add override/stop button + confidence indicator |
-| AI explains a decision | Design layered explanation (summary + expandable detail) |
-| Generating synthetic media | Embed C2PA watermark + visible label |
+| Task | Action | Legal Basis |
+|------|--------|-------------|
+| Chatbot UI | AI disclosure at first interaction | TW§4(5), EU Art.50(1), CA SB243 |
+| AI output display | Visible "AI Generated" label + `data-ai-*` metadata | TW§5(2), EU Art.50(2) |
+| Long conversation (>3hr) | Periodic AI reminder | CA SB243 |
+| AI recommendation | "Why am I seeing this?" + non-personalized alt | EU DSA Art.27/38 |
+| AI feature consent | Equal prominence Accept/Reject; per-feature granular | EU Art.5(1)(a), CCPA |
+| High-risk AI decision | Override + stop button + confidence indicator | TW§4(2), EU Art.14(4) |
+| AI explains decision | 3-tier progressive disclosure | EU Art.86 |
+| Synthetic media | C2PA watermark + visible label | EU Art.50(2)(4) |
+| Confidence display | 3-tier: color + text + icon (never color-only) | TW§4(2)(5), EU Art.13 |
+| Data collection for AI | Privacy by Design + data minimization | TW§14, GDPR Art.25 |
+| AI decision logging | Append-only audit trail, hashed PII | TW§4(7), EU Art.12 |
 
-## Compliance Rules with Code Examples
+## Rules
 
-### RULE AI-001: Chatbot AI Disclosure
-**法規**: EU AI Act Art. 50(1) | CA SB 243 | CO AI Act | TX HB 149
-**嚴重度**: CRITICAL
-**罰則**: CA $1,000/次私人訴訟 | EU AI Act 罰則
+### AI-001: Chatbot AI Disclosure
+**Severity**: CRITICAL
 
 ```tsx
-// PASS: Clear AI disclosure at first interaction
+// PASS
 <div className="chat-header">
   <span className="ai-badge" role="status" aria-label="AI assistant">
-    🤖 AI 助手
+    🤖 AI Assistant
   </span>
   <p className="ai-disclosure">
-    您正在與 AI 系統互動，非真人客服。
-    <button aria-expanded={showDetails} onClick={toggleDetails}>
-      了解更多
-    </button>
+    You are interacting with an AI system, not a human.
+    <button aria-expanded={showDetails} onClick={toggleDetails}>Learn more</button>
   </p>
 </div>
 ```
 
 ```tsx
-// FAIL: No disclosure — user assumes human
+// FAIL — user assumes human
 <div className="chat-header">
-  <span>客服助手</span>  {/* No AI indication */}
+  <span>Support</span>
 </div>
 ```
 
-**判定**: 首次互動前必須有清晰、不可遺漏的 AI 性質揭露。使用「AI」或「人工智慧」等明確用語。
+**Rule**: First interaction MUST have clear, unavoidable AI disclosure using explicit terms ("AI" or "artificial intelligence").
 
 ---
 
-### RULE AI-002: Periodic AI Reminder (Long Sessions)
-**法規**: CA SB 243
-**嚴重度**: HIGH
-**罰則**: $1,000/次法定損害賠償
+### AI-002: Periodic AI Reminder (Long Sessions)
+**Severity**: HIGH
 
 ```tsx
-// PASS: Reminder every 3 hours
-const AI_REMINDER_INTERVAL = 3 * 60 * 60 * 1000; // 3 hours
+const AI_REMINDER_INTERVAL = 3 * 60 * 60 * 1000;
 
 useEffect(() => {
   const timer = setInterval(() => {
-    showSystemMessage("提醒：您正在與 AI 系統互動，非真人。");
+    showSystemMessage("Reminder: You are interacting with an AI, not a human.");
   }, AI_REMINDER_INTERVAL);
   return () => clearInterval(timer);
 }, []);
 ```
 
-```tsx
-// FAIL: No reminder mechanism for long conversations
-// (Users in 8-hour sessions never see another disclosure)
-```
-
-**判定**: 對話超過 3 小時必須自動插入 AI 性質提醒。
+**Rule**: Auto-insert AI reminder every 3 hours in ongoing conversations.
 
 ---
 
-### RULE AI-003: AI-Generated Content Label
-**法規**: EU AI Act Art. 50(2)(4) | CA AB 853/CAITA
-**嚴重度**: CRITICAL
-**罰則**: EU AI Act 罰則 | CA 執法
+### AI-003: AI-Generated Content Label
+**Severity**: CRITICAL
+
+| Tier | Method | Applies to |
+|------|--------|------------|
+| Visible label | "AI Generated" text + icon | All AI output |
+| Watermark | Semi-transparent overlay | Images, video |
+| Machine-readable | C2PA metadata | All AI output |
+| Interaction notice | Disclose AI identity at start | Chatbots |
 
 ```tsx
-// PASS: Visible label + machine-readable metadata
+// PASS — visible + machine-readable + accessible
 <article
   data-ai-generated="true"
   data-ai-model="gpt-4"
   data-ai-timestamp={new Date().toISOString()}
 >
-  <div className="ai-content-label" aria-label="AI generated content">
+  <div className="ai-label" aria-label="AI generated content">
     <AiIcon aria-hidden="true" />
-    <span>AI 生成內容</span>
-    <Tooltip>此內容由 AI 模型生成，可能包含錯誤。</Tooltip>
+    <span>AI Generated</span>
+    <Tooltip>Generated by AI. May contain errors.</Tooltip>
   </div>
-  <p>{generatedContent}</p>
+  <p>{content}</p>
 </article>
 ```
 
 ```tsx
-// FAIL: AI content displayed without any indication
-<article>
-  <p>{generatedContent}</p>  {/* No AI label, no metadata */}
-</article>
+// FAIL
+<article><p>{content}</p></article>
 ```
 
-**判定**: AI 產出內容必須同時具備 (1) 使用者可見標籤 (2) 機器可讀屬性標記。
+**Rule**: AI output MUST have (1) visible label (2) `data-ai-*` attributes. Labels MUST meet WCAG contrast 4.5:1 in light/dark modes, keyboard-navigable, screen-reader compatible.
 
 ---
 
-### RULE AI-004: Consent Equal Prominence
-**法規**: EU AI Act Art. 5(1)(a) | DSA Art. 25 | CCPA/CPRA
-**嚴重度**: CRITICAL
-**罰則**: €3,500 萬或全球營收 7%（操縱性設計）
+### AI-004: Consent Equal Prominence
+**Severity**: CRITICAL
 
 ```tsx
-// PASS: Equal visual weight for Accept and Reject
+// PASS
 <div className="consent-actions flex gap-4">
-  <button className="btn btn-primary px-6 py-3">接受 AI 個人化</button>
-  <button className="btn btn-primary px-6 py-3">拒絕 AI 個人化</button>
+  <button className="btn btn-primary px-6 py-3">Accept AI personalization</button>
+  <button className="btn btn-primary px-6 py-3">Reject AI personalization</button>
 </div>
 ```
 
 ```tsx
-// FAIL: Dark pattern — Accept is prominent, Reject is hidden
+// FAIL — dark pattern
 <div className="consent-actions">
-  <button className="btn btn-primary btn-lg">接受</button>
-  <a href="#" className="text-xs text-gray-400 underline">稍後再說</a>
+  <button className="btn btn-primary btn-lg">Accept</button>
+  <a href="#" className="text-xs text-gray-400">Maybe later</a>
 </div>
 ```
 
-**判定**: 同意與拒絕選項必須具有相同的視覺大小、顏色、位置顯著性。不得使用縮小、淡化、隱藏等手段弱化拒絕選項。
+**Rule**: Accept and Reject MUST have identical visual size, color, and positional prominence.
 
 ---
 
-### RULE AI-005: Human Override for High-Risk AI
-**法規**: EU AI Act Art. 14(4)
-**嚴重度**: CRITICAL（高風險系統）
-**罰則**: €1,500 萬或全球營收 3%
+### AI-005: Human Override for High-Risk AI
+**Severity**: CRITICAL (high-risk systems)
+
+**Required UI components:**
+- **Override button**: "Override AI" with sufficient visual weight
+- **Emergency stop**: One-click halt
+- **3-way decision**: Accept / Edit / Reject
+- **Adjustable threshold**: User-configurable confidence trigger
+- **Confirmation step**: Pre-decision human confirmation dialog
 
 ```tsx
-// PASS: Override + stop + confidence indicator
+// PASS
 <div className="ai-decision-panel">
-  <div className="confidence-bar" aria-label={`AI confidence: ${confidence}%`}>
-    <meter value={confidence} min={0} max={100} />
-    <span>{confidence}% 信心度</span>
+  <meter value={confidence} min={0} max={100} aria-label={`AI confidence: ${confidence}%`} />
+  <span>{confidence}% confidence</span>
+  <p>{recommendation}</p>
+  <div className="controls flex gap-2">
+    <button className="btn-success" onClick={accept}>Accept</button>
+    <button className="btn-secondary" onClick={edit}>Edit</button>
+    <button className="btn-warning" onClick={override}>Override AI</button>
+    <button className="btn-danger" onClick={stop}>Emergency Stop</button>
   </div>
-  <p className="ai-recommendation">{recommendation}</p>
-  <div className="human-controls flex gap-2">
-    <button className="btn btn-warning" onClick={overrideDecision}>
-      覆寫 AI 決策
-    </button>
-    <button className="btn btn-danger" onClick={emergencyStop}>
-      緊急停止
-    </button>
-  </div>
-  <p className="bias-warning" role="alert">
-    ⚠️ 請獨立驗證此 AI 建議，避免自動化偏見。
-  </p>
+  <p role="alert">⚠️ Verify independently to avoid automation bias.</p>
 </div>
 ```
 
 ```tsx
-// FAIL: AI decision with no override mechanism
-<div className="ai-decision-panel">
-  <p>系統已自動核准此申請。</p>
-  {/* No override, no stop, no confidence indicator */}
-</div>
+// FAIL
+<p>Application auto-approved.</p>
 ```
 
-**判定**: 高風險 AI 決策介面必須包含 (1) 覆寫按鈕 (2) 停止按鈕 (3) 信心指標 (4) 偏見警告。
+**Rule**: High-risk AI MUST include (1) override (2) stop (3) confidence indicator (4) bias warning (5) 3-way choice.
 
 ---
 
-### RULE AI-006: Recommendation Transparency
-**法規**: EU DSA Art. 27, 38
-**嚴重度**: HIGH
-**罰則**: DSA 罰則
+### AI-006: Recommendation Transparency
+**Severity**: HIGH
 
 ```tsx
-// PASS: Explainable recommendation with non-personalized alternative
-<div className="recommendation-item">
-  <article>{recommendedContent}</article>
-  <button
-    aria-expanded={showExplanation}
-    onClick={() => setShowExplanation(!showExplanation)}
-  >
-    為什麼看到這個？
+// PASS
+<div className="recommendation">
+  <article>{content}</article>
+  <button aria-expanded={show} onClick={() => setShow(!show)}>
+    Why am I seeing this?
   </button>
-  {showExplanation && (
-    <div className="explanation-panel">
-      <p>此推薦基於：您的瀏覽歷史、類似使用者偏好。</p>
-      <a href="/settings/recommendations">管理推薦設定</a>
+  {show && (
+    <div>
+      <p>Based on: your browsing history, similar user preferences.</p>
+      <a href="/settings/recommendations">Manage settings</a>
     </div>
   )}
 </div>
-
-{/* Non-personalized alternative toggle */}
 <label className="flex items-center gap-2">
-  <input
-    type="checkbox"
-    checked={useChronological}
-    onChange={togglePersonalization}
-  />
-  使用時間排序（非個人化）
+  <input type="checkbox" checked={chronological} onChange={toggle} />
+  Use chronological order (non-personalized)
 </label>
 ```
 
-```tsx
-// FAIL: Black-box recommendation with no explanation or alternative
-<div className="feed">
-  {recommendations.map(item => <Card key={item.id} {...item} />)}
-  {/* No "why", no settings, no non-personalized option */}
-</div>
-```
-
-**判定**: 推薦系統必須 (1) 以通俗語言說明推薦參數 (2) 提供使用者調整控制 (3) 提供至少一個非個人化替代。
+**Rule**: Recommendations MUST (1) explain in plain language (2) provide user controls (3) offer non-personalized alternative.
 
 ---
 
-### RULE AI-007: Explainability Interface
-**法規**: EU AI Act Art. 86 | GDPR Art. 22
-**嚴重度**: HIGH（高風險系統）
-**罰則**: GDPR 罰則
+### AI-007: Explainability Interface
+**Severity**: HIGH (high-risk systems)
+
+**3-tier progressive disclosure:**
+- **Tier 1**: Summary + confidence label ("87% match")
+- **Tier 2**: Top 2-3 key factors
+- **Tier 3**: Full SHAP/LIME visualization (for auditors)
 
 ```tsx
-// PASS: Layered explanation with appeal mechanism
+// PASS
 <div className="ai-explanation">
-  <h3>AI 決策說明</h3>
-  <p className="summary">
-    此決定基於您提供的收入資料與信用歷史。
+  <p>Decision based on your income and credit history.
+    <span className="badge">87% confidence</span>
   </p>
   <details>
-    <summary>查看詳細因素</summary>
+    <summary>View factors</summary>
     <ul>
-      <li>年收入：權重 40%</li>
-      <li>信用分數：權重 30%</li>
-      <li>還款歷史：權重 30%</li>
+      <li>Annual income: 40% weight</li>
+      <li>Credit score: 30% weight</li>
+      <li>Repayment history: 30% weight</li>
     </ul>
-    <p>若您的信用分數高於 700，結果可能不同。</p>
   </details>
-  <div className="appeal-actions">
-    <button onClick={requestHumanReview}>申請人工審核</button>
-    <button onClick={viewInputData}>查看 AI 使用的資料</button>
+  <div>
+    <button onClick={requestHumanReview}>Request human review</button>
+    <button onClick={viewInputData}>View data used</button>
   </div>
 </div>
 ```
 
-```tsx
-// FAIL: Opaque AI decision with no explanation
-<div className="decision">
-  <p>您的申請已被拒絕。</p>  {/* No why, no appeal */}
-</div>
-```
-
-**判定**: 受 AI 決策影響的使用者有權獲得 (1) 簡短摘要 (2) 可展開的詳細因素 (3) 質疑/申訴機制 (4) 資料審查權。
+**Rule**: Affected users MUST get (1) summary + confidence (2) expandable key factors (3) appeal/review mechanism.
 
 ---
 
-### RULE AI-008: Granular AI Consent
-**法規**: GDPR Art. 7 | CO AI Act | CA CCPA/CPRA
-**嚴重度**: HIGH
-**罰則**: GDPR 罰則 | CO $20,000/次
+### AI-008: Granular AI Consent
+**Severity**: HIGH
 
 ```tsx
-// PASS: Per-feature consent with easy withdrawal
+// PASS
 <div className="ai-consent-panel">
-  <h3>AI 功能設定</h3>
-  {aiFeatures.map(feature => (
-    <label key={feature.id} className="flex items-center justify-between p-3">
+  <h3>AI Features</h3>
+  {features.map(f => (
+    <label key={f.id} className="flex items-center justify-between p-3">
       <div>
-        <span className="font-medium">{feature.name}</span>
-        <p className="text-sm text-gray-500">{feature.description}</p>
+        <span className="font-medium">{f.name}</span>
+        <p className="text-sm text-muted">{f.description}</p>
       </div>
       <input
-        type="checkbox"
-        checked={feature.enabled}
-        onChange={() => toggleFeature(feature.id)}
-        role="switch"
-        aria-label={`${feature.enabled ? '停用' : '啟用'} ${feature.name}`}
+        type="checkbox" checked={f.enabled}
+        onChange={() => toggle(f.id)} role="switch"
+        aria-label={`${f.enabled ? 'Disable' : 'Enable'} ${f.name}`}
       />
     </label>
   ))}
-  <button onClick={disableAll} className="btn btn-secondary mt-4">
-    全部停用
-  </button>
+  <button onClick={disableAll}>Disable all</button>
 </div>
 ```
+
+**Rule**: AI consent MUST be (1) per-feature granular (2) never pre-checked (3) withdrawal as easy as granting (4) respect Global Privacy Control. For minors: require guardian consent and restrict behavioral profiling.
+
+---
+
+### AI-009: Confidence Score Disclosure
+**Severity**: HIGH
+
+| Level | Threshold | Display | Trigger |
+|-------|-----------|---------|---------|
+| High | ≥ 85% | Green ✅ "High confidence" | May auto-execute |
+| Medium | 50-84% | Orange ⚠️ "Review suggested" | Suggest human review |
+| Low | < 50% | Red 🔴 "Uncertain" | **Force human review** |
 
 ```tsx
-// FAIL: All-or-nothing AI consent buried in onboarding
-<div className="onboarding-step-7">
-  <input type="checkbox" checked={true} /> {/* Pre-checked! */}
-  <span className="text-xs">我同意使用 AI 功能改善體驗</span>
-</div>
+function ConfidenceIndicator({ score }: { score: number }) {
+  const level = score >= 0.85 ? 'high' : score >= 0.5 ? 'medium' : 'low';
+  const config = {
+    high:   { color: 'text-green-600', icon: '✅', label: 'High confidence' },
+    medium: { color: 'text-orange-500', icon: '⚠️', label: 'Review suggested' },
+    low:    { color: 'text-red-600', icon: '🔴', label: 'Uncertain' },
+  }[level];
+
+  return (
+    <div className={`confidence ${config.color}`} role="status">
+      <span aria-hidden="true">{config.icon}</span>
+      <span>{Math.round(score * 100)}% — {config.label}</span>
+      {level === 'low' && <span className="sr-only">Requires human review</span>}
+    </div>
+  );
+}
 ```
 
-**判定**: AI 同意必須 (1) 按功能粒度控制 (2) 不得預勾選 (3) 撤回與給予同等容易 (4) 尊重 Global Privacy Control 訊號。
+**Rule**: Confidence MUST use color + text + icon (never color-only, WCAG). Low confidence MUST force human review.
 
-## Lifecycle Integration Points
+---
 
-This skill provides compliance knowledge at different stages:
+### AI-010: AI Decision Audit Trail
+**Severity**: HIGH
 
-| Stage | Role | What to do |
-|-------|------|------------|
-| `/teammate.plan` | Remind | Flag AI compliance requirements in Architecture section |
-| `/teammate.execute` | Guide | Load as Recommended context for AI-related actions |
-| `/teammate.review` | Check | Verify compliance coverage in Pass D2 |
-| `/teammate.audit` | Judge | 世界級產品體驗大師逐條 Pass/Fail 審計 |
+**Required fields**: user input (hashed), AI output (≤500 chars), timestamp, model version, confidence, data sources, decision path, user role. Hash sensitive data with SHA-256.
 
-## References
+**Retention**: High-risk 10yr, general 5yr.
 
-- [EU AI Act Full Text](https://eur-lex.europa.eu/eli/reg/2024/1689/oj)
-- [Colorado AI Act (SB 24-205)](https://leg.colorado.gov/bills/sb24-205)
-- [California SB 243](https://leginfo.legislature.ca.gov/faces/billNavClient.xhtml?bill_id=202520260SB243)
-- [NIST AI RMF](https://www.nist.gov/artificial-intelligence/risk-management-framework)
-- Regulatory background: `docs/ai-compliance/regulations.md`
+```python
+import hashlib, json, logging
+from datetime import datetime, timezone
+from uuid import uuid4
+
+logger = logging.getLogger("ai_audit")
+
+class AIDecisionLog:
+    def log(self, user_id, input_data, output, model_ver, confidence):
+        record = {
+            "id": str(uuid4()),
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "user_hash": hashlib.sha256(user_id.encode()).hexdigest(),
+            "model": model_ver,
+            "confidence": confidence,
+            "level": "HIGH" if confidence >= 0.85 else "MED" if confidence >= 0.5 else "LOW",
+            "needs_review": confidence < 0.5,
+            "input_hash": hashlib.sha256(json.dumps(input_data).encode()).hexdigest(),
+            "output": output[:500],
+        }
+        logger.info(json.dumps(record))
+        return record
+```
+
+**Rule**: All AI decisions MUST be logged in append-only audit trail with model version, confidence, and timestamp.
+
+---
+
+### AI-011: C2PA Content Provenance
+**Severity**: MEDIUM (HIGH when generating media)
+
+```python
+manifest = {
+    "claim_generator": "MyApp/1.0",
+    "assertions": [{
+        "label": "c2pa.actions",
+        "data": {"actions": [{
+            "action": "c2pa.created",
+            "digitalSourceType":
+              "http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia",
+            "softwareAgent": "MyAIModel/v2.0"
+        }]}
+    }]
+}
+```
+
+**Rule**: AI-generated images/video/audio SHOULD embed C2PA Content Credentials. Text content SHOULD use `data-ai-*` attributes.

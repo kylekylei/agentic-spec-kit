@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+
+# Consolidated prerequisite checking script
+#
+# This script provides unified prerequisite checking for Teammate workflow.
+# It replaces the functionality previously spread across multiple scripts.
+#
+# Usage: ./check-prerequisites.sh [OPTIONS]
+#
+# OPTIONS:
+#   --json              Output in JSON format
+#   --require-plan      Require plan.md to exist (for implementation phase)
+#   --include-plan      Include plan.md in AVAILABLE_DOCS list
+#   --paths-only        Only output path variables (no validation)
+#   --help, -h          Show help message
+#
+# OUTPUTS:
+#   JSON mode: {"TASK_DIR":"...", "AVAILABLE_DOCS":["..."]}
+#   Text mode: TASK_DIR:... \n AVAILABLE_DOCS: \n ✓/✗ file.md
+#   Paths only: REPO_ROOT: ... \n BRANCH: ... \n TASK_DIR: ... etc.
+
+set -e
+
+# Parse command line arguments
+JSON_MODE=false
+REQUIRE_PLAN=false
+INCLUDE_PLAN=false
+PATHS_ONLY=false
+
+# Legacy flag support (backward compatibility)
+for arg in "$@"; do
+    case "$arg" in
+        --json)
+            JSON_MODE=true
+            ;;
+        --require-plan)
+            REQUIRE_PLAN=true
+            ;;
+        --include-plan)
+            INCLUDE_PLAN=true
+            ;;
+        --paths-only)
+            PATHS_ONLY=true
+            ;;
+        --help|-h)
+            cat << 'EOF'
+Usage: check-prerequisites.sh [OPTIONS]
+
+Consolidated prerequisite checking for Teammate workflow.
+
+OPTIONS:
+  --json              Output in JSON format
+  --require-plan      Require plan.md to exist (for implementation phase)
+  --include-plan      Include plan.md in AVAILABLE_DOCS list
+  --paths-only        Only output path variables (no prerequisite validation)
+  --help, -h          Show this help message
+
+EXAMPLES:
+  # Check prerequisites (plan.md required)
+  ./check-prerequisites.sh --json
+  
+  # Check implementation prerequisites (plan.md required + included)
+  ./check-prerequisites.sh --json --require-plan --include-plan
+  
+  # Get feature paths only (no validation)
+  ./check-prerequisites.sh --paths-only
+  
+EOF
+            exit 0
+            ;;
+        *)
+            echo "ERROR: Unknown option '$arg'. Use --help for usage information." >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Source common functions
+SCRIPT_DIR="$(CDPATH="" cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ ! -f "$SCRIPT_DIR/common.sh" ]]; then
+    echo "ERROR: common.sh not found in $SCRIPT_DIR" >&2
+    exit 1
+fi
+source "$SCRIPT_DIR/common.sh"
+
+# Get task paths and validate branch
+eval $(get_task_paths)
+check_feature_branch "$CURRENT_BRANCH" "$HAS_GIT" || exit 1
+
+# If paths-only mode, output paths and exit (support JSON + paths-only combined)
+if $PATHS_ONLY; then
+    if $JSON_MODE; then
+        # Minimal JSON paths payload (no validation performed)
+        printf '{"REPO_ROOT":"%s","BRANCH":"%s","TASK_DIR":"%s","TASK_SPEC":"%s","IMPL_PLAN":"%s"}\n' \
+            "$REPO_ROOT" "$CURRENT_BRANCH" "$TASK_DIR" "$TASK_SPEC" "$IMPL_PLAN"
+    else
+        echo "REPO_ROOT: $REPO_ROOT"
+        echo "BRANCH: $CURRENT_BRANCH"
+        echo "TASK_DIR: $TASK_DIR"
+        echo "TASK_SPEC: $TASK_SPEC"
+        echo "IMPL_PLAN: $IMPL_PLAN"
+    fi
+    exit 0
+fi
+
+# Validate required directories and files
+if [[ ! -d "$TASK_DIR" ]]; then
+    echo "ERROR: Task directory not found: $TASK_DIR" >&2
+    echo "Run /teammate.align first to create the task structure." >&2
+    exit 1
+fi
+
+if [[ ! -f "$IMPL_PLAN" ]]; then
+    echo "ERROR: plan.md not found in $TASK_DIR" >&2
+    echo "Run /teammate.plan first to create the implementation plan." >&2
+    exit 1
+fi
+
+# Build list of available documents
+docs=()
+
+# Always check these optional docs
+[[ -f "$RESEARCH" ]] && docs+=("research.md")
+[[ -f "$DATA_MODEL" ]] && docs+=("data-model.md")
+
+# Check contracts directory (only if it exists and has files)
+if [[ -d "$CONTRACTS_DIR" ]] && [[ -n "$(ls -A "$CONTRACTS_DIR" 2>/dev/null)" ]]; then
+    docs+=("contracts/")
+fi
+
+[[ -f "$QUICKSTART" ]] && docs+=("quickstart.md")
+
+# Include plan.md if requested and it exists
+if $INCLUDE_PLAN && [[ -f "$IMPL_PLAN" ]]; then
+    docs+=("plan.md")
+fi
+
+# Output results
+if $JSON_MODE; then
+    # Build JSON array of documents
+    if [[ ${#docs[@]} -eq 0 ]]; then
+        json_docs="[]"
+    else
+        json_docs=$(printf '"%s",' "${docs[@]}")
+        json_docs="[${json_docs%,}]"
+    fi
+    
+    printf '{"TASK_DIR":"%s","AVAILABLE_DOCS":%s}\n' "$TASK_DIR" "$json_docs"
+else
+    # Text output
+    echo "TASK_DIR:$TASK_DIR"
+    echo "AVAILABLE_DOCS:"
+    
+    # Show status of each potential document
+    check_file "$RESEARCH" "research.md"
+    check_file "$DATA_MODEL" "data-model.md"
+    check_dir "$CONTRACTS_DIR" "contracts/"
+    check_file "$QUICKSTART" "quickstart.md"
+    
+    if $INCLUDE_PLAN; then
+        check_file "$IMPL_PLAN" "plan.md"
+    fi
+fi
