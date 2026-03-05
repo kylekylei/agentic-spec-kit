@@ -26,6 +26,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 ## [0.4.0] - 2026-03-05
 
 ### Added
+- **`teammate.yml` hub 設定** — 新增 `hub.url` 欄位，供 sync / migrate / helpme 參考框架來源
+- **`teammate-sync.sh` 改用 teammate.yml** — Hub 解析優先讀取 `hub.url`，無則 clone 至 `.teammate/hub-cache/teammate`；fallback 為 teammatesync_rule.mdc
 - **設計任務處理路徑（Design Mode）** — `teammate-rules.mdc` 新增設計任務條文，定義 `.pen` / Figma 設計稿變更為「設計文件更新」（與 `spec.md` 同級），允許設計稿修改先於 `spec.md`，完成後 MUST 補產 `contracts/ui/ui-spec.md`
 - **`teammate.align` Design Mode 分流** — 模式偵測新增 Design Mode：偵測 Pencil node IDs / `.pen` 路徑 / 設計關鍵字時，Impact Mapping 簡化為 Design Intent Mapping，產出 `contracts/ui/ui-spec.md`，Example Mapping 變為可選
 - **`[DESIGN]` action 類型** — `teammate.plan.md` 新增 `[DESIGN]` 類型（設計稿修改），MUST 排在同 story 的 `[UI]`/`[LOGIC]` actions 之前；階段結構新增 Phase 1: Design（無設計則跳過）；行動原則新增「設計先於程式」
@@ -40,6 +42,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 - **pencil commands 重組** — `frontend-design/pencil.tokens.bind.md` / `pencil.tokens.generate.md` 移至 `pencil/tokens.bind.md` / `tokens.generate.md`
 
 ### Changed
+- **migrate / healthcheck 改用 teammate.yml** — migrate.md Step 1 改為優先讀取 `hub.url`；healthcheck.md Pass 5 改為支援 `hub.url` 或 teammatesync_rule
 - **反饋閉環補強** — `teammate.plan.md` 載入額外脈絡新增條件必載：最近 2 個已完成任務的 `insights.md`（規劃階段可參考歷史教訓）；`teammate.execute.md` REFLECT 自檢清單新增第 6 點：Insight Graduation 判斷（3+ 次重複 → 建議畢業），顯式引用 `@teammate-reference`；`teammate.align.md` 基礎檢查後新增條件載入：最近 1 個已完成任務的 `insights.md`（UX/設計類教訓影響需求品質）
 - **REFLECT 迭代追蹤規則** — `teammate-rules.mdc` REFLECT 責任鏈新增第三條：已完成 action 因使用者回饋、設計審查或錯誤修正而再次修改時，MUST 在 `insights.md` 追加迭代紀錄；適用範圍不限 `/teammate.execute`。`teammate.execute.md` REFLECT Phase 同步追加迭代追蹤條目
 - **`teammate-designrule.mdc` 整合至 `.cursorule`** — Sync Rule 三項規範（框架檔案同步、版本追蹤、教訓回饋）併入 `.cursorule` 同步規範區段，刪除獨立 `teammate-designrule.mdc`（符合無冗餘原則：Rule 不重複存放相同約束）

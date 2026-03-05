@@ -62,25 +62,60 @@ Options:
 
 Environment:
   TEAMMATE_HOME    Path to Teammate repo (default: auto-detected from script location)
-                   Fallback: read from **Teammate Hub**: `...` in teammatesync_rule.mdc
+                   Fallback: read hub.url from .teammate/config/teammate.yml (clone to cache)
 EOF
+}
+
+# ── Read hub.url from teammate.yml ──
+read_hub_url_from_yml() {
+    local file="$1"
+    [[ -f "$file" ]] || return 1
+    sed -n '/^hub:/,/^[a-zA-Z#]/p' "$file" 2>/dev/null | grep 'url:' | sed -E 's/^[[:space:]]*url:[[:space:]]*["'\'']?([^"'\''[:space:]]+)["'\'']?.*/\1/' | head -1 | tr -d ' '
 }
 
 # ── Resolve TEAMMATE_HOME when called from a consumer project ──
 # When the script lives inside a consumer project's .teammate/scripts/bash/,
 # the auto-detected TEAMMATE_HOME points to the consumer project root (no dist/).
-# This function looks for the real Hub path in teammatesync_rule.mdc.
+# Resolution order: 1) teammate.yml hub.url (clone to cache) 2) teammatesync_rule.mdc
 resolve_teammate_home() {
     # If dist/ already exists at TEAMMATE_HOME, we're good
     [[ -d "$TEAMMATE_HOME/dist" ]] && return 0
 
-    # Try to read Hub path from teammatesync_rule.mdc in target or cwd
-    local candidates=(
+    # 1. Try teammate.yml hub.url first
+    local yml_candidates=(
+        "$TARGET_DIR/.teammate/config/teammate.yml"
+        "$(pwd)/.teammate/config/teammate.yml"
+    )
+    for yml in "${yml_candidates[@]}"; do
+        [[ -f "$yml" ]] || continue
+        local hub_url
+        hub_url=$(read_hub_url_from_yml "$yml")
+        if [[ -n "$hub_url" ]]; then
+            local cache_dir="$TARGET_DIR/.teammate/hub-cache/teammate"
+            if [[ -d "$cache_dir/dist" ]]; then
+                TEAMMATE_HOME="$cache_dir"
+                DIST_DIR="$TEAMMATE_HOME/dist"
+                warn "TEAMMATE_HOME resolved from teammate.yml hub.url (cached) → $TEAMMATE_HOME"
+                return 0
+            fi
+            info "Cloning Hub from $hub_url to $cache_dir..."
+            mkdir -p "$(dirname "$cache_dir")"
+            if git clone --depth 1 "$hub_url" "$cache_dir" 2>/dev/null; then
+                TEAMMATE_HOME="$cache_dir"
+                DIST_DIR="$TEAMMATE_HOME/dist"
+                warn "TEAMMATE_HOME resolved from teammate.yml hub.url (cloned) → $TEAMMATE_HOME"
+                return 0
+            fi
+            warn "Clone failed, trying fallback..."
+        fi
+    done
+
+    # 2. Fallback: teammatesync_rule.mdc (backward compatibility)
+    local rule_candidates=(
         "$TARGET_DIR/.cursor/rules/teammatesync_rule.mdc"
         "$(pwd)/.cursor/rules/teammatesync_rule.mdc"
     )
-
-    for rule_file in "${candidates[@]}"; do
+    for rule_file in "${rule_candidates[@]}"; do
         [[ -f "$rule_file" ]] || continue
         local hub_path
         hub_path=$(sed -n 's/.*\*\*Teammate Hub\*\*: `\([^`]*\)`.*/\1/p' "$rule_file" 2>/dev/null | head -1)
@@ -94,9 +129,10 @@ resolve_teammate_home() {
 
     err "dist/ not found at $TEAMMATE_HOME"
     err ""
-    err "If running from a consumer project, set the Hub path in one of:"
-    err "  1. .cursor/rules/teammatesync_rule.mdc  →  **Teammate Hub**: \`/path/to/Teammate\`"
-    err "  2. TEAMMATE_HOME env var                →  TEAMMATE_HOME=/path/to/Teammate ./teammate-sync.sh ."
+    err "If running from a consumer project, set the Hub in one of:"
+    err "  1. .teammate/config/teammate.yml  →  hub: { url: \"<git-url>\" }"
+    err "  2. .cursor/rules/teammatesync_rule.mdc  →  **Teammate Hub**: \`/path/to/Teammate\`"
+    err "  3. TEAMMATE_HOME env var                →  TEAMMATE_HOME=/path/to/Teammate ./teammate-sync.sh ."
     exit 1
 }
 
@@ -236,8 +272,12 @@ check_version() {
 
     # Fetch latest remote
     if [[ -z "$synced_remote_url" ]]; then
-        # Fall back to TEAMMATE_HOME's origin
         synced_remote_url=$(get_remote_url)
+    fi
+    if [[ -z "$synced_remote_url" ]]; then
+        # Fallback: hub.url from teammate.yml
+        local yml="$TARGET_DIR/.teammate/config/teammate.yml"
+        [[ -f "$yml" ]] && synced_remote_url=$(read_hub_url_from_yml "$yml")
     fi
 
     if [[ -z "$synced_remote_url" ]]; then

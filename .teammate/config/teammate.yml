@@ -1,6 +1,10 @@
 # Teammate Configuration
 version: "0.4.0"
 
+# Teammate Hub — 框架來源（供 sync / migrate / helpme 參考）
+hub:
+  url: "http://fw_git.phison.com/kyle_lei/teammate"
+
 # =============================================================================
 # LIFECYCLE PHASES
 # =============================================================================

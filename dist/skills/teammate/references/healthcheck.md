@@ -59,7 +59,7 @@ Status 定義：`OK` / `MISSING`（HIGH/CRITICAL）/ `NOT YET`（尚未到該階
 
 ## Pass 5: Hub Sync Status
 
-若 `teammatesync_rule.mdc` 存在，讀取 Hub 路徑，檢查：
+若 `teammate.yml` 有 `hub.url` 或 `teammatesync_rule.mdc` 存在，讀取 Hub 來源，檢查：
 - Hub 路徑是否可讀？
 - `teammate-rules.mdc` 與 Hub 版本是否一致？
 - `teammate.*.md` commands 與 Hub 版本是否一致？
