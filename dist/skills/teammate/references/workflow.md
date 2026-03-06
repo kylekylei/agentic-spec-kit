@@ -26,18 +26,13 @@ Init → Align → Plan → Execute → Review
 | `/teammate.execute` | Red-Green-Verify-Reflect-Dialogue 迴圈實作（含程式碼與設計稿修改） |
 | `/teammate.review` | 行為覆蓋率 + 需求品質 + 功能交付就緒度 |
 
-## 品質關卡（Review 之後）
-
-| 指令 | 用途 |
-|------|------|
-| `/teammate.audit` | 世界級產品體驗大師品質審計（安全 + 設計債 + 動態 A11y + 動態 AI 風險）|
-
 ## 幫助與工具（隨時可用 — 非主流程）
 
 | 指令 | 用途 |
 |------|------|
-| `/teammate.helpme` | 🧭 智慧導航 — 偵測專案狀態，推薦最適合的下一步 |
-| `/teammate.helpme healthcheck` | 工作流程健康診斷 |
-| `/teammate.helpme consult [問題]` | 流程問診 |
-| `/teammate.helpme migrate` | 版本遷移 |
-| `/teammate.helpme assign` | 將 actions 轉為 GitHub Issues |
+| `/teammate.sync` | 框架同步與版本遷移 |
+| `/teammate.skills` | Skills/Agents 管理（list/add/remove/sync/detect） |
+| `@teammate` | 🧭 智慧導航 — 偵測專案狀態，推薦最適合的下一步 |
+| `@teammate healthcheck` | 工作流程健康診斷 |
+| `@teammate consult [問題]` | 流程問診 |
+| `@design-auditor` | 設計品質審查（可被 review 委派或獨立觸發） |

@@ -218,7 +218,7 @@ foo=I("parentId", {
 ### Figma → Code 流程
 本規則專注於 `.pen` 檔案的操作。若需執行 Figma → Code 轉換流程，請參考：
 - **Figma 核心規則**: `.cursor/rules/figma-rules.mdc` — Figma 操作的核心原則與約束
-- **完整 Agent 流程**: `.cursor/commands/figma.to.code.md` — 完整 Figma → Code 智能體定義
+- **完整 Agent 流程**: 透過 `@designer` agent 載入 `figma` skill 執行 Figma → Code 流程
 - **自動化 Skills**: 
   - `.cursor/skills/code-connect-components/` — 建立 Figma 與 Code 的映射連結
   - `.cursor/skills/create-design-system-rules/` — 自動生成專案特定的設計規則
@@ -228,8 +228,8 @@ foo=I("parentId", {
 - Pencil MCP Server: `C:\Users\kyle_lei\.cursor\projects\d-Open-WebUI-open-webui\mcps\user-pencil`
 - Design Tokens 定義: `.teammate/design/pencil/design-tokens.pen`
 - 組件對應表: `tasks/*/contracts/ui/component-specs.md`
-- Token 生成工具: `.cursor/commands/pencil.tokens.generate.md`
-- Token 綁定工具: `.cursor/commands/pencil.tokens.bind.md`
+- Token 生成工具: `.cursor/skills/pencil/references/generate.md`
+- Token 綁定工具: `.cursor/skills/pencil/references/bind.md`
 
 ---
 

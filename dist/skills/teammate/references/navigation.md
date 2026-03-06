@@ -1,6 +1,6 @@
 ---
 name: teammate/references/navigation
-description: Teammate 智慧導航邏輯。偵測專案狀態（Foundation / 進度）、首次引導模式、進度偵測模式、輸出格式與核心規則。被 teammate.helpme command 與 teammate agent 共用。
+description: Teammate 智慧導航邏輯。偵測專案狀態（Foundation / 進度）、首次引導模式、進度偵測模式、輸出格式與核心規則。被 teammate agent 使用。
 ---
 
 # 智慧導航
@@ -68,7 +68,7 @@ description: Teammate 智慧導航邏輯。偵測專案狀態（Foundation / 進
 
 有注意事項時附上：
 ```markdown
-> 💡 小提醒：[問題描述]。可用 `/teammate.helpme healthcheck` 做完整健康檢查。
+> 💡 小提醒：[問題描述]。可用 `@teammate healthcheck` 做完整健康檢查。
 ```
 
 ## 核心規則

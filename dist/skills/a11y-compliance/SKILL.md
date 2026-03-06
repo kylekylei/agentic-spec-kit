@@ -34,7 +34,7 @@ This skill is loaded **conditionally** based on project characteristics.
 | `/teammate.plan` | Remind | Flag a11y requirements for UI components in Architecture section |
 | `/teammate.execute` | Guide | Load as Recommended context for `[UI]` and `[LOGIC+UI]` actions |
 | `/teammate.review` | Check | Verify a11y coverage in Pass D2 |
-| `/teammate.audit` | Judge | 世界級產品體驗大師執行 POUR 全面掃描 |
+| `/teammate.review` | Judge | 委派 design-auditor 執行 POUR 全面掃描 |
 
 ## Quick Decision Guide
 

@@ -97,6 +97,92 @@ Foundation Status:
    - 若檔案不存在或為 template：從 `.teammate/templates/principles-template.md` 複製
    - 填入推導出的原則
 
+### 步驟 2.5：智慧 Skills 選配
+
+根據專案特徵自動偵測所需 skills 和 agents，引導使用者確認。
+
+**階段 A — 自動偵測**（零互動）：
+
+讀取 `skill-registry.yml`，依各分類的 `detect` 規則掃描專案：
+
+- `package.json` → 比對 `detect.deps`（react, vue, svelte, next, tailwindcss, playwright...）
+- `go.mod` / `Cargo.toml` / `pyproject.toml` → 比對 `detect.files`
+- `tsconfig.json` → 啟用 `frontend_typescript`
+- `Dockerfile` / `docker-compose.yml` / `k8s/` → 啟用 `devops`
+- `.pen` 檔案 / README 含 `figma.com` → 啟用 `design`
+
+自動勾選所有匹配的 categories。
+
+**階段 B — 引導確認**（最多 3 題，使用 AskQuestion）：
+
+Q1: 專案類型確認（展示自動偵測結果）
+
+```
+已偵測: [React + Next.js + TypeScript]
+
+[A] 正確
+[B] 需要調整
+```
+
+Q2: 設計工具整合（僅在未自動偵測到時問）
+
+```
+[A] 有 Figma 設計稿要整合
+[B] 有 Pencil (.pen) 設計檔
+[C] 需要從零設計 UI
+[D] 不涉及設計工具整合
+```
+
+Q3: 額外能力（多選，僅列出未被自動偵測的）
+
+```
+[A] DevOps / Kubernetes
+[B] 辦公文件（Word/Excel/PPT/PDF）
+[C] 瀏覽器自動化測試
+[D] AI Agent 開發
+[E] 都不需要
+```
+
+**階段 C — 展示與確認**：
+
+```
+Skills 選配結果：
+
+Core (6): teammate, git-commit, code-review, ...
+Frontend Web (9): frontend-design, ui-ux-pro-max, ...
+React/Next.js (3): react-best-practices, ...
+
+Agents (3): teammate, designer, design-auditor
+
+Total: 25 skills + 3 agents | 確認? [Y/n]
+```
+
+**階段 D — 寫入 manifest**：
+
+產生 `.teammate/config/skills.yml`：
+
+```yaml
+version: 1
+auto_detected:
+  frontend_web: true
+  frontend_react: true
+  frontend_typescript: true
+user_selected:
+  design: true
+  devops: false
+selected_skills:
+  - teammate
+  - git-commit
+  - frontend-design
+  # ... 完整清單
+selected_agents:
+  - teammate
+  - designer
+```
+
+> 此步驟僅在 Init Mode 執行。Complete/Audit Mode 跳過。  
+> 事後管理 skills 請使用 `/teammate.skills` command。
+
 ### 步驟 3：環境建置
 
 依 Technical Context 設定專案基礎環境：

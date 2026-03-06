@@ -13,13 +13,61 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
-- (無)
+- **`skill-registry.yml`** — 統一 Skills 與 Agents 的分類元資料、自動偵測規則、依賴對照，供 `/teammate.init` 智慧選配與 `/teammate.skills` 管理使用
+- **`teammate.skills.md` 指令** — 新增 `/teammate.skills` 指令，支援 skill 安裝、更新、列舉，整合 `skill-registry.yml` 分類
+- **`teammate.sync.md` 指令** — 整合原 sync / migrate 流程，統一為單一同步指令
+- **`figma` skill** — 整併 `figma-implement-design`、`implement-design` 三個重疊 skill 為單一 `figma`，含完整 7 步 Figma-to-Code 流程；新增 `references/fidelity-adaptive.md`（HIGH-FI / MID-FI / LO-FI 自適應模式）
+- **`pencil` skill** — 由 `pencil-tokens` 改名，升級為 Pencil 設計工具整合主入口，保留 `references/generate.md`、`references/bind.md`
+- **`playwright` skill** — 新增 CLI-first Playwright 自動化 skill
+- **`playwright-interactive` skill** — 新增基於 `js_repl` 的互動式 Playwright / Electron 測試 skill
+- **`agent-orchestration` skill** — Agent 協調與 Multi-Agent 優化知識封裝為 skill
+- **`ai-review-pipeline` skill** — AI 審查流程封裝為 skill
+- **`c4-architecture` skill** — C4 模型架構設計封裝為 skill
+- **`component-scaffold` skill** — UI 元件建立 8 步引導流程封裝為 skill（原為 command）
+- **`design-system-setup` skill** — Design System 初始化流程封裝為 skill（原為 command）
+- **`designer` agent** — 設計全棧專家，整合 Figma / Pencil / Design System 操作
+- **`design-auditor` agent** — 設計品質審查專家，涵蓋 UX / a11y / 設計債 / AI 風險
+- **`architect` agent** — 系統架構專家（由 `code-architect` 簡化改名）
+- **`docs/ai-fundamental-act.md`** — 台灣 AI 基本法完整解析文件
 
 ### Changed
-- (無)
+- **Commands → Skills 遷移** — `pencil/tokens.generate.md`、`pencil/tokens.bind.md`、`ui-design/create-component.md`、`ui-design/design-system-setup.md`、`agent-orchestration/improve-agent.md`、`agent-orchestration/multi-agent-optimize.md`、`ai-review/ai-review.md`、`architecture/c4-architecture.md`、`commit.md` 均轉換為 Skills，Commands 回歸純 `teammate.*` 生命週期流程
+- **`teammate.audit.md` 移除** — 審計能力移至 `design-auditor` agent
+- **`teammate.helpme.md` 移除** — 功能整合至 `teammate.sync.md`
+- **`pencil-tokens` → `pencil`** — skill 改名，`designer.md`、`skill-registry.yml`、`pencil-rules.mdc` 引用同步更新
+- **`playwright-skill` 刪除** — 被 `playwright`（CLI-first）取代；`lib/helpers.js`、`run.js`、`API_REFERENCE.md` 不遷移（執行模型差異）
+- **`implement-design` / `figma-implement-design` 刪除** — 合併至 `figma` skill
+- **`figma.to.code.md` command 刪除** — 違反「僅 `teammate.*` 為 command」原則，核心邏輯保留至 `figma/references/fidelity-adaptive.md`
+- **`ai-compliance` 歸類** — 從 `devops` 類別移至 `design` 類別，與 `design-auditor` agent 並列
+- **`code-architect` → `architect`** — agent 改名簡化
+- **`pencil-dev` agent 移除** — Pencil 操作能力整合至 `designer` agent
+- **`ui-designer` agent 移除** — 功能合併至 `designer` agent
+- **`git-commit` skill 強化** — 整合 Conventional Commits 完整規範
+- **`teammate.init.md`** — 更新整合新的 skill-registry 選配流程
+- **`teammate.review.md`** — 更新整合設計審查路由
+- **`teammate-sync.sh`** — 新增 `dist/agents` 同步至三個平台支援
 
-### Documentation
-- (無)
+### Removed
+- `dist/commands/pencil/tokens.bind.md`
+- `dist/commands/pencil/tokens.generate.md`
+- `dist/commands/ui-design/create-component.md`
+- `dist/commands/ui-design/design-system-setup.md`
+- `dist/commands/ui-design/accessibility-audit.md`
+- `dist/commands/ui-design/design-review.md`
+- `dist/commands/agent-orchestration/improve-agent.md`
+- `dist/commands/agent-orchestration/multi-agent-optimize.md`
+- `dist/commands/ai-review/ai-review.md`
+- `dist/commands/architecture/c4-architecture.md`
+- `dist/commands/commit.md`
+- `dist/commands/teammate.audit.md`
+- `dist/commands/teammate.helpme.md`
+- `dist/skills/pencil-tokens/`
+- `dist/skills/playwright-skill/`
+- `dist/skills/implement-design/`
+- `dist/skills/figma-implement-design/`
+- `dist/agents/code-architect.md`
+- `dist/agents/pencil-dev.md`
+- `dist/agents/ui-designer.md`
 
 ---
 

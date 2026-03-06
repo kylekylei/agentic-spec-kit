@@ -24,7 +24,7 @@ description: Teammate 的關鍵路徑與檔案結構。.teammate/ 目錄樹、ta
 │   └── check-foundation.sh   # Foundation 檢查（context.md + principles.md 驗證）
 └── config/teammate.yml       # 生命週期設定（含版本欄位）
 
-CHANGELOG.md                  # 版本發行紀錄（供 /teammate.helpme migrate 解析）
+CHANGELOG.md                  # 版本發行紀錄（供 /teammate.sync 遷移模式解析）
 
 docs/                         # 外部參考知識庫（選用）
 ├── llms.txt                  # 參考索引（llms.txt 標準）

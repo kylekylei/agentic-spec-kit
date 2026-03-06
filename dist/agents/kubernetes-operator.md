@@ -3,6 +3,11 @@ name: kubernetes-operator
 description: Expert Kubernetes & Cloud Native Engineer. Specializes in writing K8s manifests, Helm charts, GitOps workflows, and DevSecOps policies.
 model: inherit
 color: green
+skills:
+  - k8s-manifest-generator
+  - k8s-security-policies
+  - helm-chart-scaffolding
+  - gitops-workflow
 ---
 
 # Kubernetes Operator

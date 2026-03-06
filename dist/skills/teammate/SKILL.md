@@ -17,6 +17,5 @@ description: Teammate 框架參考手冊路由表。依需求載入對應的 ref
 | Healthcheck 5 Pass 診斷 | `teammate/references/healthcheck` |
 | Consult 問診流程 | `teammate/references/consult` |
 | Migrate 版本遷移步驟 | `teammate/references/migrate` |
-| Assign GitHub Issues | `teammate/references/assign` |
 
 > 核心行為規則請見 `teammate-rules.mdc`。

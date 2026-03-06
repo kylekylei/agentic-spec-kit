@@ -1,11 +1,6 @@
 ---
-description: 執行行為覆蓋分析與功能就緒驗證，整合 review 與 checklist 為單一品質關卡。
+description: 唯一品質關卡 — 行為覆蓋分析、功能就緒驗證、程式碼品質、安全掃描、測試健全度。整合原 audit 永遠啟用維度，設計維度委派 design-auditor。
 handoffs:
-  - label: 建立 Issues
-    agent: teammate.helpme
-    prompt: assign — 將 actions 轉為 GitHub Issues
-    prompt: 將任務轉為 GitHub issues
-    send: true
   - label: 修補缺口
     agent: teammate.plan
     prompt: 更新計畫以處理 review 發現
@@ -164,51 +159,11 @@ Output a table:
 - 邊界條件是否定義？
 - 負向路徑是否指定？
 
-#### Compliance Coverage（動態，從 plan.md System Scope 讀取）
+#### Compliance Coverage（委派 design-auditor）
 
-**讀取 System Scope**：
+從 `plan.md` 讀取 System Scope 表格，當 Frontend/LLM/Mobile 標記為 ✅ 時，委派 `design-auditor` agent 執行設計合規檢查（A11y、AI Risk、Design System Compliance）。
 
-從 `plan.md` 讀取 System Scope 表格，根據標記啟用對應的合規檢查：
-
-```python
-# 偽代碼
-scope = parse_markdown_table("plan.md", "System Scope")
-
-enabled_checks = []
-
-if scope["Frontend"] == "✅":
-    enabled_checks.append("A11y")
-
-if scope["LLM"] == "✅":
-    enabled_checks.append("AI Risk")
-
-if scope["Mobile"] == "✅":
-    enabled_checks.append("Mobile A11y")
-```
-
-**A11y**（Frontend ✅ 時啟用）:
-- 所有互動 UI 元件是否有適當的 aria 屬性？
-- 鍵盤導航是否覆蓋所有功能？
-- 色彩對比是否達 WCAG 2.2 AA 標準？
-- 表單是否有錯誤提示與 `aria-invalid`？
-
-**AI Risk**（LLM ✅ 時啟用）:
-- AI 互動是否有首次揭露機制？
-- AI 生成內容是否有標示（可見 + 機器可讀）？
-- 同意流程是否具同等視覺顯著性？
-- 高風險決策是否有人類覆寫機制？
-
-**Mobile A11y**（Mobile ✅ 時啟用）:
-- 觸控目標是否 ≥ 44x44px？
-- 文字是否可縮放？
-- 螢幕閱讀器導航是否流暢？
-
-**為什麼從 plan.md 讀取而非重新掃描？**
-- ✅ 保證檢查範圍與實際實作一致（plan 時已偵測 + execute 時可能新增）
-- ✅ 避免重複掃描（效能）
-- ✅ 可追溯（System Scope 記錄何時新增哪些層級）
-
-> 此為初步檢查。完整對抗性審計請執行 `/teammate.audit`。
+若使用者專案未安裝 design 分類的 skills，跳過並在報告中標註「設計品質審查未啟用」。
 
 ## Pass E：追溯矩陣
 
@@ -291,7 +246,7 @@ if scope["Mobile"] == "✅":
 依發現結果：
 - CRITICAL：必須先解決才能繼續 → 建議 `/teammate.plan update`
 - HIGH：應處理以提升品質 → 建議具體修復
-- 僅 LOW/MEDIUM：可繼續 → 建議 `/teammate.helpme assign`
+- 僅 LOW/MEDIUM：可繼續 → commit → checkout main → merge
 
 ### 任務結束且無需修正時（務必執行）
 
@@ -306,45 +261,55 @@ if scope["Mobile"] == "✅":
 
 不代為執行 Git 指令（review 為唯讀）；僅提示流程：**Review 完成 → commit → checkout main → merge**。
 
-## Pass G: Design System Compliance（從 System Scope 讀取）
+## Pass G：目標對齊（永遠啟用）
 
-**讀取 System Scope**：
+| 檢查項 | 方法 |
+|--------|------|
+| 產品目標覆蓋 | `context.md` Business Goals 中的每個目標，是否有對應的實作？ |
+| 里程碑一致性 | `milestone.md` 的 Deliverables 與實際產出是否吻合？ |
+| 多餘實作 | 是否有不在目標或里程碑中的功能被實作？ |
 
-從 `plan.md` 讀取 System Scope 表格：
+## Pass H：安全掃描（永遠啟用）
 
-```python
-scope = parse_markdown_table("plan.md", "System Scope")
+| 檢查項 | 方法 |
+|--------|------|
+| SQL/NoSQL Injection | 搜尋直接字串拼接查詢 |
+| XSS | 搜尋 `dangerouslySetInnerHTML`、`innerHTML`、未轉義輸出 |
+| 硬編碼密鑰 | 搜尋 API key / token / secret 字串 |
+| 未驗證輸入 | 搜尋未經 sanitize 的使用者輸入直接使用 |
 
-if scope["Frontend"] == "✅":
-    執行 Design System 檢查
-else:
-    跳過此 Pass
-```
+## Pass I：程式碼品質（永遠啟用）
 
-若 Frontend ✅，執行以下檢查：
+| 檢查項 | 方法 |
+|--------|------|
+| 命名品質 | 搜尋單字母變數（非迴圈索引）、含糊命名（`data`、`temp`、`info`） |
+| 函式大小 | 偵測超過 30 行的函式、參數超過 3 個的函式 |
+| DRY 違規 | 搜尋相似邏輯片段、複製貼上痕跡 |
+| SRP 違規 | 偵測承擔過多職責的 class/module |
+| 錯誤處理 | 搜尋空 catch block、未處理的 Promise rejection |
+| 副作用 | 搜尋隱藏的全域狀態變更、非純函式的意外修改 |
+| 深層巢狀 | 偵測超過 3 層的條件巢狀 |
+| 循環依賴 | 偵測模組間的循環 import |
 
-#### Token 合規
-- 搜尋硬編碼顏色值（`#[0-9a-fA-F]{3,8}` 且非在 token 定義檔中）
-- 搜尋硬編碼間距值（`margin: Npx`、`padding: Npx` 等非 token 值）
-- 統計 Token 覆蓋率：使用 design token 的樣式 vs 硬編碼值
+## Pass J：測試健全度（永遠啟用）
 
-#### 視覺一致性
-- 偵測非 Token 樣式（原生 px 值、inline style）
-- 品牌調性一致性（字體、圓角、陰影是否使用統一 token）
+| 檢查項 | 方法 |
+|--------|------|
+| 新程式碼覆蓋 | 新增/修改的程式碼是否有對應測試？ |
+| 行為 vs 實作 | 測試是否驗證行為（what）而非實作（how）？ |
+| 邊界案例 | 關鍵邏輯是否有邊界條件測試？ |
+| Flaky 模式 | 搜尋 `setTimeout` in test、未 await 的非同步、依賴執行順序 |
+| Mock 過度 | 是否 mock 了被測對象本身的行為？ |
 
-#### 輸出
+## Pass K：設計品質（委派 design-auditor）
 
-```markdown
-### Design System Compliance
+從 `plan.md` 讀取 System Scope 表格。當 Frontend/LLM/Mobile 標記為 ✅ 時：
 
-| 檢查項 | 狀態 | 數量 |
-|--------|------|------|
-| 硬編碼顏色值 | [PASS/FAIL] | [N] |
-| 硬編碼間距值 | [PASS/FAIL] | [N] |
-| Token 覆蓋率 | [%] | — |
-```
+1. 委派 `design-auditor` agent 執行設計維度審查
+2. design-auditor 回傳結構化報告（UX、A11y、設計債務、AI 風險、Design System Compliance）
+3. 將結果整合進最終 review 報告
 
-> 完整 Design Debt 審計請執行 `/teammate.audit design-debt`。
+若使用者專案未安裝 design 分類的 skills（`.teammate/config/skills.yml` 中無 design），跳過並在報告中標註「設計品質審查未啟用（未安裝設計 skills）」。
 
 ## Update Progress
 

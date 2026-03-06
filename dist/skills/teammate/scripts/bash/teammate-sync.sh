@@ -352,6 +352,109 @@ sync_dir() {
     log "$label: $count files synced"
 }
 
+# ── Selective sync: skills ──
+sync_skills_selective() {
+    local dest="$1/skills"
+    local manifest="$TARGET_DIR/.teammate/config/skills.yml"
+
+    if [[ ! -f "$manifest" ]]; then
+        sync_dir "$DIST_DIR/skills" "$dest" "skills"
+        return
+    fi
+
+    if $DRY_RUN; then
+        dry "skills (selective from skills.yml):"
+    else
+        mkdir -p "$dest"
+    fi
+
+    local skills
+    skills=$(grep '^\s*- ' "$manifest" | sed 's/^\s*- //' | sort -u)
+    local count=0
+
+    while IFS= read -r skill; do
+        [[ -z "$skill" ]] && continue
+        local src="$DIST_DIR/skills/$skill"
+        if [[ -d "$src" ]]; then
+            if $DRY_RUN; then
+                dry "  $skill/"
+            else
+                rsync -a --delete "$src/" "$dest/$skill/"
+            fi
+            ((count++))
+        fi
+    done <<< "$skills"
+
+    # Also always sync skill-registry.yml
+    if [[ -f "$DIST_DIR/skills/skill-registry.yml" ]]; then
+        if $DRY_RUN; then
+            dry "  skill-registry.yml"
+        else
+            cp "$DIST_DIR/skills/skill-registry.yml" "$dest/skill-registry.yml"
+        fi
+    fi
+
+    if ! $DRY_RUN; then
+        # Clean up skills not in manifest
+        for dir in "$dest"/*/; do
+            [[ -d "$dir" ]] || continue
+            local name
+            name=$(basename "$dir")
+            if ! echo "$skills" | grep -qx "$name"; then
+                rm -rf "$dir"
+            fi
+        done
+        log "skills: $count selected skills synced (selective)"
+    fi
+}
+
+# ── Selective sync: agents ──
+sync_agents_selective() {
+    local dest="$1/agents"
+    local manifest="$TARGET_DIR/.teammate/config/skills.yml"
+
+    if [[ ! -f "$manifest" ]]; then
+        sync_dir "$DIST_DIR/agents" "$dest" "agents"
+        return
+    fi
+
+    if $DRY_RUN; then
+        dry "agents (selective from skills.yml):"
+    else
+        mkdir -p "$dest"
+    fi
+
+    local agents
+    agents=$(sed -n '/^selected_agents:/,/^[a-z]/p' "$manifest" | grep '^\s*- ' | sed 's/^\s*- //' | sort -u)
+    local count=0
+
+    while IFS= read -r agent; do
+        [[ -z "$agent" ]] && continue
+        local src="$DIST_DIR/agents/${agent}.md"
+        if [[ -f "$src" ]]; then
+            if $DRY_RUN; then
+                dry "  ${agent}.md"
+            else
+                cp "$src" "$dest/${agent}.md"
+            fi
+            ((count++))
+        fi
+    done <<< "$agents"
+
+    if ! $DRY_RUN; then
+        # Clean up agents not in manifest
+        for f in "$dest"/*.md; do
+            [[ -f "$f" ]] || continue
+            local name
+            name=$(basename "$f" .md)
+            if ! echo "$agents" | grep -qx "$name"; then
+                rm -f "$f"
+            fi
+        done
+        log "agents: $count selected agents synced (selective)"
+    fi
+}
+
 # ── Cursor sync ──
 sync_cursor() {
     local dest="$TARGET_DIR/.cursor"
@@ -360,8 +463,8 @@ sync_cursor() {
 
     sync_dir "$DIST_DIR/commands" "$dest/commands" "commands"
     sync_dir "$DIST_DIR/rules"    "$dest/rules"    "rules"
-    sync_dir "$DIST_DIR/skills"   "$dest/skills"   "skills"
-    sync_dir "$DIST_DIR/agents"   "$dest/agents"   "agents"
+    sync_skills_selective "$dest"
+    sync_agents_selective "$dest"
 
     write_version "$dest"
 }
@@ -712,8 +815,8 @@ sync_claude() {
 
     sync_claude_commands
     sync_claude_rules
-    sync_dir "$DIST_DIR/skills" "$dest/skills" "skills"
-    sync_dir "$DIST_DIR/agents" "$dest/agents" "agents"
+    sync_skills_selective "$dest"
+    sync_agents_selective "$dest"
 
     write_version "$dest"
 }
@@ -726,8 +829,8 @@ sync_antigravity() {
 
     sync_antigravity_workflows
     sync_antigravity_rules
-    sync_dir "$DIST_DIR/skills" "$dest/skills" "skills"
-    sync_dir "$DIST_DIR/agents" "$dest/agents" "agents"
+    sync_skills_selective "$dest"
+    sync_agents_selective "$dest"
 
     write_version "$dest"
 }

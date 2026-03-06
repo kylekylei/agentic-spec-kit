@@ -1,0 +1,193 @@
+# Teammate Skill Registry
+# 所有 skills 和 agents 的分類元資料、自動偵測規則、依賴對照。
+# 用於 /teammate.init 智慧選配和 /teammate.skills 管理。
+
+version: 1
+
+categories:
+  core:
+    label: "核心（所有專案必裝）"
+    always_install: true
+    skills:
+      - teammate
+      - git-commit
+      - code-review
+      - code-refactoring
+      - code-documentation
+      - skill-creator
+    agents:
+      - name: teammate
+        description: "AI 開發隊友 — 導航、診斷、問診、框架同步"
+        skills: [teammate]
+
+  frontend_web:
+    label: "前端 Web"
+    detect:
+      files: [package.json]
+      deps: [react, vue, svelte, angular, next, nuxt]
+    skills:
+      - frontend-design
+      - ui-ux-pro-max
+      - responsive-design
+      - interaction-design
+      - visual-design-foundations
+      - a11y-compliance
+      - web-component-design
+      - design-system-patterns
+      - webapp-testing
+
+  frontend_react:
+    label: "React / Next.js"
+    parent: frontend_web
+    detect:
+      deps: [react, next]
+    skills:
+      - react-best-practices
+      - react-state-management
+      - nextjs-app-router-patterns
+
+  frontend_svelte:
+    label: "Svelte"
+    parent: frontend_web
+    detect:
+      deps: [svelte, "@sveltejs/kit"]
+    skills:
+      - svelte
+
+  frontend_tailwind:
+    label: "Tailwind CSS"
+    parent: frontend_web
+    detect:
+      deps: [tailwindcss]
+    skills:
+      - tailwind-design-system
+
+  frontend_typescript:
+    label: "TypeScript 進階"
+    detect:
+      files: [tsconfig.json]
+    skills:
+      - typescript-advanced-types
+
+  mobile:
+    label: "行動端 App"
+    detect:
+      deps: [react-native, expo]
+    skills:
+      - react-native-architecture
+      - react-native-design
+
+  design:
+    label: "設計工具整合"
+    detect:
+      files: ["*.pen"]
+      patterns: ["figma.com"]
+    question: "你的專案需要設計工具整合嗎？"
+    skills:
+      - figma
+      - code-connect-components
+      - create-design-system-rules
+      - canvas-design
+      - brand-guidelines
+      - theme-factory
+      - component-scaffold
+      - design-system-setup
+      - pencil
+      - ai-compliance
+    agents:
+      - name: designer
+        description: "設計全棧專家 — 設計系統、UI 元件、Pencil/Figma 操作"
+        skills:
+          - figma
+          - create-design-system-rules
+          - code-connect-components
+          - pencil
+          - ui-ux-pro-max
+          - a11y-compliance
+          - design-system-patterns
+          - visual-design-foundations
+          - component-scaffold
+          - design-system-setup
+          - interaction-design
+          - frontend-design
+      - name: design-auditor
+        description: "設計品質審查 — UX/a11y/設計債/AI風險/Design System"
+        skills:
+          - ui-ux-pro-max
+          - a11y-compliance
+          - visual-design-foundations
+          - interaction-design
+          - responsive-design
+          - web-component-design
+          - frontend-design
+          - ai-compliance
+          - design-system-patterns
+
+  backend:
+    label: "後端 API / 微服務"
+    detect:
+      files: [go.mod, Cargo.toml, pyproject.toml, requirements.txt]
+      deps: [express, fastify, nestjs, django, flask, fastapi]
+    skills:
+      - backend-development
+      - postgresql
+      - mcp-builder
+      - claude-api
+      - c4-architecture
+    agents:
+      - name: architect
+        description: "系統架構專家 — C4 模型、資料庫設計、系統架構"
+        skills: [c4-architecture]
+
+  devops:
+    label: "DevOps / Kubernetes"
+    detect:
+      files: [Dockerfile, docker-compose.yml, "k8s/", "helm/"]
+    skills:
+      - k8s-manifest-generator
+      - k8s-security-policies
+      - helm-chart-scaffolding
+      - gitops-workflow
+    agents:
+      - name: kubernetes-operator
+        description: "K8s/Cloud Native 專家 — manifests、Helm、GitOps、DevSecOps"
+        skills:
+          - k8s-manifest-generator
+          - k8s-security-policies
+          - helm-chart-scaffolding
+          - gitops-workflow
+
+  documents:
+    label: "辦公文件"
+    question: "你需要處理辦公文件嗎？"
+    skills:
+      - docx
+      - xlsx
+      - pptx
+      - pdf
+      - doc-coauthoring
+      - internal-comms
+
+  testing:
+    label: "瀏覽器自動化測試"
+    detect:
+      deps: [playwright, "@playwright/test"]
+    skills:
+      - playwright
+      - agent-browser
+      - web-artifacts-builder
+
+  agent_dev:
+    label: "AI/Agent 開發"
+    question: "你需要 AI Agent 開發或審查能力嗎？"
+    skills:
+      - algorithmic-art
+      - agent-orchestration
+      - ai-review-pipeline
+    agents:
+      - name: agent-orchestrator
+        description: "Multi-Agent 協調與優化專家"
+        skills: [agent-orchestration]
+      - name: ai-reviewer
+        description: "程式碼審查專家 — 安全、效能、架構、最佳實踐"
+        skills: [code-review, a11y-compliance, ai-review-pipeline]

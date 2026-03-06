@@ -27,7 +27,7 @@ alwaysApply: false
 ## 執行流程
 
 ### 完整 Figma → Code 轉換
-使用 **Command**: `.cursor/commands/figma.to.code.md` 觸發完整智能體流程（Phase 0-4）
+透過 `@designer` agent 載入 `figma` skill 觸發完整智能體流程
 
 **觸發時機**：
 - 使用者提供 Figma URL 並要求實作
@@ -72,7 +72,7 @@ alwaysApply: false
 
 | 檔案 | 職責 |
 |------|------|
-| `.cursor/commands/figma.to.code.md` | 完整 Figma → Code Agent 執行流程 |
+| `@designer` + `figma` skill | 完整 Figma → Code Agent 執行流程 |
 | `.cursor/rules/pencil-rules.mdc` | Pencil `.pen` 檔案操作規則 |
 | `.cursor/rules/figma-design-system.mdc` | 專案特定規則（Skill 自動生成） |
 
