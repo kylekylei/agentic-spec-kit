@@ -13,6 +13,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
+- (無)
+
+### Changed
+- (無)
+
+### Documentation
+- (無)
+
+---
+
+## [0.5.0] - 2026-03-06
+
+### Added
 - **`skill-registry.yml`** — 統一 Skills 與 Agents 的分類元資料、自動偵測規則、依賴對照，供 `/teammate.init` 智慧選配與 `/teammate.skills` 管理使用
 - **`teammate.skills.md` 指令** — 新增 `/teammate.skills` 指令，支援 skill 安裝、更新、列舉，整合 `skill-registry.yml` 分類
 - **`teammate.sync.md` 指令** — 整合原 sync / migrate 流程，統一為單一同步指令

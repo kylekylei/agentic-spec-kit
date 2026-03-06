@@ -1,5 +1,5 @@
 # Teammate Configuration
-version: "0.4.0"
+version: "0.5.0"
 
 # Teammate Hub — 框架來源（供 sync / migrate / helpme 參考）
 hub:
