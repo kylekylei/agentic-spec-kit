@@ -13,7 +13,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
-- (無)
+- **`commands`** — `commit.md` 新增 Step 7：依 commit type 自動更新 CHANGELOG `[Unreleased]`（feat/fix/refactor/docs 寫入，chore 略過）；恢復 `release.md`（PowerShell 相容版本，改用 `git commit -F`）
 
 ### Changed
 - (無)
