@@ -76,7 +76,34 @@ EOF
 
 4. 執行 `git status` 確認 commit 成功
 
-### Step 7: Report
+### Step 7: Update CHANGELOG
+
+Commit 成功後，自動更新 `CHANGELOG.md` 的 `[Unreleased]` 區段：
+
+**分類規則**（依 commit type）：
+
+| Commit Type | CHANGELOG 區段 |
+|-------------|---------------|
+| `feat` | `### Added` |
+| `fix` | `### Changed` |
+| `refactor` / `perf` | `### Changed` |
+| `docs` | `### Documentation` |
+| `chore` / `style` / `test` / `build` / `ci` | 略過（不寫入） |
+| `feat!` / Breaking Change | `### Changed`（加 **BREAKING** 標注） |
+
+**寫入格式**：
+```
+- **`<scope>`** — <commit description 的人類易讀版本>
+```
+
+若 scope 不存在，直接寫描述。若 `[Unreleased]` 對應區段目前為 `(無)`，替換該行；否則 append 到區段底部。
+
+**略過條件**（不更新 CHANGELOG）：
+- commit type 為 `chore` / `style` / `test` / `build` / `ci`
+- commit message 包含 `[skip changelog]`
+- 變更僅涉及 `.git/`、`node_modules/`、`*.lock` 等非產品檔案
+
+### Step 8: Report
 
 輸出 commit 結果摘要：
 
@@ -86,6 +113,7 @@ EOF
 **Hash**: [short hash]
 **Message**: [commit message first line]
 **Files**: [N files changed]
+**CHANGELOG**: [已更新 [Unreleased] / 略過（chore）]
 ```
 
 ## Key Rules
@@ -95,3 +123,4 @@ EOF
 - **不 commit 敏感檔案** — `.env`、credentials、API keys 等永遠排除，若偵測到則警告
 - **不 push** — 只做 commit，不自動 push（除非使用者明確要求）
 - **拆分建議** — 變更跨多個不相關 concern 時，建議拆分而非合併為一個大 commit
+- **CHANGELOG 自動維護** — `feat` / `fix` / `refactor` / `docs` 類型的 commit 自動寫入 `[Unreleased]`；`chore` 等維護性 commit 略過
