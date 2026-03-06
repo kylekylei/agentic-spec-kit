@@ -19,7 +19,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 - (無)
 
 ### Documentation
-- (無)
+- **`readme`** — 安裝來源從 GitHub 改為 GitLab（`fw_git.phison.com`），GitLab 為正式發布管道
+- **`readme`** — 移除 `docs/` 結構區塊與備註（docs/ 已加入 .gitignore）；移除 License 區段
 
 ---
 
