@@ -36,7 +36,7 @@ $ARGUMENTS
 
 ## 階段 1：偵測與報告
 
-執行 `.teammate/scripts/bash/check-foundation.sh` 並解析 JSON，報告目前狀態：
+執行 `skills/teammate/scripts/bash/check-foundation.sh`並解析 JSON，報告目前狀態：
 
 ```
 Foundation Status:
@@ -152,7 +152,7 @@ Core (6): teammate, git-commit, code-review, ...
 Frontend Web (9): frontend-design, ui-ux-pro-max, ...
 React/Next.js (3): react-best-practices, ...
 
-Agents (3): teammate, designer, design-auditor
+Agents (4): teammate, designer, design-auditor, architect
 
 Total: 25 skills + 3 agents | 確認? [Y/n]
 ```

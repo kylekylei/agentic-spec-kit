@@ -63,7 +63,7 @@ $ARGUMENTS
 
 ### 階段 0：基礎檢查
 
-執行 `.teammate/scripts/bash/check-foundation.sh` 並解析 JSON：
+執行 `skills/teammate/scripts/bash/check-foundation.sh`並解析 JSON：
 - `context` 或 `principles` 非 `complete` → **ERROR**: "Run `/teammate.init` first."
 - 兩者皆 `complete` → 載入 `context.md`（WHO/WHY/技術約束）與 `principles.md`（行為邊界）
 
@@ -78,7 +78,7 @@ $ARGUMENTS
 2. **檢查既有分支編號**：
    - 掃描遠端（`git fetch --all --prune` + `git ls-remote`）、本地分支、`tasks/` 目錄
    - 新分支使用 N+1 編號
-   - 執行 `.teammate/scripts/bash/create-new-task.sh --json "$ARGUMENTS"`
+   - 執行 `skills/teammate/scripts/bash/create-new-task.sh --json "$ARGUMENTS"`
    - 參數含單引號時使用 escape 語法：`'I'\''m Groot'`
 
 ### 階段 2：Impact Mapping

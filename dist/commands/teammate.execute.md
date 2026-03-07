@@ -46,7 +46,7 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
 
 ### 執行步驟
 
-1. **Setup**：從 repo 根目錄執行 `.teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan` 並解析 `TASK_DIR`、`AVAILABLE_DOCS`。
+1. **Setup**：從 repo 根目錄執行 `skills/teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan`並解析 `TASK_DIR`、`AVAILABLE_DOCS`。
    - 參數含單引號時使用 escape 語法：`'I'\''m Groot'`
 
 2. **檢查清單狀態**（若 `TASK_DIR/checklists/` 存在）：掃描所有 checklist 檔案，統計完成/未完成。若有未完成 → 暫停詢問；全部完成 → 自動繼續。

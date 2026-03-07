@@ -31,7 +31,7 @@ $ARGUMENTS
 
 ### 階段 0：基礎檢查
 
-執行 `.teammate/scripts/bash/check-foundation.sh` 並解析 JSON：
+執行 `skills/teammate/scripts/bash/check-foundation.sh`並解析 JSON：
 - `context` 或 `principles` 非 `complete` → **ERROR**：「請先執行 `/teammate.init`。」
 - 兩者皆 `complete` → 載入作為工作脈絡
 
@@ -53,7 +53,7 @@ $ARGUMENTS
 
 ### 設定
 
-1. 執行 `.teammate/scripts/bash/check-prerequisites.sh --json --paths-only`，取得 `TASK_DIR`、`TASK_SPEC`
+1. 執行 `skills/teammate/scripts/bash/check-prerequisites.sh --json --paths-only`，取得 `TASK_DIR`、`TASK_SPEC`
 2. **載入脈絡**：
    - Required：`spec.md`、`example-mapping.md`、`principles.md`
    - Optional：`feature-template.feature`、`contracts/ui/design-principles.md`
