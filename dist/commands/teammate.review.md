@@ -1,5 +1,5 @@
 ---
-description: 唯一品質關卡 — 行為覆蓋分析、功能就緒驗證、程式碼品質、安全掃描、測試健全度。整合原 audit 永遠啟用維度，設計維度委派 design-auditor。
+description: 唯一品質關卡 — 行為覆蓋分析、功能就緒驗證、程式碼品質、安全掃描、測試健全度。設計維度委派 design-auditor，程式碼深度審查委派 code-auditor。
 handoffs:
   - label: 修補缺口
     agent: teammate.plan
@@ -40,7 +40,7 @@ $ARGUMENTS
 
 ### 設定
 
-從 repo root 執行 `.teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan` 並解析：
+從 repo root 執行 `skills/teammate/scripts/bash/check-prerequisites.sh --json --require-plan --include-plan`並解析：
 - `TASK_DIR`、`AVAILABLE_DOCS`
 
 推導路徑：
@@ -310,6 +310,16 @@ Output a table:
 3. 將結果整合進最終 review 報告
 
 若使用者專案未安裝 design 分類的 skills（`.teammate/config/skills.yml` 中無 design），跳過並在報告中標註「設計品質審查未啟用（未安裝設計 skills）」。
+
+## Pass L：程式碼深度審查（委派 code-auditor）
+
+委派 `code-auditor` agent 對 Pass H/I/J 進行深度補強審查：
+
+1. 委派 `code-auditor` agent 執行多維度程式碼審查（安全漏洞、效能瓶頸、架構合規、程式碼品質、測試健全度）
+2. code-auditor 載入 `code-review`、`ai-review-pipeline`、`code-refactoring` skills 進行深度分析
+3. code-auditor 回傳結構化報告，將結果整合進最終 review 報告
+
+若使用者專案未安裝 code-auditor 相關 skills，跳過並在報告中標註「程式碼深度審查未啟用（未安裝 code-auditor skills）」。Pass H/I/J 的基礎檢查仍正常執行。
 
 ## Update Progress
 

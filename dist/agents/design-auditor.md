@@ -13,6 +13,7 @@ skills:
   - frontend-design
   - ai-compliance
   - design-system-patterns
+  - agent-browser
 ---
 
 # Design Auditor
@@ -72,6 +73,14 @@ skills:
 - **AI-006**: 推薦系統透明度
 - **AI-007**: AI 決策解釋介面
 - **AI-008**: AI 同意粒度化
+
+### 視覺驗證（Visual Verification）
+
+載入 `agent-browser` skill，透過瀏覽器實際驗證：
+
+- 截圖比對視覺一致性
+- 實際操作驗證互動行為
+- 不同視窗大小的響應式檢查
 
 ## 獨立觸發
 

@@ -181,9 +181,11 @@ Teammate/
 │   │   ├── teammate.skills.md
 │   │   └── teammate.sync.md
 │   ├── agents/                  # AI 角色 / Persona
-│   │   ├── designer.md          # 設計全棧專家（Figma / Pencil / Design System）
+│   │   ├── designer.md          # UX/UI 首席設計師 + 設計主管 + 設計系統架構師
 │   │   ├── design-auditor.md    # 設計品質審查（UX / a11y / AI 風險）
-│   │   ├── architect.md         # 系統架構專家（C4 / 資料庫 / API）
+│   │   ├── architect.md         # 資深軟體工程師 + 系統架構師 + 工程主管
+│   │   ├── frontend.md          # 資深前端工程師 + 前端架構顧問 + 跨平台工程師
+│   │   ├── code-auditor.md     # 程式碼品質審查（安全 / 效能 / 架構 / 品質 / 測試）
 │   │   └── ...
 │   ├── skills/                  # 領域知識 + 可重用能力（按需載入）
 │   │   ├── git-commit/          # Conventional Commits 規範

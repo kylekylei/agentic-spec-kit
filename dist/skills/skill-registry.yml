@@ -35,6 +35,21 @@ categories:
       - web-component-design
       - design-system-patterns
       - webapp-testing
+    agents:
+      - name: frontend
+        description: "資深前端工程師 + 前端架構顧問 + 跨平台工程師"
+        skills:
+          - react-best-practices
+          - react-state-management
+          - nextjs-app-router-patterns
+          - svelte
+          - react-native-architecture
+          - react-native-design
+          - web-component-design
+          - typescript-advanced-types
+          - webapp-testing
+          - playwright
+          - code-refactoring
 
   frontend_react:
     label: "React / Next.js"
@@ -96,20 +111,27 @@ categories:
       - ai-compliance
     agents:
       - name: designer
-        description: "設計全棧專家 — 設計系統、UI 元件、Pencil/Figma 操作"
+        description: "UX/UI 首席設計師 + 設計主管 + 設計系統架構師"
         skills:
+          - ui-ux-pro-max
+          - a11y-compliance
+          - interaction-design
+          - responsive-design
+          - ai-compliance
+          - visual-design-foundations
+          - frontend-design
+          - brand-guidelines
+          - canvas-design
+          - theme-factory
+          - design-system-patterns
+          - design-system-setup
+          - tailwind-design-system
+          - web-component-design
+          - component-scaffold
           - figma
           - create-design-system-rules
           - code-connect-components
           - pencil
-          - ui-ux-pro-max
-          - a11y-compliance
-          - design-system-patterns
-          - visual-design-foundations
-          - component-scaffold
-          - design-system-setup
-          - interaction-design
-          - frontend-design
       - name: design-auditor
         description: "設計品質審查 — UX/a11y/設計債/AI風險/Design System"
         skills:
@@ -122,6 +144,7 @@ categories:
           - frontend-design
           - ai-compliance
           - design-system-patterns
+          - agent-browser
 
   backend:
     label: "後端 API / 微服務"
@@ -136,8 +159,16 @@ categories:
       - c4-architecture
     agents:
       - name: architect
-        description: "系統架構專家 — C4 模型、資料庫設計、系統架構"
-        skills: [c4-architecture]
+        description: "資深軟體工程師 + 系統架構師 + 工程主管"
+        skills:
+          - c4-architecture
+          - backend-development
+          - postgresql
+          - mcp-builder
+          - claude-api
+          - code-refactoring
+          - code-documentation
+          - typescript-advanced-types
 
   devops:
     label: "DevOps / Kubernetes"
@@ -149,7 +180,7 @@ categories:
       - helm-chart-scaffolding
       - gitops-workflow
     agents:
-      - name: kubernetes-operator
+      - name: kubernetes
         description: "K8s/Cloud Native 專家 — manifests、Helm、GitOps、DevSecOps"
         skills:
           - k8s-manifest-generator
@@ -185,9 +216,6 @@ categories:
       - agent-orchestration
       - ai-review-pipeline
     agents:
-      - name: agent-orchestrator
-        description: "Multi-Agent 協調與優化專家"
-        skills: [agent-orchestration]
-      - name: ai-reviewer
-        description: "程式碼審查專家 — 安全、效能、架構、最佳實踐"
-        skills: [code-review, a11y-compliance, ai-review-pipeline]
+      - name: code-auditor
+        description: "程式碼品質審查專家 — 安全漏洞、效能瓶頸、架構合規、程式碼品質、測試健全度"
+        skills: [code-review, ai-review-pipeline, code-refactoring, playwright]

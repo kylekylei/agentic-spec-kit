@@ -13,13 +13,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
-- (無)
+- **`frontend` agent** — 新增資深前端工程師 + 前端架構顧問 + 跨平台工程師角色；涵蓋 Web 框架（React / Next.js / Svelte）、跨平台（React Native / Expo）、工程品質三大維度；掛載 10 個 skills，填補 `frontend_web` / `frontend_react` / `frontend_svelte` / `mobile` 四個 registry 分類長期無 agent 路由的缺口
 
 ### Changed
-- (無)
+- **`designer` agent 重構** — 角色從「設計全棧專家」升級為「UX/UI 首席設計師 + 設計主管 + 設計系統架構師」三合一角色；新增 7 個 skills（`responsive-design`、`web-component-design`、`tailwind-design-system`、`canvas-design`、`brand-guidelines`、`theme-factory`、`ai-compliance`）；能力路由表從工具導向重構為設計思維導向（UX 策略 / 視覺設計 / 設計系統 / 工具整合四大維度）
+- **`ai-reviewer` → `code-auditor` 改名 + 強化** — 改名為 `code-auditor` 與 `design-auditor` 形成對稱命名；從 29 行精簡版升級為完整程式碼審查專家；新增 5 大審查維度（安全漏洞、效能瓶頸、架構合規、程式碼品質、測試健全度）含嚴重度分級；新增獨立觸發模式、委派模式、結構化輸出格式；skills 調整為 `code-review`、`ai-review-pipeline`、`code-refactoring`
+- **`architect` agent 強化** — 角色從「系統架構專家」升級為「資深軟體工程師 + 系統架構師 + 工程主管」三合一角色；skills 從 1 個（`c4-architecture`）擴充至 8 個；新增系統架構（`backend-development`、`postgresql`、`mcp-builder`、`claude-api`）與工程品質（`code-refactoring`、`code-documentation`、`typescript-advanced-types`）兩大維度的能力路由
+- **`teammate.review.md`** — 新增 Pass L：程式碼深度審查（委派 `code-auditor`），與 Pass K（委派 `design-auditor`）形成對稱的雙委派架構
+- **測試驗證能力分配** — `playwright` 加入 `frontend`（寫測試）與 `code-auditor`（跑測試驗證）；`agent-browser` 加入 `design-auditor`（瀏覽器截圖視覺驗證）
+- **`kubernetes-operator` → `kubernetes` 簡化命名** — agent 檔案改名，所有引用同步更新
+- **`skill-registry.yml`** — designer / architect / code-auditor / frontend / kubernetes agent 描述與 skills 列表同步更新
+
+### Removed
+- **`dist/agents/ai-reviewer.md`** — 改名為 `code-auditor.md`
+- **`dist/agents/kubernetes-operator.md`** — 簡化為 `kubernetes.md`
+- **`dist/agents/agent-orchestrator.md`** — 移除（不實用）；`agent-orchestration` skill 仍保留於 `agent_dev` 分類供按需載入
 
 ### Documentation
-- (無)
+- **`readme`** — designer / architect / frontend / code-auditor agent 描述同步更新
 
 ---
 

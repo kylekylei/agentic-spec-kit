@@ -33,8 +33,8 @@ $ARGUMENTS
   React (3):    react-best-practices, ...
   Design (6):   figma, ...
 
-已安裝 Agents (4/7):
-  teammate, designer, design-auditor, architect
+已安裝 Agents (5/7):
+  teammate, designer, design-auditor, architect, code-auditor
 
 未安裝的分類:
   - DevOps (5 skills, 1 agent): k8s-manifest-generator, ...
@@ -60,9 +60,9 @@ $ARGUMENTS
 
 ```
 /teammate.skills add devops
-→ 追加 DevOps 分類：5 skills + kubernetes-operator agent
+→ 追加 DevOps 分類：5 skills + kubernetes agent
   Skills: k8s-manifest-generator, k8s-security-policies, helm-chart-scaffolding, gitops-workflow, ai-compliance
-  Agent: kubernetes-operator
+  Agent: kubernetes
   確認? [A] 是 / [B] 否
 ```
 
