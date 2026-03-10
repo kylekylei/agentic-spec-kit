@@ -23,6 +23,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 
 ---
 
+## [0.6.1] - 2026-03-10
+
+### Added
+- (無)
+
+### Changed
+- **`commands`** — 簡化 `align` / `execute` / `init` / `plan` / `review` 指令描述 (description YAML)，提升 AI 載入時的辨識度。
+
+### Documentation
+- (無)
+
+---
+
 ## [0.6.0] - 2026-03-10
 
 ### Added
