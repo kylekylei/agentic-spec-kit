@@ -99,6 +99,8 @@ $ARGUMENTS
    - 產生 Functional Requirements（可測試）、Success Criteria（可衡量、技術無關）、Key Entities
 3. 寫入 `TASK_DIR/spec.md`
 
+   > **精簡約束**：spec.md 以模板為準，每個章節不超過 5 個條列項目；User Stories 不超過 10 個；成功標準以可量測的單句為主，避免段落式展開。
+
 ### 階段 4：規格驗證
 
 1. 產生 `TASK_DIR/checklists/requirements.md`
@@ -111,9 +113,13 @@ $ARGUMENTS
 
 針對每個 User Story（依 P1→P2→P3 優先序）：
 
+> **精簡約束（P2/P3）**：P2 和 P3 rules 每條**只需一行摘要**（格式：`- [rule 名稱]：[邊界條件一句話]`），不展開完整 Given/When/Then 範例。僅 P1 rules 完整展開所有範例與邊界。
+
 1. **Story Card**：As a / I want / So that 格式，確認業務價值
 2. **Rules Discovery**：識別業務規則（條件、約束、允許變體、principles 邊界），每條清晰可測試
-3. **Examples Generation**：每條規則至少產生 happy path + alternative（若適用）+ negative 範例 + boundary conditions，遵循 Given/When/Then
+3. **Examples Generation**：
+   - **P1 rules**：每條規則至少產生 happy path + alternative（若適用）+ negative 範例 + boundary conditions，遵循 Given/When/Then
+   - **P2/P3 rules**：僅輸出一行摘要，格式：`- [rule 名稱]：[邊界條件一句話]`
 4. **Questions Collection**：記錄模糊處（影響 High/Medium/Low），High impact 問題直接提出（最多 3 個）附建議選項
 
 完成後：
@@ -138,6 +144,7 @@ $ARGUMENTS
 ### 階段 8：完成報告
 
 輸出：分支名稱 + 檔案路徑 + Impact Mapping 摘要 + Example Mapping 摘要 + 就緒狀態 → 建議 `/teammate.plan`
+
 
 ## 行為規則
 

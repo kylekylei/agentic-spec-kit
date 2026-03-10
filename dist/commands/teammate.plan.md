@@ -61,13 +61,13 @@ $ARGUMENTS
 
 ### UX 衝突掃描（若存在 `design-principles.md`）
 
-在產生 scenarios 前，強制執行衝突分析：
-1. 設計原則 vs 核心原則交叉比對（API 可行性、後端 endpoint 需求）
-2. 互動元素可行性檢查
-3. 參考設計語意差異
-4. 有 CONFLICT 或 SEMANTIC_GAP → 使用 `AskQuestion` tool 暫停決策
+在產生 scenarios 前，若 `contracts/ui/design-principles.md` 存在，執行交叉比對：
 
-決策選項：修正設計原則 / 新增後端能力 / 調整語意對齊 / 標記技術債
+| 發現 | 行為 |
+|------|------|
+| 設計原則 vs 核心原則無衝突 | 繼續生成 scenarios |
+| 發現 `CONFLICT`（API 可行性、後端 endpoint、互動元素）| 用 `AskQuestion` 暫停，提供：修正設計原則 / 新增後端能力 / 調整語意對齊 / 標記技術債 |
+| 發現 `SEMANTIC_GAP`（參考設計語意差異）| 同上 |
 
 ### 場景生成
 
@@ -108,34 +108,14 @@ Optional：`agent-spec.md`、`docs/llms.txt`、`example-mapping.md`
 - `.teammate/design/figma-index.md` **存在** → UI Deep Analysis 必定觸發 + 啟用 `contracts/ui/ui-spec.md`
 - **不存在** → 僅在 `--ui` flag 或 ≥3 UI 組件時觸發
 
-### Compliance Detection
+### Compliance Detection 與 System Scope Detection
 
-掃描 `context.md` tech stack + codebase：
-- **前端**（*.tsx/*.vue/*.svelte 或對應依賴）→ 標記 A11y Compliance（WCAG 2.2 AA），參考 `a11y-compliance/SKILL.md`
-- **AI/LLM**（openai/anthropic/langchain 等）→ 標記 AI Risk Compliance（EU AI Act Art. 50），參考 `ai-compliance/SKILL.md`
-- codebase 偵測到但 context.md 無標記 → 提示更新 context.md
+執行 `skills/teammate/scripts/bash/detect-system-scope.sh --json` 並解析輸出：
+- `layers`：各系統層是否啟用（frontend / backend / llm / database / mobile）
+- `compliance`：對應合規需求（a11y / security-owasp / ai-risk / mobile-a11y）
+- `missing_context`：若有標記 → 提示更新 `context.md`
 
-### 測試基礎設施檢查
-
-掃描既有框架（vitest/jest/pytest 等）。若不存在 → plan.md 新增 Phase 0 setup。若已存在 → 記錄在 Technical Context。
-
-### System Scope Detection
-
-> 產出：plan.md 開頭的 System Scope 表格
-
-掃描檔案/目錄/依賴模式，偵測系統層級：
-
-| Layer | 偵測信號 |
-|-------|---------|
-| Frontend | `*.tsx`/`*.vue`/`*.svelte`、`src/components/`、react/vue/svelte 依賴 |
-| Backend | `*controller.*`/`*service.*`/`*api.*`、`src/api/`、express/fastapi/django 依賴 |
-| LLM | openai/anthropic/langchain import、`/chat`/`/completion` routes |
-| Database | `*model.*`/`*entity.*`、`src/models/`/`prisma/`、sqlalchemy/prisma/mongoose 依賴 |
-| Mobile | `*.swift`/`*.kt`/`*.dart`、`ios/`/`android/`、react-native/flutter 依賴 |
-
-**合規標記**：Frontend → A11y、Backend/Database → Security (OWASP)、LLM → AI Risk、Mobile → Mobile A11y
-
-產出 System Scope 表格（Layer/Status/Evidence/Added）+ Compliance Requirements + Detection Details，插入 plan.md 最開頭。
+依 `layers` 結果建立 **System Scope 表格**（Layer/Status/Evidence/Added），插入 `plan.md` 最開頭。
 
 ### 技術規劃
 
@@ -143,6 +123,12 @@ Optional：`agent-spec.md`、`docs/llms.txt`、`example-mapping.md`
 2. **Principles Check**：每條原則對應技術決策。*GATE：必須通過*
 3. **Actors & Abilities**（選用，≥5 stories）
 4. **Project Structure**：檔案標記 `[NEW]`/`[ENHANCE]`/`[INTEGRATE]`
+5. **型別定義產出物**（新增，依需要擇一）：
+   - `types.d.ts`（前端 / Node）
+   - `schema.sql`（DB）
+   - 對應 Interface / Protobuf 定義
+
+   > 根據 `spec.md` 的 Key Entities 與 Success Criteria 直接生成邊界明確的型別，列入 Architecture 產出物清單。
 
 ### 整合影響分析
 
@@ -160,13 +146,7 @@ Optional：`agent-spec.md`、`docs/llms.txt`、`example-mapping.md`
 
 **觸發條件**（任一）：`figma-index.md` 存在 / UI 組件 ≥ 3 / `--ui` flag。不滿足則跳過。
 
-內容：
-1. **組件清單**：類型、狀態數、父組件
-2. **屬性與介面**：Props、匯出介面、事件、slot
-3. **狀態矩陣**：每個組件 ≥ 3 狀態（預設 + 主要 + 邊界），Loading/Error/Empty MUST 說明內容與使用者動作
-4. **互動流程**：核心路徑（happy + error）步驟序列
-5. **互動狀態機**：每個元素 MUST 有 enabled + disabled；引用外部設計 MUST 標註語意差異
-6. **設計系統合規**：color tokens、spacing、typography、i18n keys、a11y（aria-label、鍵盤導航、對比 ≥ 4.5:1）
+依 `skills/teammate/references/ui-spec-format.md` 的格式規範撰寫，涵蓋：組件清單、屬性介面、狀態矩陣（≥3 狀態）、互動流程、互動狀態機、設計系統合規（tokens / i18n / a11y）。
 
 全部寫入 `TASK_DIR/contracts/ui/ui-spec.md`。
 
@@ -187,6 +167,7 @@ Optional：`agent-spec.md`、`docs/llms.txt`、`example-mapping.md`
 - `[LOGIC]` 涉及 util/store/service/model MUST 拆為 RED + GREEN 兩個 actions
 - `[UI]` 不強制拆分
 - 每個 `[INTEGRATE]` 檔在組件建立 action 後立即產生 mount/import action
+- **每條 Action Description 控制在單行**：描述聚焦「做什麼」，不包含實作細節或展開說明。
 
 ### 階段結構
 

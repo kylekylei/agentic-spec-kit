@@ -87,6 +87,22 @@ $ARGUMENTS
 - Step 是宣告式還是命令式？
 - 場景是否獨立（可單獨執行）？
 
+#### 自動斷言產生（Test-Driven Review 強化）
+
+根據 `spec.md` 的 **Success Criteria** 與 `example-mapping.md` 的 **P1 rules 邊界條件**，自動產生 3–5 個斷言樣本：
+
+```ts
+// 產生格式：尚未實作的可執行斷言骨架
+// 總數控制在 3–5 個，對準 P1 Success Criteria 與核心邊界條件
+describe('[feature]', () => {
+  it('[Success Criteria 1]', () => { expect(/* 實作結果 */).toBe(/* 期望値 */); });
+  it('[boundary: P1 rule 邊界]', () => { expect(/* 邊界狀態 */).toBe(/* 期望値 */); });
+  it('[negative: 失敗情境]', () => { expect(/* 錯誤處理 */).toThrow(/* 預期錯誤 */); });
+});
+```
+
+> **驗證機制**：若安裝測試框架（vitest/jest/pytest），將斷言寫入 `TASK_DIR/checklists/review-assertions.spec.ts`；否則僅輸出為準備執行的斷言樣本。實現代碼通過所有斷言，即視為 Review 通過。
+
 ## Pass B：一致性分析
 
 #### B1. 追溯驗證
@@ -177,49 +193,7 @@ Output a table:
 
 ## Pass F：活文件
 
-產生 `TASK_DIR/checklists/feature-readiness.md`：
-
-```markdown
-# Feature Readiness Report: [Feature Name]
-
-**Generated**: [Date]
-**Status**: [Ready/Not Ready/Partial]
-
-## Executive Summary
-[2-3 sentence overview]
-
-## Behavioral Coverage
-[Scenario distribution + coverage by story]
-
-## Requirements Quality
-| Dimension | Score | Issues |
-|-----------|-------|--------|
-| Completeness | [%] | [N] |
-| Clarity | [%] | [N] |
-| Consistency | [%] | [N] |
-| Coverage | [%] | [N] |
-
-## Findings
-| ID | Category | Severity | Location | Finding | Recommendation |
-|----|----------|----------|----------|---------|----------------|
-
-## Traceability Summary
-[Matrix from Pass E]
-
-## Principles Compliance
-| Principle | Coverage | Status |
-|-----------|----------|--------|
-
-## Metrics
-- Total Scenarios: [N]
-- Total Actions: [N]
-- Scenario Coverage: [%]
-- Principles Coverage: [%]
-- Critical Issues: [N]
-
-## Recommendation
-[Ready to proceed / Needs attention / Blocked]
-```
+依 `skills/teammate/references/review-report-format.md` 的格式規範，產生 `TASK_DIR/checklists/feature-readiness.md`。
 
 ---
 
@@ -341,6 +315,11 @@ Output:
 - Readiness status
 - Recommended next steps
 - Suggested next command
+- **Scenario → Assert 追湯表**：列出每個 P1 Scenario 對應的斷言樣本 ID，與通過/未通過狀態
+
+  | Scenario Tag | 對應斷言 | 狀態 |
+  |---|---|---|
+  | @us1-happy-path | `review-assertions.spec.ts#L12` | Pass / Fail / Pending |
 
 **當 Readiness 為 Ready 且無需修正時**：必須在輸出結尾加上「是否要 commit 並 merge 回 main？」的詢問（見「任務結束且無需修正時」）。
 

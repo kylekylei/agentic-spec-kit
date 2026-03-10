@@ -53,25 +53,14 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
 
 3. **載入實作脈絡**：
 
-   **Staleness Check**：若 `spec.md` 比 `plan.md` 新 → 警告 plan 可能過期，建議先 `/teammate.plan update`。
+   執行 `skills/teammate/scripts/bash/load-execution-context.sh --json` 並依輸出載入對應文件：
+   - `required`：必定載入（plan.md、scenarios/*.feature）
+   - `loaded`：存在即載入（insights、合約、llms.txt 等）
+   - `compliance`：自動偵測到的合規 Skills（a11y / AI Risk）
 
-   **必載**:
-   - `plan.md` — Part 1（架構）+ Part 2（Actions）
-   - `scenarios/*.feature` — Gherkin 情境
+   **Staleness Check**：若 `spec.md` 的修改時間比 `plan.md` 新 → 警告「plan 可能過期」，建議先執行 `/teammate.plan update`。
 
-   **條件必載**（存在即載入，不得跳過）:
-   - `TASK_DIR/insights.md` + 最近 2 個已完成任務的 `insights.md`
-   - `.teammate/memory/agent-spec.md`
-   - `docs/llms.txt` → 載入對應 `docs/[library]/llms.txt`
-   - `contracts/` — API / UI / AI 合約
-
-   **Compliance Skills**（動態偵測）:
-   - 前端 → 載入 `a11y-compliance/SKILL.md`
-   - AI/LLM → 載入 `ai-compliance/SKILL.md`
-
-   **輔助參考**: `data-model.md`、`research.md`
-
-   > **反簡短偏差**：條件必載資源不得以「節省 context」為由跳過。足夠重要的 insight 會「畢業」到 `context.md`。
+   > **反簡短偏差**：`loaded` 清單中任何資源不得以「節省 context」為由跳過。
 
 4. **專案設定驗證**：依偵測到的技術建立/驗證 ignore 檔案（`.gitignore`、`.dockerignore` 等）。
 
@@ -105,9 +94,11 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
 
    #### UI 智能分流
 
-   - **有 Figma link 或兄弟組件可參考** → 直接實作
-   - **有不確定的細節** → 使用 `AskQuestion` tool 暫停提供結構化選項
-   - **完全無參考** → 完整暫停，展示視覺規格確認後再實作
+   | 情況 | 行為 |
+   |------|---------|
+   | 有 Figma link 或兄弟組件可參考 | 直接實作 |
+   | 有不確定細節（props/狀態/互動）| 用 `AskQuestion` 提供結構化選項，等確認後實作 |
+   | 完全無參考 | 暫停，展示視覺規格供確認，再實作 |
 
    推斷依據：`contracts/ui/`、`principles.md`、`insights.md` 記錄的兄弟組件慣例。
 
@@ -119,6 +110,11 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
    4. 若 RED → 標記進行中，繼續實作；若 GREEN → 警告需驗證正確性
 
    #### 若 Action 為實作：
+
+   > **輸出約束（Hard Rule）**：
+   > - **嚴格禁止** LLM 回吐整個文件、重複現有程式或不相關的樣板代碼。
+   > - 實作時**僅回傳 Function Body** 或特定程式碼片段（如 `logic_impl.ts` 的指定函式），並標明插入位置（行號或錨點）。
+   > - 若需建立新檔案，只輸出與此 Action 直接相關的最小程式碼，不輸出整個檔案骨架。
 
    1. **Test Pre-Check**（`[LOGIC]`/`[LOGIC+UI]`）：檢查對應 test 是否存在，若不存在且 RED action 未完成 → 建議先執行
    2. 識別此 action 的 `[Verifies: @tag]`
@@ -163,41 +159,14 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
 
    #### DIALOGUE Phase（對話式同步）
 
-   REFLECT 完成後，執行語意差異偵測。**最小干預原則**：僅「超出計畫」或「結構性變更」才對話。
+   REFLECT 完成後，**最小干預原則**：僅以下兩種情況才對話：
 
-   ##### 觸發判斷
+   | 觸發條件 | 行為 |
+   |----------|---------|
+   | 實作的 public 介面（endpoint / prop / 函式）**超出** `[Verifies: @tag]` 涵蓋的行為範圍 | 提供選項：`[A]` 刻意擴展（更新 spec + plan）/ `[B]` 範疇蔓延（移除）/ `[C]` 稍後處理（記錄 Technical Debt）/ `[D]` 忽略 |
+   | 引入 `plan.md` System Scope 中未標記的新系統層（如新增 `openai` import 但 LLM 為 ❌）| 確認後更新 System Scope + Compliance Requirements；取消則記錄 Technical Debt |
 
-   | REFLECT 分類 | Verifies 範圍比對 | 新層級偵測 | DIALOGUE |
-   |-------------|------------------|-----------|---------|
-   | No insights / 重構 | — | 無 | **跳過** |
-   | 新功能 | 在範圍內 | 無 | **跳過** |
-   | 新功能 | **超出範圍** | — | **觸發（行為）** |
-   | 任何 | — | **有** | **觸發（層級）** |
-
-   ##### 行為範圍比對（dialogue_signal == "CHECK" 時）
-
-   比對「action 實際實作的 public 介面」vs「[Verifies: @tag] 對應 scenario 涵蓋的行為」：
-   - 掃描新增的 API endpoints、UI props、public 函式、驗證規則、錯誤處理、資料欄位
-   - 核心判斷：實作是否超出 Verifies tag 涵蓋的行為範圍？
-
-   ##### 系統層級偵測（永遠執行）
-
-   掃描新增的 imports/files，比對 `plan.md` System Scope：
-   - 若引入未標記的層級（如 `openai` import 但 LLM 為 ❌）→ 觸發層級對話
-
-   ##### 層級變更對話
-
-   若偵測到新層級 → 使用 `AskQuestion` tool 確認：
-   - **確認**：更新 `plan.md` System Scope + Compliance Requirements + `spec.md` Change Log + `progress.md`
-   - **取消**：記錄到 `insights.md` Technical Debt
-
-   ##### 行為變更對話
-
-   若超出 Verifies 範圍 → 提供選項：
-   - `[A]` **刻意擴展** — 更新 `spec.md` FR + Change Log + `plan.md` 對應 action 標註 → 建立 snapshot
-   - `[B]` **範疇蔓延** — 移除實作，標記 `[REVERTED]`
-   - `[C]` **稍後處理** — 記錄到 `insights.md` Technical Debt
-   - `[D]` **忽略差異** — 視為實作細節，不更新
+   其餘情況（重構、bug fix、實作細節）一律**跳過 DIALOGUE**，直接進入下一個 action。
 
 8. **平行執行規則**：標記 `[P]` 的 actions 可平行執行，若修改不同檔案、無相依、驗證獨立情境。
 
@@ -211,6 +180,7 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
     - **Blockers**：failing scenarios 或 Risk Gate 暫停
 
 12. **完成報告**：所有情境 GREEN + actions 完成 + 活文件已更新 → 建議 `/teammate.review`
+
 
 ## 實作執行規則
 
