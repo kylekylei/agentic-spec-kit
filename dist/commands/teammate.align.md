@@ -1,5 +1,5 @@
 ---
-description: 透過 Impact Mapping 定義要建構的內容，並以 Example Mapping 釐清需求。單次產出 spec.md + example-mapping.md。
+description: 需求對齊——進行 Impact Mapping + Example Mapping，產出 spec.md + example-mapping.md。
 handoffs: 
   - label: 建立工作計畫
     agent: teammate.plan

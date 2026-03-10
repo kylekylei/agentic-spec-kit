@@ -1,5 +1,5 @@
 ---
-description: 執行 Red-Green-Verify-Reflect-Dialogue 迴圈實作 — 先寫步驟定義（RED），再實作至 GREEN，自動驗證（VERIFY），重構（REFACTOR），自檢（REFLECT），對話式同步（DIALOGUE），依 Actions 順序進行。
+description: 實作執行——依 Actions 順序走 Red-Green-Verify-Refactor-Reflect-Dialogue 迭代迴圈。
 handoffs:
   - label: 行為覆蓋審查
     agent: teammate.review

@@ -1,5 +1,5 @@
 ---
-description: 一次產出 Gherkin 場景與統一實作計畫（任務 + 行動）。產物：.feature 檔 + plan.md + contracts/ui/ui-spec.md（若有 UI）。
+description: 實作視圖——產出 Gherkin 情境與 plan.md（架構 + Actions）。
 handoffs: 
   - label: 執行行動
     agent: teammate.execute

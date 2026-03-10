@@ -1,5 +1,5 @@
 ---
-description: 初始化或審計專案基礎 — 檢查/填寫 context.md 與 principles.md，建置環境。整合 kickoff + principles 於單一指令。
+description: 專案初始化——建立或審計 context.md + principles.md，一鍵就緒。
 handoffs: 
   - label: 開始對齊
     agent: teammate.align

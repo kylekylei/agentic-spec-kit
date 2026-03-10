@@ -1,5 +1,5 @@
 ---
-description: 唯一品質關卡 — 行為覆蓋分析、功能就緒驗證、程式碼品質、安全掃描、測試健全度。設計維度委派 design-auditor，程式碼深度審查委派 code-auditor。
+description: 品質關卡——行為覆蓋、功能就緒、程式碼與安全審查，委派設計與程式碼審查至專案 agent。
 handoffs:
   - label: 修補缺口
     agent: teammate.plan
