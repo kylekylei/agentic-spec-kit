@@ -13,6 +13,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
+- (無)
+
+### Changed
+- (無)
+
+### Documentation
+- (無)
+
+---
+
+## [0.6.0] - 2026-03-10
+
+### Added
 - **`frontend` agent** — 新增資深前端工程師 + 前端架構顧問 + 跨平台工程師角色；涵蓋 Web 框架（React / Next.js / Svelte）、跨平台（React Native / Expo）、工程品質三大維度；掛載 10 個 skills，填補 `frontend_web` / `frontend_react` / `frontend_svelte` / `mobile` 四個 registry 分類長期無 agent 路由的缺口
 
 ### Changed
