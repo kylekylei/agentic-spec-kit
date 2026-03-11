@@ -13,7 +13,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
-- (無)
+- `teammate-sync.sh`: 新增 `--platform all` 支援，一次同步所有平台
+- `teammate-sync.sh`: `detect_platform` 自動偵測多平台專案時回傳 `all`，不再只選第一個
 
 ### Changed
 - (無)

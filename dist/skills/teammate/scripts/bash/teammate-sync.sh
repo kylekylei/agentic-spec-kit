@@ -54,7 +54,7 @@ usage() {
 Usage: teammate-sync.sh <target-project> [options]
 
 Options:
-  --platform cursor|claude|antigravity   Target platform (auto-detected if omitted)
+  --platform cursor|claude|antigravity|all   Target platform (auto-detected if omitted; "all" syncs all detected platforms)
   --dry-run                       Show what would change without writing
   --check                         Check if local sync is behind remote Hub
   --self-update                   Pull latest Hub from remote before syncing
@@ -138,9 +138,13 @@ resolve_teammate_home() {
 
 # ── Platform detection ──
 detect_platform() {
-    if [[ -d "$TARGET_DIR/.cursor" ]]; then echo "cursor"
-    elif [[ -d "$TARGET_DIR/.claude" || -f "$TARGET_DIR/CLAUDE.md" ]]; then echo "claude"
-    elif [[ -d "$TARGET_DIR/.agent" ]]; then echo "antigravity"
+    local found=()
+    [[ -d "$TARGET_DIR/.cursor" ]] && found+=("cursor")
+    [[ -d "$TARGET_DIR/.claude" || -f "$TARGET_DIR/CLAUDE.md" ]] && found+=("claude")
+    [[ -d "$TARGET_DIR/.agent" ]] && found+=("antigravity")
+
+    if [[ ${#found[@]} -gt 1 ]]; then echo "all"
+    elif [[ ${#found[@]} -eq 1 ]]; then echo "${found[0]}"
     else echo ""
     fi
 }
@@ -150,11 +154,13 @@ prompt_platform() {
     echo "  [1] Cursor       (.cursor/)"
     echo "  [2] Claude Code  (.claude/)"
     echo "  [3] Antigravity  (.agent/)"
-    read -rp "Choice (1/2/3): " choice
+    echo "  [4] All          (sync all three)"
+    read -rp "Choice (1/2/3/4): " choice
     case "$choice" in
         1) PLATFORM="cursor" ;;
         2) PLATFORM="claude" ;;
         3) PLATFORM="antigravity" ;;
+        4) PLATFORM="all" ;;
         *) err "Cancelled."; exit 1 ;;
     esac
 }
@@ -872,6 +878,13 @@ main() {
         cursor)       sync_cursor ;;
         claude)       sync_claude ;;
         antigravity)  sync_antigravity ;;
+        all)
+            sync_cursor
+            echo ""
+            sync_claude
+            echo ""
+            sync_antigravity
+            ;;
         *)            err "Unknown platform: $PLATFORM"; exit 1 ;;
     esac
 
