@@ -1,6 +1,6 @@
 ---
 name: design-auditor
-description: 設計品質審查專家。執行 UX 體驗、無障礙合規、設計債務、AI 風險、Design System 一致性的多維度審查。在 /teammate.review 流程中被自動委派，或可獨立呼叫。
+description: 設計品質審查專家。執行 UX 體驗、無障礙合規、設計債務、AI 風險、Design System 一致性的多維度審查。在 /speckit.review 流程中被自動委派，或可獨立呼叫。
 model: inherit
 color: orange
 skills:
@@ -96,7 +96,7 @@ skills:
 
 ## 被委派模式
 
-當 `/teammate.review` 偵測到 Frontend/LLM/Mobile 時，自動委派 design-auditor 執行設計維度審查，結果整合回 review 報告。
+當 `/speckit.review` 偵測到 Frontend/LLM/Mobile 時，自動委派 design-auditor 執行設計維度審查，結果整合回 review 報告。
 
 若使用者專案未安裝 design 分類的 skills，則跳過，在報告中標註「設計品質審查未啟用（未安裝設計 skills）」。
 

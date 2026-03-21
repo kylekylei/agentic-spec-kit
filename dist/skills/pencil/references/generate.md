@@ -19,7 +19,7 @@ description: 從 Tailwind config 產生 design tokens，並透過 Pencil MCP 注
 npm run tokens:generate
 ```
 
-輸出：`.teammate/design/pencil/tokens-output.json`
+輸出：`.specify/design/pencil/tokens-output.json`
 
 腳本位置：`.cursor/skills/design-tokens/scripts/`
 
@@ -44,7 +44,7 @@ AI 讀取 `tokens-output.json` 的內容（variables 物件）。
 
 ```
 set_variables(
-  filePath: ".teammate/design/pencil/design-tokens.pen",
+  filePath: ".specify/design/pencil/design-tokens.pen",
   variables: <tokens-output.json 的全部內容>,
   themes: { Mode: ["Light", "Dark"] }
 )
@@ -53,7 +53,7 @@ set_variables(
 ### 2-3. 驗證
 
 ```
-get_variables(filePath: ".teammate/design/pencil/design-tokens.pen")
+get_variables(filePath: ".specify/design/pencil/design-tokens.pen")
 ```
 
 確認 token 數量與內容與 tokens-output.json 一致。

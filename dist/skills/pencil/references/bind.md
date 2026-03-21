@@ -15,7 +15,7 @@ bind <filePath> [rootNodeId]
 
 | 參數 | 必填 | 說明 | 範例 |
 |------|------|------|------|
-| `filePath` | 是 | .pen 檔案絕對路徑 | `.teammate/design/pencil/components/TaskNotifier.pen` |
+| `filePath` | 是 | .pen 檔案絕對路徑 | `.specify/design/pencil/components/TaskNotifier.pen` |
 | `rootNodeId` | 否 | 限縮範圍的根節點 ID（省略則掃描整個檔案） | `8BV09` |
 
 ## 執行流程

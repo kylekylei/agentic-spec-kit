@@ -15,7 +15,7 @@ alwaysApply: false
 ## 檔案位置
 
 ```
-.teammate/design/pencil/
+.specify/design/pencil/
 ├── design-tokens.pen         # 設計系統 token 定義
 ├── pencil-shadcn.pen         # shadcn UI 組件庫
 └── components/
@@ -188,7 +188,7 @@ foo=I("parentId", {
 
 ```
 1. 識別缺漏
-   - 在 /teammate.execute REFLECT 步驟中標記「設計缺漏」
+   - 在 /speckit.execute REFLECT 步驟中標記「設計缺漏」
    - 描述：發現 Pencil 缺少 [xxx] 狀態/token
 
 2. 設計師確認（視情況）
@@ -226,8 +226,8 @@ foo=I("parentId", {
 ## 參考資源
 
 - Pencil MCP Server: `C:\Users\kyle_lei\.cursor\projects\d-Open-WebUI-open-webui\mcps\user-pencil`
-- Design Tokens 定義: `.teammate/design/pencil/design-tokens.pen`
-- 組件對應表: `tasks/*/contracts/ui/component-specs.md`
+- Design Tokens 定義: `.specify/design/pencil/design-tokens.pen`
+- 組件對應表: `specs/*/contracts/ui/component-specs.md`
 - Token 生成工具: `.cursor/skills/pencil/references/generate.md`
 - Token 綁定工具: `.cursor/skills/pencil/references/bind.md`
 

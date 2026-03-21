@@ -57,8 +57,8 @@ for d in "$HUB/.cursor/skills/"/*/; do
   link_dir "$d" "$PROJECT/.cursor/skills/$name"
 done
 
-# ── Rules (file-level, exclude teammatesync) ──
-SHARED_RULES=(teammate-rules.mdc clean-code.mdc codequality.mdc git-conventions.mdc figma-to-code.mdc)
+# ── Rules (file-level, exclude speckitsync) ──
+SHARED_RULES=(speckit-rules.mdc clean-code.mdc codequality.mdc git-conventions.mdc figma-to-code.mdc)
 echo -e "${YELLOW}Rules${NC}"
 mkdir -p "$PROJECT/.cursor/rules"
 for rule in "${SHARED_RULES[@]}"; do
@@ -74,7 +74,7 @@ if [ -d "$PROJECT/.agent/workflows" ]; then
     [ -f "$f" ] || continue
     link_file "$f" "$PROJECT/.agent/workflows/$(basename "$f")"
   done
-  [ -f "$PROJECT/.agent/workflows/teammatesync_rule.mdc" ] && rm -f "$PROJECT/.agent/workflows/teammatesync_rule.mdc"
+  [ -f "$PROJECT/.agent/workflows/speckitsync_rule.mdc" ] && rm -f "$PROJECT/.agent/workflows/speckitsync_rule.mdc"
 fi
 
 # ── .agent/rules (if dir exists) ──
@@ -85,7 +85,7 @@ if [ -d "$PROJECT/.agent/rules" ]; then
     [ -f "$src" ] || continue
     link_file "$src" "$PROJECT/.agent/rules/$rule"
   done
-  [ -f "$PROJECT/.agent/rules/teammatesync_rule.mdc" ] && rm -f "$PROJECT/.agent/rules/teammatesync_rule.mdc"
+  [ -f "$PROJECT/.agent/rules/speckitsync_rule.mdc" ] && rm -f "$PROJECT/.agent/rules/speckitsync_rule.mdc"
 fi
 
 echo ""

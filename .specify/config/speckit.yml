@@ -1,0 +1,221 @@
+# Speckit Configuration
+version: "0.6.1"
+
+# Hub — 框架來源（供 sync / migrate / helpme 參考）
+hub:
+  url: "http://fw_git.phison.com/kyle_lei/agentic-spec-kit"
+
+# =============================================================================
+# LIFECYCLE PHASES
+# =============================================================================
+# Configure which phases are required vs optional for your workflow
+
+lifecycle:
+  foundation:
+    init:
+      required: true
+      description: "Initialize or audit project foundation (context + principles)"
+      output: "context.md + principles.md"
+
+  per_feature:
+    align:
+      required: true
+      description: "Define what to build (Impact Mapping + Example Mapping)"
+      output: "spec.md + example-mapping.md"
+    plan:
+      required: true
+      description: "Generate scenarios and unified implementation plan (UI deep analysis auto-triggered)"
+      output: ".feature + plan.md + contracts/ui/ui-spec.md (if UI)"
+    execute:
+      required: true
+      description: "Execute actions using Red-Green-Refactor-Reflect Loop"
+    review:
+      required: true
+      description: "Behavioral coverage + requirements quality + feature readiness"
+      output: "checklists/feature-readiness.md"
+
+  quality_gate:
+    audit:
+      required: false
+      description: "Product quality audit (Security + Design Debt + dynamic A11y + AI Risk)"
+      output: "Roast Report (stdout)"
+      dynamic_dimensions:
+        a11y: "auto-detect frontend"
+        ai_risk: "auto-detect LLM/AI"
+
+# =============================================================================
+# GHERKIN SETTINGS
+# =============================================================================
+
+gherkin:
+  # Default language for Gherkin keywords (Given/When/Then)
+  # Note: Step descriptions should be written in Traditional Chinese per speckit-rules.mdc
+  language: en
+
+  # Tag conventions
+  tags:
+    priority:
+      - "@P1"  # Critical - MVP
+      - "@P2"  # Important - Release
+      - "@P3"  # Nice-to-have - Deferred
+    
+    category:
+      - "@happy-path"
+      - "@alternative"
+      - "@negative"
+      - "@boundary"
+      - "@data-driven"
+      - "@principles"
+    
+    status:
+      - "@wip"
+      - "@manual"
+      - "@slow"
+      - "@flaky"
+
+  # Scenario naming conventions
+  naming:
+    pattern: "Sentence case with context"
+    max_length: 120
+    
+  # Step definition settings
+  step_definitions:
+    language: typescript  # or: javascript, python, ruby, java
+    location: "tests/step-definitions"
+
+# =============================================================================
+# VERIFICATION SETTINGS
+# =============================================================================
+
+verification:
+  # Auto-run tests during execute phase
+  auto_run:
+    enabled: true                       # Enable auto-verification (default: true)
+    on_action_complete: true            # Run tests when action completes
+    fail_fast: true                     # Stop on first test failure
+  
+  # Test execution command
+  # Set to null for auto-detection, or specify manually (e.g., "pytest tests/features/")
+  test_command: null
+  
+  # Test framework auto-detection
+  # AI will scan for these files to determine the test framework
+  framework_detection:
+    pytest: ["pytest.ini", "pyproject.toml"]
+    behave: [".behaverc", "behave.ini"]
+    cucumber: ["cucumber.yml"]
+    jest: ["package.json"]
+  
+  # Coverage thresholds
+  coverage:
+    minimum_scenario_coverage: 80  # Percentage of scenarios that must pass
+    require_happy_path: true       # All @happy-path scenarios must pass
+    require_principles: true       # All @principles scenarios must pass
+
+  # Living documentation output
+  living_docs:
+    enabled: true
+    format: html  # or: markdown, json
+    output_dir: "docs/living-documentation"
+    include_pending: true
+
+  # Traceability requirements
+  traceability:
+    require_scenario_to_action: true   # Each action must reference a scenario
+    require_action_to_task: true      # Each task must have actions
+
+# =============================================================================
+# FEATURE DIRECTORY STRUCTURE
+# =============================================================================
+
+feature_structure:
+  base_dir: "specs"
+
+  # Files generated per feature
+  files:
+    - spec.md              # speckit.align output (spec)
+    - example-mapping.md   # speckit.align output (examples)
+    - speckit.refs.yaml    # Context anchors
+    - plan.md              # speckit.plan output (Part 1: Architecture + Part 2: Actions)
+    - insights.md          # speckit.execute output (REFLECT dynamic cheatsheet)
+    - README.md            # Feature overview
+  
+  # Subdirectories per feature
+  directories:
+    scenarios: "scenarios"    # .feature files (Gherkin scenarios)
+    contracts:
+      api: "contracts/api"    # OpenAPI specs
+      ui: "contracts/ui"      # UI mockups
+      ai: "contracts/ai"      # Prompt contracts
+    checklists: "checklists"  # Verification checklists
+
+# =============================================================================
+# DOCS SETTINGS (External Reference Knowledge Base)
+# =============================================================================
+
+docs:
+  location: "docs"
+  
+  # llms.txt standard — index file for LLM-friendly reference discovery
+  # Note: docs/llms.txt is optional (project chooses whether to use it)
+  llms_txt:
+    enabled: false  # Set to true if project uses llms.txt
+    root: "docs/llms.txt"
+  
+  # Subdirectory conventions
+  # Note: Design assets are managed in .specify/design/ (created dynamically by /speckit.align)
+  directories:
+    # design: ".specify/design"  # Managed by align command, not here
+    # Add per-library directories as needed:
+    # fubon_neo: "docs/fubon-neo"
+
+# =============================================================================
+# MEMORY SETTINGS
+# =============================================================================
+
+memory:
+  location: ".specify/memory"
+  
+  files:
+    principles: "principles.md"
+    project_context: "context.md"
+    progress: "progress.md"
+    milestone: "milestone.md"
+
+  # Auto-update settings
+  auto_update:
+    progress: true         # Update on each command
+    milestone: true        # Update on phase completion
+
+# =============================================================================
+# SCRIPT SETTINGS
+# =============================================================================
+
+scripts:
+  location: ".specify/scripts/bash"
+  
+  # Script execution preferences
+  shell: "/bin/bash"
+  json_output: true
+
+# =============================================================================
+# SNAPSHOT SETTINGS
+# =============================================================================
+
+# Note: This controls automated snapshots (on phase/verification completion).
+# Event-driven snapshots (on principles/plan/scope changes) are enforced by
+# command logic (e.g. speckit.plan update) regardless of this setting.
+snapshots:
+  enabled: false
+  location: ".specify/snapshots"
+  
+  # When to capture snapshots
+  triggers:
+    - on_phase_complete
+    - on_verification_pass
+  
+  # What to include in snapshots
+  include:
+    - feature_files
+    - living_docs
+    - coverage_reports

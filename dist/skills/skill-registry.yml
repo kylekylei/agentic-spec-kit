@@ -1,6 +1,6 @@
-# Teammate Skill Registry
+# Skill Registry
 # 所有 skills 和 agents 的分類元資料、自動偵測規則、依賴對照。
-# 用於 /teammate.init 智慧選配和 /teammate.skills 管理。
+# 用於 /speckit.init 智慧選配和 /speckit.skills 管理。
 
 version: 1
 
@@ -9,16 +9,16 @@ categories:
     label: "核心（所有專案必裝）"
     always_install: true
     skills:
-      - teammate
+      - speckit
       - git-commit
       - code-review
       - code-refactoring
       - code-documentation
       - skill-creator
     agents:
-      - name: teammate
+      - name: speckit
         description: "AI 開發隊友 — 導航、診斷、問診、框架同步"
-        skills: [teammate]
+        skills: [speckit]
 
   frontend_web:
     label: "前端 Web"

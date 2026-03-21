@@ -31,10 +31,10 @@ This skill is loaded **conditionally** based on project characteristics.
 
 | Stage | Role | What to do |
 |-------|------|------------|
-| `/teammate.plan` | Remind | Flag a11y requirements for UI components in Architecture section |
-| `/teammate.execute` | Guide | Load as Recommended context for `[UI]` and `[LOGIC+UI]` actions |
-| `/teammate.review` | Check | Verify a11y coverage in Pass D2 |
-| `/teammate.review` | Judge | 委派 design-auditor 執行 POUR 全面掃描 |
+| `/speckit.plan` | Remind | Flag a11y requirements for UI components in Architecture section |
+| `/speckit.execute` | Guide | Load as Recommended context for `[UI]` and `[LOGIC+UI]` actions |
+| `/speckit.review` | Check | Verify a11y coverage in Pass D2 |
+| `/speckit.review` | Judge | 委派 design-auditor 執行 POUR 全面掃描 |
 
 ## Quick Decision Guide
 

@@ -1,6 +1,6 @@
 ---
 name: code-auditor
-description: 程式碼品質審查專家。執行安全漏洞、效能瓶頸、架構合規、程式碼品質、測試健全度的多維度深度審查。在 /teammate.review 流程中被自動委派，或可獨立呼叫。
+description: 程式碼品質審查專家。執行安全漏洞、效能瓶頸、架構合規、程式碼品質、測試健全度的多維度深度審查。在 /speckit.review 流程中被自動委派，或可獨立呼叫。
 model: inherit
 color: yellow
 skills:
@@ -96,7 +96,7 @@ skills:
 
 ## 被委派模式
 
-當 `/teammate.review` 執行時，自動委派 code-auditor 對 Pass H（安全）、Pass I（程式碼品質）、Pass J（測試）進行深度審查，結果整合回 review 報告。
+當 `/speckit.review` 執行時，自動委派 code-auditor 對 Pass H（安全）、Pass I（程式碼品質）、Pass J（測試）進行深度審查，結果整合回 review 報告。
 
 若使用者專案未安裝 code-auditor 相關 skills，則 Pass H/I/J 仍以 review 內建的基礎檢查執行。
 

@@ -1,5 +1,5 @@
 ---
-description: Publish a new version — move [Unreleased] to a versioned release, bump teammate.yml, commit, and push.
+description: Publish a new version — move [Unreleased] to a versioned release, bump speckit.yml, commit, and push.
 ---
 
 ## User Input
@@ -16,7 +16,7 @@ $ARGUMENTS
 
 平行執行：
 1. 讀取 `CHANGELOG.md` — 取得最新版本號與 `[Unreleased]` 內容
-2. 讀取 `.teammate/config/teammate.yml` — 取得當前 `version` 欄位
+2. 讀取 `.specify/config/speckit.yml` — 取得當前 `version` 欄位
 3. 執行 `git status --short` — 確認工作目錄狀態
 
 ### Step 2: Validate
@@ -58,16 +58,16 @@ $ARGUMENTS
    - (無)
    ```
 
-### Step 5: Update teammate.yml
+### Step 5: Update speckit.yml
 
-將 `.teammate/config/teammate.yml` 的 `version` 欄位改為新版本號。
+將 `.specify/config/speckit.yml` 的 `version` 欄位改為新版本號。
 
 ### Step 6: Commit
 
 僅 stage 兩個檔案：
 
 ```bash
-git add CHANGELOG.md .teammate/config/teammate.yml
+git add CHANGELOG.md .specify/config/speckit.yml
 ```
 
 使用暫存檔方式 commit（PowerShell 不支援 HEREDOC）：
@@ -80,7 +80,7 @@ Commit message 格式：
 chore(release): vX.Y.Z
 
 - Update CHANGELOG.md with version X.Y.Z
-- Bump framework version in teammate.yml
+- Bump framework version in speckit.yml
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>
 ```
@@ -108,6 +108,6 @@ git push origin <branch-name>
 ## Key Rules
 
 - **不跳過版本確認** — 永遠 AskQuestion 確認版本號
-- **Atomic commit** — 只 commit CHANGELOG.md + teammate.yml，其他變更不納入
+- **Atomic commit** — 只 commit CHANGELOG.md + speckit.yml，其他變更不納入
 - **不 force push**
 - **PowerShell 相容** — 使用暫存檔取代 HEREDOC（`git commit -F`）
