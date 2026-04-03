@@ -53,6 +53,8 @@ SPECKIT_HOME=/path/to/Hub bash /path/to/Hub/dist/skills/speckit/scripts/bash/spe
 ~/.speckit-hub/install.sh /path/to/your-project --self-update
 ```
 
+若你直接在 Hub repo 上 `git pull`：macOS 的 `.DS_Store` 已列入 `.gitignore` 且不再納入版控，可避免與本機未追蹤檔案衝突。
+
 ---
 
 ## 快速開始
@@ -271,6 +273,44 @@ AI 不是只會產文件的助手，而是你的流程共創夥伴：
 - `.cursor/skills/` 為領域知識與能力模組，由 Agent 依意圖路由載入；可透過 `/speckit.skills` 管理。
 
 
+
+---
+
+## 四系統定位與設計治理的關係
+
+Agentic Spec-Kit 是四系統架構中的 **Process 流程執行層**：
+
+```
+aiui-design-system     Foundation — 元件 API + Token 定義（SSOT）
+experience-kit         Governance — Golden Circle 設計治理 + AI 規格橋接
+agentic-spec-kit       Process   — Spec Lifecycle + BDD + 團隊協作（本 repo）
+Consumer project       Integration — 消費以上三層，產出產品
+```
+
+### Golden Circle 銜接
+
+experience-kit 用 Golden Circle（WHY / WHAT / HOW）定義設計邊界；spec-kit 用 Spec Lifecycle（Align / Plan / Execute / Review）驅動實作。兩者在消費端並行運作：
+
+```
+Design Lifecycle（experience-kit）          Feature Lifecycle（spec-kit）
+intent → /x.scenario → /x.design           /speckit.init → /speckit.align
+    → /x.model → /x.prototype                  → /speckit.plan → /speckit.execute
+    → /x.audit → /x.release                    → /speckit.review
+
+交叉點：
+  /x.model      ← 讀取 specs/ 需求脈絡
+  /x.prototype  ← 消費 specs/*/scenarios/*.feature 生成測試
+  /speckit.plan  ← 引用 design/experience-{p}-{c}.md 設計資產
+  /speckit.execute ← 載入 .cursor/skills/{framework}/ 元件 API
+```
+
+### 職責分離
+
+- **設計意圖**（token、visual、annotation）→ experience-kit 擁有
+- **實作品質**（code-review、test、refactor）→ spec-kit 擁有
+- **共享領域**（a11y、framework）→ experience-kit 定義規則，spec-kit 定義執行方式
+
+> 完整架構文件：`experience-kit/docs/four-system-architecture.md`
 
 ---
 

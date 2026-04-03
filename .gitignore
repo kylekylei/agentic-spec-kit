@@ -1,1 +1,4 @@
 .claude/settings.local.json
+
+# macOS（避免與遠端 tree 衝突、不應進版控）
+.DS_Store
