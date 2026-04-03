@@ -1,0 +1,30 @@
+---
+description: Guidelines for writing clean, maintainable, and human-readable code. Apply these rules when writing or reviewing code to ensure consistency and quality.
+globs:
+---
+# Clean Code Guidelines
+
+## NEVER
+- Never use magic numbers — replace with named constants (descriptive name explaining purpose)
+- Never comment what code does — make code self-documenting
+- Never repeat logic — extract into reusable functions (DRY)
+
+## ALWAYS
+- Single responsibility: one function = one task, ≤20 lines, ≤4 parameters
+- Meaningful names: variables/functions/classes reveal purpose, no abbreviations unless universal
+- Comments explain *why*, not *what* — document APIs, complex algorithms, non-obvious side effects
+- Constants at file top or dedicated constants file
+- Write tests before fixing bugs; test edge cases and error conditions
+- Props interface ≤7 props; split if exceeded
+
+## PREFER
+- Keep related code together in logical hierarchy
+- Consistent file/folder naming conventions
+- Small, focused commits with clear messages
+- Meaningful branch names
+- Refactor continuously; leave code cleaner than found
+
+## AVOID
+- Exposing implementation details — hide behind clear interfaces
+- Nested conditionals — extract into well-named functions
+- Accumulating technical debt — fix early

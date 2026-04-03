@@ -11,7 +11,7 @@
 set -euo pipefail
 
 SPECKIT_HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SYNC_SCRIPT="$SPECKIT_HOME/dist/skills/speckit/scripts/bash/speckit-sync.sh"
+SYNC_SCRIPT="$SPECKIT_HOME/scripts/bash/speckit-sync.sh"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 
@@ -109,7 +109,7 @@ main() {
     echo "║        Framework Install              ║"
     echo "╚══════════════════════════════════════╝"
     echo ""
-    info "Hub:    $SPECKIT_HOME"
+    info "Source: $SPECKIT_HOME"
     info "Target: $target"
     echo ""
 

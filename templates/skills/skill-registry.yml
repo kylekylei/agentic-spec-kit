@@ -1,0 +1,63 @@
+# Skill Registry
+# 所有 skills 和 agents 的分類元資料、自動偵測規則、依賴對照。
+# 用於 /speckit.init 智慧選配和 /speckit.skills 管理。
+
+version: 1
+
+categories:
+  core:
+    label: "核心（所有專案必裝）"
+    always_install: true
+    skills:
+      - speckit
+      - git-commit
+      - code-review
+      - code-refactoring
+    agents:
+      - name: speckit_helper
+        description: "AI 開發隊友 — 導航、診斷、問診、框架同步"
+        skills: [speckit]
+
+  frontend_web:
+    label: "前端 Web"
+    detect:
+      files: [package.json]
+      deps: [react, vue, svelte, angular, next, nuxt]
+    skills:
+      - frontend-design
+      - a11y-compliance
+      - webapp-testing
+
+  design:
+    label: "設計工具整合"
+    detect:
+      files: ["*.pen"]
+      patterns: ["figma.com"]
+    question: "你的專案需要設計工具整合嗎？"
+    skills:
+      - component-scaffold
+
+  backend:
+    label: "後端 API / 微服務"
+    detect:
+      files: [go.mod, Cargo.toml, pyproject.toml, requirements.txt]
+      deps: [express, fastify, nestjs, django, flask, fastapi]
+    skills:
+      - c4-architecture
+
+  testing:
+    label: "瀏覽器自動化測試"
+    detect:
+      deps: [playwright, "@playwright/test"]
+    skills:
+      - playwright
+      - playwright-recording
+      - playwright-streaming
+
+
+  agent_dev:
+    label: "AI/Agent 開發"
+    question: "你需要 AI Agent 開發或審查能力嗎？"
+    skills:
+      - agent-orchestration
+      - ai-review-pipeline

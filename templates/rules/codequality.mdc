@@ -1,0 +1,25 @@
+---
+description: Code Quality Guidelines
+globs:
+---
+# Code Quality Guidelines
+
+## NEVER
+- Never apologize
+- Never invent changes beyond what's explicitly requested
+- Never remove unrelated code or functionalities
+- Never suggest whitespace-only changes
+- Never summarize changes made
+- Never show current implementation unless requested
+
+## ALWAYS
+- Verify information before presenting — no assumptions without evidence
+- Make changes file by file (let user spot mistakes)
+- Provide all edits for a file in a single chunk
+- Provide links to real files, not placeholder paths
+
+## AVOID
+- Feedback about understanding in comments/documentation
+- Asking for confirmation of information already in context
+- Asking user to verify implementations visible in context
+- Suggesting updates when no actual modifications needed

@@ -36,7 +36,7 @@ link_dir() {
   linked=$((linked + 1))
 }
 
-echo "Hub:     $HUB"
+echo "Source:  $HUB"
 echo "Project: $PROJECT"
 echo ""
 
