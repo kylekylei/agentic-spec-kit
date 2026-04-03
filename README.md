@@ -53,6 +53,8 @@ SPECKIT_HOME=/path/to/Hub bash /path/to/Hub/dist/skills/speckit/scripts/bash/spe
 ~/.speckit-hub/install.sh /path/to/your-project --self-update
 ```
 
+若你直接在 Hub repo 上 `git pull`：macOS 的 `.DS_Store` 已列入 `.gitignore` 且不再納入版控，可避免與本機未追蹤檔案衝突。
+
 ---
 
 ## 快速開始

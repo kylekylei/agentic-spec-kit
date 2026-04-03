@@ -17,7 +17,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). This file is par
 - `teammate-sync.sh`: `detect_platform` 自動偵測多平台專案時回傳 `all`，不再只選第一個
 
 ### Changed
-- (無)
+- **Repository** — `.gitignore` 忽略 `.DS_Store`；已自 Git 索引移除誤提交的 `.DS_Store`（本機 Finder 仍會重建檔案，但不會再阻擋 `git pull`）
 
 ### Documentation
 - (無)
