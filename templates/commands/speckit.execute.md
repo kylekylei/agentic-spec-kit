@@ -64,9 +64,40 @@ RED → GREEN → VERIFY → REFACTOR → REFLECT → DIALOGUE → REPEAT
 
 5. **Parse Plan Structure**: Extract from `plan.md` Part 2: Phases, Actions, `[Verifies: AC-001]`, `[P]` parallel markers, Action types.
 
-6. **Risk-Based HITL Gates**:
+6. **Principles Auto-Enforce + Risk-Based HITL Gates**:
 
-   Before executing each action, check these risk conditions. Pause and ask user when triggered:
+   #### Principles Auto-Enforce（自動失敗）
+
+   Before executing each action, automatically verify against `context.md` Principles section:
+
+   | Check | Method | On Violation |
+   |-------|--------|-------------|
+   | MUST rules | Scan generated code for violations | ❌ **Auto-fail** — block commit, show violation + fix suggestion |
+   | MUST NOT rules | Scan generated code for forbidden patterns | ❌ **Auto-fail** — block commit, show violation + fix suggestion |
+   | SHOULD rules | Scan generated code for deviations | ⚠️ WARN — log, continue |
+
+   **Auto-enforce flow**:
+   ```
+   Action GREEN (test passes)
+     → Principles scan (MUST / MUST NOT / SHOULD)
+     → Any MUST/MUST NOT violation?
+       → Yes: RED — revert to pre-action state, show violation, fix required
+       → No: proceed to VERIFY
+   ```
+
+   **Common auto-enforce checks** (derived from principles):
+   - A11y: interactive elements must have aria-label or visible text
+   - Security: no hardcoded secrets, API keys, tokens
+   - Token: no hardcoded hex/rgb values in UI code
+   - Architecture: no cross-layer direct imports violating dependency direction
+
+   > Principles are parsed from `context.md` Principles section at Phase 0.
+   > MUST/MUST NOT statements are converted to scannable patterns.
+   > New patterns are added as principles evolve — this is not a static list.
+
+   #### Risk-Based HITL Gates
+
+   Beyond auto-enforce, pause and ask user for these risk conditions:
 
    | Risk Trigger | Pause Behavior |
    |-------------|---------|

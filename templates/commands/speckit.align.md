@@ -67,6 +67,31 @@ Load `context.md` (WHO/WHY/technical constraints + Principles behavioral boundar
 
 **Figma URL Detection**: Scan `context.md` for Figma URLs (`figma.com/design/`, `/file/`, `/proto/`). If found → create `.specify/design/figma-index.md` (Project Figma table + empty Feature Pages table). If none → skip.
 
+**experience-kit AC Seed Detection**:
+
+> Cross-system integration: experience-kit → agentic-spec-kit
+> Contract: see experience-kit `contracts/handoff-to-speckit.md`
+
+Scan for experience-spec with §8 AC Seed:
+
+| Artifact | Path Pattern | If Found |
+| --- | --- | --- |
+| experience-spec | `design/*-experience-spec-v*.md` | Read §4 + §8 |
+
+**If experience-spec §8 AC Seed found:**
+- §8 AC Seed → directly seed spec.md Acceptance Criteria (skip re-derivation from scratch)
+- §8 Data Contracts → seed spec.md Key Entities and validation rules
+- §8 Form Validation → seed spec.md validation requirements
+- §8 Error Recovery → seed spec.md error handling requirements
+- §4 Design Expectations → cross-reference during Example Mapping (Phase 5)
+- Record: `ac-seed-source: experience-spec v{X.Y} §8`
+
+**If §8 is missing but §4 exists:**
+- Derive AC from §4 Design Expectations (standard path, slower)
+- WARN: "AC Seed not available — deriving from §4 Design Expectations. Consider re-running /x.scenario to generate §8."
+
+**If no experience-spec found:** proceed with standard flow (no cross-system input).
+
 ### Phase 1: Setup
 
 1. **Generate branch name** (2–4 words, verb-noun format, e.g. `add-user-auth`)

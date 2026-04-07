@@ -51,11 +51,43 @@ Foundation Status:
 
 ## Init Mode (New Project)
 
+### Step 0.5: Detect experience-kit Artifacts
+
+> Cross-system integration: experience-kit → agentic-spec-kit
+> Contract: see experience-kit `contracts/handoff-to-speckit.md`
+
+Scan for experience-kit outputs in the project:
+
+| Artifact | Path Pattern | If Found |
+| --- | --- | --- |
+| experience-spec | `design/*-experience-spec-v*.md` | Primary context source — extract §1-§3, §5-§6 |
+| design-spec | `design/*-design-spec-v*.md` | Architecture reference for `/speckit.plan` |
+| spec-ops result | `specs/*/result.json` | Quality gate — check verdict before proceeding |
+| spec-ops context | `specs/*/context.json` | RC7 compliance → principles.md MUST rules |
+
+**If experience-spec found:**
+- Extract §1 Project Identity → context.md Project Identity
+- Extract §2 Business Goals → context.md Business Goals
+- Extract §3 Personas → context.md Target Users
+- Extract §5 Technical Constraints → context.md Technical Context
+- Extract §6 Brand & Compliance → principles.md MUST rules (a11y, regulations)
+- Record consumed version: `experience-spec: v{X.Y} consumed at {date}`
+- Skip redundant questions in Step 1 (data already available)
+
+**If spec-ops result.json found:**
+- Check `summary.verdict`:
+  - **Fail** → WARN: product-spec has quality issues. Display failing dimensions. Suggest PM fixes spec first.
+  - **Conditional** → Note risk items in context.md
+  - **Pass** → Normal flow
+- Extract RC7 (Compliance) → principles.md MUST rules
+
+**If neither found:** proceed with standard auto-detection (Step 1).
+
 ### Step 1: Gather Project Context
 
 1. **Parse user input**: extract info already provided in `$ARGUMENTS`
 
-2. **Auto-detect from repository**:
+2. **Auto-detect from repository** (skip sections already populated by Step 0.5):
    - `README.md` → project name, description
    - `package.json` / `go.mod` / `Cargo.toml` / `pyproject.toml` → language, framework, dependencies
    - `tsconfig.json` / `.eslintrc` → configuration
@@ -64,7 +96,7 @@ Foundation Status:
    - `docs/llms.txt` → available external references
    - Existing source code → architecture patterns
 
-3. **If required fields are missing**: infer from context; only ask the user when no reasonable default exists. **Max 5 questions**.
+3. **If required fields are missing**: infer from context; only ask the user when no reasonable default exists. **Max 5 questions** (reduced if Step 0.5 provided data).
 
 4. **Copy template and populate `.specify/memory/context.md`**:
    - If file is missing or still a template: copy from `templates/context-template.md`

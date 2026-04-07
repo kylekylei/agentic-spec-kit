@@ -36,6 +36,25 @@ $ARGUMENTS
 2. **Load `principles.md`** (cold layer — full version needed for review depth checks)
    - **Parse all principles**: Extract every MUST / MUST NOT / SHOULD rule with its ID (e.g. `BB-001`, `III-D`) into an in-memory checklist for use in Pass B3, Pass D Compliance, and Pass G.
 
+### Parallel Specialist Dispatch
+
+Review passes are organized into **independent specialist tracks** that can execute in parallel:
+
+| Track | Passes | Focus | Dependencies |
+| --- | --- | --- | --- |
+| **Coverage Specialist** | Pass A + Pass E | AC distribution, traceability matrix | spec.md, scenarios/*.feature |
+| **Consistency Specialist** | Pass B | Traceability, terminology, principles alignment | All artifacts |
+| **Quality Specialist** | Pass C + Pass D | Detection scan, requirements quality | spec.md, example-mapping.md |
+| **Alignment Specialist** | Pass G | Goal coverage, milestone consistency | context.md, plan.md |
+
+**Execution flow**:
+1. Phase 0 (Load Context + Setup) runs sequentially — all tracks need shared context
+2. **Tracks execute in parallel** — each specialist operates independently on loaded artifacts
+3. Pass F (Living Document) runs after all tracks complete — aggregates findings
+
+> Implementation: When the runtime supports parallel tool calls, dispatch each track simultaneously.
+> When sequential, execute in track order. Results are merged into a single report.
+
 ### Setup
 
 Run prerequisites check (see `speckit/references/command-shared`) with `--json --require-plan --include-plan`. Parse:

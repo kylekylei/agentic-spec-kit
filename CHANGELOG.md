@@ -11,10 +11,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 > 累積中的變更，尚未歸入版本號。下次發行時移到具體版本區段。
 
 ### Added
-- (無)
+
+- **`speckit.qa`** — E2E／視覺／無障礙 QA 階段（Playwright），與 validate 分離
+- **`speckit.ship`** — 發佈前總關卡與分段釋出選項
+- **`speckit.retro`** — 工程回顧，彙整 `.specify/` 與跨系統回饋
 
 ### Changed
-- (無)
+
+- **`speckit.init`** — Step 0.5：偵測 experience-kit 產物與 spec-ops `result.json`，減少重複訪談
+- **`speckit.align`** — experience-spec §8 AC Seed 偵測，可種入 spec.md AC／實體／驗證規則
+- **`speckit.execute`** — Principles 自動檢查（MUST／MUST NOT 阻擋）與既有 HITL 關卡並列
+- **`speckit.review`** — 平行專家軌道（Coverage／Consistency／Quality／Alignment）
+- **`speckit.validate`** — spec-ops `result.json` 品質閘門與 SQ 維度加嚴對應
 
 ### Documentation
 - (無)

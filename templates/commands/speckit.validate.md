@@ -51,6 +51,44 @@ Per `speckit/references/command-shared`. Also:
 - Read System Scope table from `plan.md`
 - Run prerequisites check with `--json --require-plan --include-plan` to get `SPEC_DIR`
 
+### spec-ops Quality Gate
+
+> Cross-system integration: spec-ops → agentic-spec-kit
+> Contract: see spec-ops `contracts/consumption-api.md`
+
+Scan for `specs/*/result.json` in the project:
+
+| Verdict | Behavior |
+| --- | --- |
+| **Pass** | Normal flow — proceed to validation |
+| **Conditional** | Note risk items from `top_improvements`, flag low-scoring SQ dimensions in report |
+| **Fail** | **Block validation** — display failing SQ dimensions, recommend PM fixes product-spec first |
+
+SQ score consumption during validation:
+- Low-scoring SQ dimensions → stricter checks in corresponding Pass:
+  - `SQ6` (Security) low → Pass 1 Security Scan elevated to CRITICAL threshold
+  - `SQ1` (Functional Suitability) low → Pass 4 Test Health coverage requirements raised
+  - `SQ4` (Interaction Capability) low → Pass 5 Design Quality UX checks mandatory
+
+If no `result.json` found → skip gate, proceed normally (no blocking).
+
+### Model Routing
+
+> Route validation tasks to the most appropriate model based on task complexity.
+
+| Task Type | Recommended Model | Rationale |
+| --- | --- | --- |
+| Security scan (Pass 1) | Opus / most capable | Security requires deep reasoning, false negatives are costly |
+| Architecture compliance (Pass 2) | Opus / most capable | Structural analysis needs broad context understanding |
+| Code quality (Pass 3) | Sonnet / balanced | Pattern matching + heuristics, balanced speed/quality |
+| Test health (Pass 4) | Sonnet / balanced | Coverage analysis is well-structured |
+| Design quality (Pass 5) | Sonnet / balanced | Checklist-driven assessment |
+| BDD generation (Pass 6) | Haiku / fast | Mechanical translation from tests to Gherkin |
+
+**Implementation**: When the runtime supports model selection per subtask, route accordingly.
+When single-model, use the most capable available model for all passes.
+Model routing is advisory — the runtime may override based on availability.
+
 ### Dimension Routing
 
 Auto-determine which validation dimensions to activate based on project characteristics:
