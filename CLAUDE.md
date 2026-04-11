@@ -2,6 +2,15 @@
 
 Speckit 透過 `speckit-sync.sh` 將 `templates/` 同步至消費端 `.claude/` 目錄。
 
+## 框架間契約（Contracts）
+
+跨系統邊界主要交付物一律採 JSON（框架間交付格式原則）。
+
+| 上游 | 契約路徑 | 消費指令 |
+|------|---------|---------|
+| spec-ops | `specs/*/reviews/*-spec-contract-v*.json` | `/speckit.init`, `/speckit.validate`, `/speckit.ship` |
+| experience-kit | `contracts/*-experience-contract-v*.json` | `/speckit.init`, `/speckit.align` |
+
 ## Path Mapping
 
 | `templates/` | `.claude/` |

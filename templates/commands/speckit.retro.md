@@ -46,7 +46,7 @@ Scan `.specify/` and related directories:
 | Source | Path | Extract |
 | --- | --- | --- |
 | experience-kit audit | `design/audit/reports/*.md` | Design compliance trends |
-| spec-ops result | `specs/*/result.json` | Spec quality scores |
+| spec-ops contract | `specs/*/reviews/*-spec-contract-v*.json` | Spec quality scores |
 
 ---
 
@@ -118,10 +118,18 @@ Insights referenced ≥ 3 times across tasks → suggest graduation to `principl
 
 > Feeds back to spec-ops spec-retro for calibration
 
-Generate `.specify/reports/validation-retro.md` in spec-ops consumable format:
+Generate `{product}-engineering-feedback-v{N}.md` in unified feedback format (spec-ops `spec-retro` calibration input C):
 
 ```markdown
-## spec-kit Retrospective Feedback
+---
+product: {product}
+feedback_version: v{N}
+source_system: spec-kit
+produced_at: YYYY-MM-DD
+aligned_spec_contract: v{N}
+---
+
+## spec-kit Engineering Feedback
 
 ### Spec Quality Signals
 - clarification_questions: {{count}} (time-to-first-clarification: {{duration}})
@@ -133,9 +141,19 @@ Generate `.specify/reports/validation-retro.md` in spec-ops consumable format:
 - verify_skip_rate: {{%}}
 - principle_violations: {{count}}
 
-### Reviewed At
-{{ISO 8601}}
+### AC Seed Delta
+- ac_seed_modified: [list of scenario IDs modified from experience-kit AC Seed]
+- ac_seed_conflicts: [list of conflicts with spec-contract Required sub-chars, with resolution]
+
+### Own/Enable AC Summary
+- own_ac_count: {{N}} (AC-NNN)
+- enable_ac_count: {{N}} (AC-E-NNN)
+- enable_ac_pass_rate: {{%}}
 ```
+
+Output path: `.specify/reports/{product}-engineering-feedback-v{N}.md`
+
+This file is consumed by spec-ops `spec-retro` as calibration input C (alongside A=QA feedback, B=design feedback).
 
 ---
 

@@ -99,12 +99,24 @@
 | 2 | MUST | [PRINCIPLE_2] |
 | 3 | MUST NOT | [PRINCIPLE_3] |
 
+## Aligned Contracts
+
+> 跨系統 contract 版本追蹤。`/speckit.align` 更新此段落。
+
+| Contract | Version | SHA / Package | Last Aligned |
+|----------|---------|---------------|-------------|
+| spec-contract | — | — | — |
+| experience-contract | — | — | — |
+| token-contract | @aiui/tokens@— | — | — |
+| composition-recipes | — | — | — |
+
 ## Current
 
 - **Foundation**: [complete/partial/missing]
 - **Phase**: [init/align/plan/execute/review/idle]
 - **Last**: [last completed action or milestone]
 - **Next**: [next expected action]
+- **Shipping Ceiling**: [L0–L{X} or —]
 
 ---
 

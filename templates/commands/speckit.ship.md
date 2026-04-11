@@ -46,14 +46,36 @@ Per `speckit/references/command-shared`. Also:
 
 ### 1a. spec-ops Gate
 
-Scan `specs/*/result.json`:
+Scan `specs/*/reviews/*-spec-contract-v*.json` (prefer latest version).
+
+**3 框架 gate** (from `quality_gates`):
 
 | Check | Criteria | Blocking? |
 |-------|----------|-----------|
-| Product spec verdict | Must be Pass or Conditional | Yes |
-| Conditional items | All `top_improvements` addressed in implementation | No (WARN) |
+| SQ verdict | Must be Pass or Conditional | Yes |
+| DQ verdict (if triggered) | Must be Pass or Conditional | Yes |
+| LQ verdict (if triggered) | Must be Pass or Conditional | Yes |
+| `overall.top_improvements` | All addressed in implementation | No (WARN) |
 
-If no `result.json` → WARN (no product spec quality gate).
+**X1–X4 橫切合規 join gate** (from `crosscutting_compliance`):
+
+| Check | Criteria | Blocking? |
+|-------|----------|-----------|
+| Each triggered X item verdict | Must be Pass (not Fail) | Yes |
+| Enable-layer sub-chars | Must have AC-E-NNN contract test evidence | Yes |
+
+**出貨天花板 gate**（from `context.md` Shipping Ceiling）:
+
+| Ceiling | 行為 |
+|---------|------|
+| L4 | 完整驗證：SQ + DQ + LQ + X1-X4 + experience-contract 必須存在 |
+| L3 | SQ + DQ + LQ + X1-X4，experience-contract optional |
+| L2 | SQ + DQ/LQ (if triggered)，Enable AC 仍需 pass |
+| L0-L1 | 輕量：SQ 聚焦 SQ2/SQ3/SQ8/SQ9 |
+
+即使天花板 < L4，Enable AC（AC-E-NNN）的契約測試仍必須 pass。Enable 層的責任不因出貨天花板降低而免除——它確保上層未來能合規。
+
+If no `spec-contract.json` found → WARN (no product spec quality gate).
 
 ### 1b. experience-kit Gate
 
@@ -100,7 +122,7 @@ If no audit report → WARN (no design audit gate).
 ### Upstream Gates
 | Gate | Source | Status |
 |------|--------|--------|
-| spec-ops | result.json | [PASS/WARN/FAIL/MISSING] |
+| spec-ops | spec-contract.json | [PASS/WARN/FAIL/MISSING] |
 | experience-kit | audit report | [PASS/WARN/FAIL/MISSING] |
 | spec-kit review | feature-readiness.md | [PASS/FAIL] |
 | spec-kit validate | validate report | [PASS/FAIL] |

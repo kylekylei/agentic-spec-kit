@@ -18,11 +18,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ### Changed
 
-- **`speckit.init`** — Step 0.5：偵測 experience-kit 產物與 spec-ops `result.json`，減少重複訪談
-- **`speckit.align`** — experience-spec §8 AC Seed 偵測，可種入 spec.md AC／實體／驗證規則
+- **`speckit.init`** — Step 0.5：`experience-contract`／`spec-contract` JSON；standalone 模式；Shipping Ceiling 由 contract 推導或預設 L0–L2
+- **`speckit.align`** — Own/Enable 與 spec 責任標記；§8 `Addresses`／`Recipe`；AC Seed 與 composition-recipes 對接
 - **`speckit.execute`** — Principles 自動檢查（MUST／MUST NOT 阻擋）與既有 HITL 關卡並列
 - **`speckit.review`** — 平行專家軌道（Coverage／Consistency／Quality／Alignment）
-- **`speckit.validate`** — spec-ops `result.json` 品質閘門與 SQ 維度加嚴對應
+- **`speckit.validate`** — `spec-contract` 品質閘門；`quality_gates`／`crosscutting_compliance`（X1–X4）；mandatory gates 與 AC-E 驗證
+- **`speckit.ship`** — spec-contract／X1–X4；出貨天花板對照 `context.md` Shipping Ceiling
+- **`speckit.retro`** — `spec-contract` 路徑；`{product}-engineering-feedback-v{N}.md`（spec-retro 校正輸入 C）
+- **`templates/context-template.md`** — Aligned Contracts 表、Shipping Ceiling
+- **`CLAUDE.md`** — 框架間契約（JSON）路徑與消費指令對照表
+
+
+### Removed
+
+- **`docs/architecture.md`、`docs/extension-api-reference.md`**
 
 ### Documentation
 - (無)

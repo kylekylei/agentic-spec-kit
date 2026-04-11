@@ -60,26 +60,42 @@ Scan for experience-kit outputs in the project:
 
 | Artifact | Path Pattern | If Found |
 | --- | --- | --- |
-| experience-spec | `design/*-experience-spec-v*.md` | Primary context source — extract §1-§3, §5-§6 |
+| experience-contract | `design/*-experience-contract-v*.json` | Primary context source — read JSON fields directly |
 | design-spec | `design/*-design-spec-v*.md` | Architecture reference for `/speckit.plan` |
-| spec-ops result | `specs/*/result.json` | Quality gate — check verdict before proceeding |
+| spec-ops contract | `specs/*/reviews/*-spec-contract-v*.json` | Quality gate — check overall.verdict before proceeding |
 | spec-ops context | `specs/*/context.json` | RC7 compliance → principles.md MUST rules |
 
-**If experience-spec found:**
-- Extract §1 Project Identity → context.md Project Identity
-- Extract §2 Business Goals → context.md Business Goals
-- Extract §3 Personas → context.md Target Users
-- Extract §5 Technical Constraints → context.md Technical Context
-- Extract §6 Brand & Compliance → principles.md MUST rules (a11y, regulations)
-- Record consumed version: `experience-spec: v{X.Y} consumed at {date}`
+**If experience-contract.json found:**
+- Read `project_identity` → context.md Project Identity
+- Read `business_goals` → context.md Business Goals
+- Read `personas` → context.md Target Users
+- Read `technical_constraints` → context.md Technical Context
+- Read `brand_compliance` → principles.md MUST rules (a11y, regulations)
+- Record consumed version: `experience-contract: v{X.Y} consumed at {date}`
 - Skip redundant questions in Step 1 (data already available)
 
-**If spec-ops result.json found:**
-- Check `summary.verdict`:
+**If spec-ops spec-contract.json found:**
+- Check `overall.verdict`:
   - **Fail** → WARN: product-spec has quality issues. Display failing dimensions. Suggest PM fixes spec first.
   - **Conditional** → Note risk items in context.md
   - **Pass** → Normal flow
 - Extract RC7 (Compliance) → principles.md MUST rules
+
+**Standalone mode detection** (no experience-contract):
+
+If neither experience-contract nor experience-spec found:
+- Set `context.md` → `Shipping Ceiling: L0–L2` (default, user can override)
+- Proceed with standard auto-detection (Step 1)
+- Token contracts (`@aiui/tokens/contracts/*`) and composition-recipes still available via direct aiui-ds consumption
+- `/speckit.align` will only read spec-contract (no AC Seed from experience-kit)
+- WARN: "Running in standalone mode — no experience-kit artifacts. Design-level AC Seeds not available."
+
+**Shipping ceiling extraction**:
+
+If spec-contract found, read `context.target_layer` → set `context.md` → `Shipping Ceiling: L0–L{max}`
+If not found, infer from experience-contract presence:
+- experience-contract found → assume L4 (full stack)
+- neither found → default L0–L2, ask user to confirm
 
 **If neither found:** proceed with standard auto-detection (Step 1).
 

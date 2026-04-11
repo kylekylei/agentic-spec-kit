@@ -80,11 +80,33 @@ Scan for experience-spec with §8 AC Seed:
 
 **If experience-spec §8 AC Seed found:**
 - §8 AC Seed → directly seed spec.md Acceptance Criteria (skip re-derivation from scratch)
+- §8 `Addresses` field → map each AC to spec-contract SQ/DQ/LQ sub-characteristics
+- §8 `Recipe` field → link AC to `composition-recipes.json` for implementation guidance
 - §8 Data Contracts → seed spec.md Key Entities and validation rules
 - §8 Form Validation → seed spec.md validation requirements
 - §8 Error Recovery → seed spec.md error handling requirements
 - §4 Design Expectations → cross-reference during Example Mapping (Phase 5)
 - Record: `ac-seed-source: experience-spec v{X.Y} §8`
+
+**Own / Enable AC 雙軌**（if spec-contract found with `responsibility` markings）:
+
+Read spec-contract sub-characteristic responsibility markings. For each sub-characteristic addressed by AC Seed:
+
+| Responsibility | AC Type | Naming | Verification |
+| --- | --- | --- | --- |
+| `own` | Direct AC | `AC-NNN` | 功能/E2E 測試 |
+| `enable` | Contract AC | `AC-E-NNN` | 契約測試（Pact / JSON Schema / OpenAPI）。必填 `Supports: AC-NNN` |
+| `ref` | No AC | — | 記錄至 context.md `## References` |
+
+- Enable AC 語意模板：「提供 {結構} 以支援 {上層合規}」
+- If AC Seed has `composition_recipe_ref` → AC-E references recipe as implementation guidance
+- 缺口檢查：spec-contract Required sub-char 無對應 AC → WARN
+
+**AC Seed 修改注記**：
+
+When spec-kit modifies AC Seed content during alignment (e.g., splitting, merging, rewording):
+- Record diff in spec.md header: `ac-seed-delta: [modified scenario IDs]`
+- If AC Seed conflicts with spec-contract Required sub-char → **暫停執行，請人類做決策**，記錄至 `principles.md`
 
 **If §8 is missing but §4 exists:**
 - Derive AC from §4 Design Expectations (standard path, slower)

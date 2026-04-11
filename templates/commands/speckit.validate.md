@@ -54,23 +54,55 @@ Per `speckit/references/command-shared`. Also:
 ### spec-ops Quality Gate
 
 > Cross-system integration: spec-ops → agentic-spec-kit
-> Contract: see spec-ops `contracts/consumption-api.md`
+> Contract: `{product}-spec-contract-v{N}.json` (schema: spec-ops `assets/spec-contract-schema.json`)
 
-Scan for `specs/*/result.json` in the project:
+Scan for `specs/*/reviews/*-spec-contract-v*.json` (prefer latest version).
+
+**3 框架 gate** (read from `quality_gates`):
 
 | Verdict | Behavior |
 | --- | --- |
 | **Pass** | Normal flow — proceed to validation |
-| **Conditional** | Note risk items from `top_improvements`, flag low-scoring SQ dimensions in report |
-| **Fail** | **Block validation** — display failing SQ dimensions, recommend PM fixes product-spec first |
+| **Conditional** | Note risk items from `overall.top_improvements`, flag low-scoring dimensions in report |
+| **Fail** | **Block validation** — display failing gate details, recommend PM fixes product-spec first |
 
-SQ score consumption during validation:
-- Low-scoring SQ dimensions → stricter checks in corresponding Pass:
-  - `SQ6` (Security) low → Pass 1 Security Scan elevated to CRITICAL threshold
-  - `SQ1` (Functional Suitability) low → Pass 4 Test Health coverage requirements raised
-  - `SQ4` (Interaction Capability) low → Pass 5 Design Quality UX checks mandatory
+**X1–X4 橫切合規 join gate** (read from `crosscutting_compliance`):
 
-If no `result.json` found → skip gate, proceed normally (no blocking).
+| X Item | Triggered | Verdict | Behavior |
+| --- | --- | --- | --- |
+| X1 無障礙 | true | Fail | Flag A11y gap — Pass 5 Design Quality A11y checks elevated to CRITICAL |
+| X2 AI 透明度 | true | Fail | Flag AI transparency gap — note in report |
+| X3 AI 可追溯性 | true | Fail | Flag traceability gap — Pass 2 Architecture checks flag missing audit trail |
+| X4 資料保護 | true | Fail | Flag data protection gap — Pass 1 Security Scan elevated to CRITICAL |
+| Any X | false | N/A | Skip — not triggered by RC context |
+
+**Mandatory Gates — 3 框架（blocking）**:
+
+| Gate | Condition | Trigger |
+| --- | --- | --- |
+| SQ Required = 0 | 任何 SQ Required sub-char 得分 = 0 | Always |
+| SQ1 < 50% | 功能適切性得分率 < 50% | Always |
+| SQ5 < 50% | 可靠性得分率 < 50% | Always |
+| DQ1–DQ5 Required = 0 | 固有品質任一 Required 得分 = 0 | `frameworks_enabled.dq = true` 且非 PRD-PLAT |
+| LQ1 < 50% | 操作品質得分率 < 50% | `frameworks_enabled.lq = true` 且非 PRD-PLAT |
+
+任一 gate fail → 標記為 ship blocker，列入報告。
+
+**Dimension adjustment based on SQ/DQ/LQ scores:**
+
+- `quality_gates.sq` low on `SQ6` → Pass 1 Security Scan elevated to CRITICAL threshold
+- `quality_gates.sq` low on `SQ1` → Pass 4 Test Health coverage requirements raised
+- `quality_gates.sq` low on `SQ4` → Pass 5 Design Quality UX checks mandatory
+- `quality_gates.dq` low on `DQ1–DQ5` → Data validation checks elevated
+- `quality_gates.lq` low on `LQ2.3` (幻覺控制) → AI output verification checks elevated
+
+**Enable AC 驗證**（if Own/Enable dual-track active）:
+
+For each triggered X item, verify corresponding Enable ACs (AC-E-NNN) have contract test evidence:
+- AC-E exists in spec.md → check test file exists + passes
+- AC-E missing for Required Enable sub-char → FAIL
+
+If no `spec-contract.json` found → skip gate, proceed normally (no blocking).
 
 ### Model Routing
 
@@ -231,7 +263,27 @@ Generate BDD Feature Files from passing tests? [Y/n]
 ```markdown
 ## Validation Report
 
-### Summary
+### spec-ops Quality Gate
+#### 3 框架 Gate
+| Framework | Score | Verdict | Blockers |
+|-----------|-------|---------|---------|
+| SQ (Spec Quality) | [0-100] | [Pass/Conditional/Fail/N/A] | [sub-char IDs or —] |
+| DQ (Data Quality) | [0-100 or N/A] | [Pass/Conditional/Fail/N/A] | [sub-char IDs or —] |
+| LQ (LLM Quality) | [0-100 or N/A] | [Pass/Conditional/Fail/N/A] | [sub-char IDs or —] |
+
+#### X1–X4 橫切合規 Join Gate
+| ID | 面向 | Triggered | Sub-chars | Verdict | Fail Reason |
+|----|------|-----------|-----------|---------|------------|
+| X1 | 無障礙 | [Yes/No] | SQ4.6 | [Pass/Fail/N/A] | [— or which char = 0] |
+| X2 | AI 透明度 | [Yes/No] | SQ4.10, LQ4.1 | [Pass/Fail/N/A] | [—] |
+| X3 | AI 可追溯性 | [Yes/No] | SQ6.3, SQ6.4, DQ11, LQ3.4 | [Pass/Fail/N/A] | [—] |
+| X4 | 資料保護 | [Yes/No] | SQ6, DQ7, DQ8, LQ3.3 | [Pass/Fail/N/A] | [—] |
+
+**Overall spec-ops Gate: [PASS / CONDITIONAL / FAIL / SKIPPED (no contract found)]**
+
+---
+
+### Code Validation Summary
 | Dimension | Checks | Pass | Fail | Score | Status |
 |-----------|--------|------|------|-------|--------|
 | Security | [N] | [N] | [N] | [%] | [Enabled/Not enabled] |
