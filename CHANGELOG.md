@@ -34,7 +34,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - **`docs/architecture.md`、`docs/extension-api-reference.md`**
 
 ### Documentation
-- (無)
+
+- **README.md** — 對齊目前分發架構：三平台路徑對照表、`scripts/bash` 完整檔名、Plan 階段產物（`.feature`／選配 ui-spec）、Windows／`rsync` 前置說明；安裝章節移除消費端不需閱讀的同步腳本路徑說明
+- **`.gitignore`** — 不再排除 `.cursor/`、`.claude/`、根目錄 `CLAUDE.md`（維持 `.claude/settings.local.json` 排除）
 
 ---
 

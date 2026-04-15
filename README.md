@@ -11,7 +11,7 @@
 ### 前置需求
 
 - [Cursor](https://cursor.com/)（或 Claude Code / Antigravity）
-- `git`、`rsync`（macOS / Linux 預設已有）
+- `git`、`rsync`（`install.sh` / `speckit-sync.sh` 依賴 rsync；Windows 請用 **Git Bash** 或 **WSL** 等含 `rsync` 的環境）
 
 ### 方式一：Script 安裝（推薦）
 
@@ -68,7 +68,7 @@ SPECKIT_HOME=/path/to/Source bash /path/to/Source/scripts/bash/speckit-sync.sh .
 /speckit.plan
 ```
 
-產出 `plan.md`（Part 1: Architecture、Part 2: Actions），每條 Action 對齊 Acceptance Criteria。
+產出 `plan.md`（Part 1: Architecture、Part 2: Actions）、對應 Gherkin **`.feature`**；若有 UI 深度分析則另產 `contracts/ui/ui-spec.md`。每條 Action 對齊 Acceptance Criteria。
 
 ### 4. 執行實作
 
@@ -152,37 +152,56 @@ Source (agentic-spec-kit)/
 │   └── feature-template.feature
 │
 ├── scripts/bash/                  # Source 腳本
-│   ├── speckit-sync.sh            # 主同步引擎
-│   ├── speckit-skills.sh          # Skills 管理
+│   ├── speckit-sync.sh            # 主同步引擎（templates/ → 消費端）
+│   ├── speckit-skills.sh          # Skills 清單（skills.yml）管理
 │   ├── check-foundation.sh
 │   ├── check-prerequisites.sh
-│   └── ...
+│   ├── common.sh
+│   ├── create-new-spec.sh
+│   ├── detect-system-scope.sh
+│   ├── load-execution-context.sh
+│   └── setup-task.sh
 │
+├── docs/                          # 安裝／快速開始等
+│   ├── installation.md
+│   └── quickstart.md
 ├── install.sh                     # 一鍵安裝
-└── CLAUDE.md                      # Claude Code 參考
+└── CLAUDE.md                      # Claude Code 參考（根目錄）
 ```
 
 ### 消費端結構
 
+IDE 分發路徑（由 `speckit-sync.sh` 依 `--platform` 寫入）：
+
+| 資源 | Cursor | Claude Code | Antigravity |
+|------|--------|-------------|-------------|
+| 生命週期指令 | `.cursor/commands/` | `.claude/commands/` | `.agent/workflows/`（由 `speckit.*.md` 轉換） |
+| 規則 | `.cursor/rules/*.mdc` | `.claude/rules/*.md`（由 `.mdc` 轉換） | `.agent/rules/*.md`（由 `.mdc` 轉換） |
+| Skills / Agents | `.cursor/skills/`、`agents/` | `.claude/skills/`、`agents/` | `.agent/skills/`、`agents/` |
+| 同步腳本副本 | `.cursor/skills/speckit/scripts/bash/*.sh` | 同上（`.claude/...`） | 同上（`.agent/...`） |
+
 ```
 Consumer Project/
-├── .cursor/ (or .claude/ or .agent/)
-│   ├── commands/speckit.*.md
-│   ├── rules/*.mdc
-│   ├── skills/                    # 依 skills.yml 按需安裝
-│   └── agents/speckit_helper.md
-├── hooks/
+├── .cursor/                 # 或 .claude/、.agent/；子路徑見上表（Antigravity 指令在 workflows/）
+│   ├── commands/            # Cursor／Claude；Antigravity 為 workflows/
+│   ├── rules/
+│   ├── skills/
+│   │   ├── speckit/         # 含 scripts/bash/（speckit-sync.sh、speckit-skills.sh 等副本）
+│   │   ├── <其他已選技能>/
+│   │   └── skill-registry.yml
+│   └── agents/              # 例如 speckit_helper.md
+├── hooks/                         # 專案根目錄（與 IDE 目錄分開）
 │   ├── pre-command-foundation.sh
 │   ├── post-edit-check.sh
 │   └── settings.json
 ├── .specify/
 │   ├── memory/
-│   │   ├── context.md             # 溫層（§ Principles + § Current）
+│   │   ├── context.md             # 溫層（Principles 摘要 + Current）
 │   │   └── principles.md          # 冷層（完整版原則）
 │   ├── config/
-│   │   ├── speckit.yml
-│   │   └── skills.yml
-│   └── templates/
+│   │   ├── speckit.yml            # 框架設定（含 lifecycle、source.url）
+│   │   └── skills.yml             # 選配技能清單（無則同步僅裝 Core；init / speckit-skills 可建立）
+│   └── templates/                 # spec 用頂層模板（由 sync 從 Source templates/ 複製）
 └── specs/
     └── [###-spec-name]/
         ├── spec.md
